@@ -1,0 +1,7 @@
+{
+  "editor.tabSize": 2,
+  "npm.packageManager": "yarn",
+  "eslint.packageManager": "yarn",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}
