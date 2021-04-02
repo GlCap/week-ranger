@@ -1,14 +1,17 @@
 import { Day } from './Day';
-import { WeekSerializable } from '../types';
+import { DaySerializable, WeekSerializable } from '../types';
+import { InvalidFormatError } from '../errors';
+
+const initialDay: DaySerializable = { ranges: [], number: -1 };
 
 const initialValues: WeekSerializable = {
-  monday: { ranges: [] },
-  tuesday: { ranges: [] },
-  wednesday: { ranges: [] },
-  thursday: { ranges: [] },
-  friday: { ranges: [] },
-  saturday: { ranges: [] },
-  sunday: { ranges: [] },
+  monday: initialDay,
+  tuesday: initialDay,
+  wednesday: initialDay,
+  thursday: initialDay,
+  friday: initialDay,
+  saturday: initialDay,
+  sunday: initialDay,
 };
 
 export class Week {
@@ -22,7 +25,10 @@ export class Week {
   private readonly _saturday: Day;
   private readonly _sunday: Day;
 
-  constructor(value: string | Week | WeekSerializable) {
+  constructor(value: string);
+  constructor(value: WeekSerializable);
+  constructor(value: Week);
+  constructor(value: string | WeekSerializable | Week) {
     if (value instanceof Week) {
       this._monday = value._monday;
       this._tuesday = value._tuesday;
@@ -45,21 +51,26 @@ export class Week {
     this._sunday = new Day(parsed.sunday);
   }
 
-  static parse(base: string): WeekSerializable {
-    const rawWeek = base.split(this.separator);
-    if (rawWeek.length > 7) {
-      throw new Error(`Invalid number of days: ${rawWeek.length}`);
+  static parse(value: string): WeekSerializable {
+    if (value.length === 0) {
+      throw new InvalidFormatError(value, 'Week');
+    }
+
+    const rawWeek = value.split(this.separator);
+
+    if (rawWeek.length > 7 || rawWeek.length < 1) {
+      throw new InvalidFormatError(value, 'Week');
     }
 
     return rawWeek.reduce(
       (acc, curr, index) => {
-        if (index === 0) acc.monday = Day.parse(curr);
-        if (index === 1) acc.tuesday = Day.parse(curr);
-        if (index === 2) acc.wednesday = Day.parse(curr);
-        if (index === 3) acc.thursday = Day.parse(curr);
-        if (index === 4) acc.friday = Day.parse(curr);
-        if (index === 5) acc.saturday = Day.parse(curr);
-        if (index === 6) acc.sunday = Day.parse(curr);
+        if (index === 0) acc.monday = Day.parse(curr, index);
+        if (index === 1) acc.tuesday = Day.parse(curr, index);
+        if (index === 2) acc.wednesday = Day.parse(curr, index);
+        if (index === 3) acc.thursday = Day.parse(curr, index);
+        if (index === 4) acc.friday = Day.parse(curr, index);
+        if (index === 5) acc.saturday = Day.parse(curr, index);
+        if (index === 6) acc.sunday = Day.parse(curr, index);
 
         return acc;
       },
@@ -79,6 +90,22 @@ export class Week {
     ];
 
     return array.join(Week.separator);
+  }
+
+  toJSON(): WeekSerializable {
+    return {
+      monday: this._monday.toJSON(),
+      tuesday: this._tuesday.toJSON(),
+      wednesday: this._wednesday.toJSON(),
+      thursday: this._thursday.toJSON(),
+      friday: this._friday.toJSON(),
+      saturday: this._saturday.toJSON(),
+      sunday: this._sunday.toJSON(),
+    };
+  }
+
+  equals(that: Week): boolean {
+    return this.toString() === that.toString();
   }
 
   private getDay(day: Day): Day | null {

@@ -1,5 +1,6 @@
 import { Time } from './Time';
 import { RangeSerializable } from '../types';
+import { InvalidFormatError } from '../errors';
 
 export class Range {
   static readonly separator = '-' as const;
@@ -7,28 +8,36 @@ export class Range {
   private readonly _start: Time;
   private readonly _end: Time;
 
-  constructor(value: string | Range | RangeSerializable) {
+  constructor(value: string);
+  constructor(value: RangeSerializable);
+  constructor(value: Range);
+  constructor(value: string | RangeSerializable | Range) {
     if (value instanceof Range) {
       this._start = value._start;
       this._end = value._end;
       return;
     }
 
-    const parsed = typeof value === 'string' ? Range.parse(value) : value;
+    const { start, end } =
+      typeof value === 'string' ? Range.parse(value) : value;
 
-    this._start = new Time(parsed.start);
-    this._end = new Time(parsed.end);
+    this._start = new Time(start.hours, start.minutes);
+    this._end = new Time(end.hours, end.minutes);
   }
 
   static parse(value: string): RangeSerializable {
     const rawTime = value.split(Range.separator);
-    if (rawTime.length !== 2) throw new Error('');
+    if (rawTime.length !== 2) {
+      throw new InvalidFormatError(value, 'Range');
+    }
     const [startRaw, endRaw] = rawTime;
 
-    const start = Time.parse(startRaw);
-    const end = Time.parse(endRaw);
+    const start = new Time(startRaw);
+    const end = new Time(endRaw);
 
-    return { start, end };
+    if (start.compareTo(end) > 0) throw new Error('Start is after End');
+
+    return { start: start.toJSON(), end: end.toJSON() };
   }
 
   toString(): string {
@@ -43,7 +52,19 @@ export class Range {
   }
 
   toJSON(): RangeSerializable {
-    return { end: this._end, start: this._start };
+    return { end: this._end.toJSON(), start: this._start.toJSON() };
+  }
+
+  equals(that: Range): boolean {
+    return this._start.equals(that._start) && this._end.equals(that._end);
+  }
+
+  compareTo(that: Range): number {
+    return this._end.compareTo(that._start);
+  }
+
+  isAfter(that: Range): boolean {
+    return this.compareTo(that) <= 0;
   }
 
   get start(): Time {
