@@ -1,0 +1,26 @@
+name: Coverage
+
+on:
+  pull_request:
+    branches:
+      - '*'
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+
+      - uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: 'Run Tests with coverage'
+        uses: mattallty/jest-github-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Runs tests related to the changes since the base branch of your pull request
+          changes-only: true
