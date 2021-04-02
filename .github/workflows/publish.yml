@@ -1,4 +1,4 @@
-name: Build & Publish to Github Packages
+name: Build & Publish to NPM
 
 on:
   push:
