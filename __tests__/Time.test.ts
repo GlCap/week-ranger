@@ -2,10 +2,12 @@ import { Time } from '../src/core/Time';
 
 const timeString = '12:30';
 const timeAfterString = '14:30';
-const timeBeforeString = '11:30';
+const timeBeforeString = '09:05';
 
 describe('Time class', () => {
   const time = new Time(timeString);
+  const timeAfter = new Time(timeAfterString);
+  const timeBefore = new Time(timeBeforeString);
 
   it(`should be equal to ${timeString}`, () => {
     expect(time.toString()).toBe(timeString);
@@ -21,14 +23,19 @@ describe('Time class', () => {
 
   it('can be created without params', () => {
     expect(new Time()).toBeDefined();
+    expect(new Time().equals(new Time())).toBeTruthy();
   });
 
   it('can be created with numbers', () => {
     expect(new Time(14)).toBeDefined();
+    expect(new Time(14).equals(new Time(14))).toBeTruthy();
   });
 
   it('can be created from a Date', () => {
-    expect(new Time(new Date()).toDate()).toBeDefined();
+    const now = new Date();
+    const time = new Time(now);
+    expect(time).toBeDefined();
+    expect(time.equals(new Time(now))).toBeTruthy();
   });
 
   it('can be created from a Time', () => {
@@ -57,17 +64,28 @@ describe('Time class', () => {
 
   it('should be convertible to date', () => {
     expect(time.toDate() instanceof Date).toBeTruthy();
+    expect(time.toDate()).toStrictEqual(time.toDate());
+  });
+
+  it('can be converted to a formatted string', () => {
+    expect(time.toString()).toStrictEqual(timeString);
+    expect(timeAfter.toString()).toStrictEqual(timeAfterString);
+    expect(timeBefore.toString()).toStrictEqual(timeBeforeString);
   });
 
   it('should be comparable to another time', () => {
     expect(time.compareTo(new Time(time))).toBe(0);
+    expect(time.compareTo(timeAfter)).toBeLessThan(0);
+    expect(time.compareTo(timeBefore)).toBeGreaterThan(0);
   });
 
   it(`${timeString} should be after ${timeBeforeString}`, () => {
-    expect(time.isAfter(new Time(timeBeforeString))).toBeTruthy();
+    expect(time.isAfter(timeBefore)).toBeTruthy();
+    expect(timeBefore.isAfter(time)).toBeFalsy();
   });
 
   it(`${timeString} should not be after ${timeAfterString}`, () => {
-    expect(time.isAfter(new Time(timeAfterString))).toBeFalsy();
+    expect(timeAfter.isAfter(time)).toBeTruthy();
+    expect(time.isAfter(timeAfter)).toBeFalsy();
   });
 });
