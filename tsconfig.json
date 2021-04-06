@@ -11,5 +11,5 @@
     "allowSyntheticDefaultImports": true,
     "importHelpers": true
   },
-  "exclude": ["dist", "__tests__"]
+  "exclude": ["dist"]
 }

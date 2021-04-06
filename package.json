@@ -14,10 +14,10 @@
     "node": ">=14"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.{ts,js}\" --fix",
-    "typecheck": "yarn build --noEmit",
+    "typecheck": "tsc --noEmit",
     "typecheck:watch": "yarn typecheck --watch",
     "test": "jest",
     "test:watch": "jest --watch",
