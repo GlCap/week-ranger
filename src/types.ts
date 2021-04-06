@@ -8,10 +8,10 @@ export interface RangeSerializable {
   end: TimeSerializable;
 }
 
-export type WeekNumbers = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+export type WeekDays = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export interface DaySerializable {
-  number: WeekNumbers | -1;
+  number: WeekDays | -1;
   ranges: RangeSerializable[];
 }
 
