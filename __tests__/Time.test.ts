@@ -51,6 +51,8 @@ describe('Time class', () => {
     expect(() => Time.parse('12:000')).toThrow();
     expect(() => Time.parse('12')).toThrow();
     expect(() => Time.parse(':00')).toThrow();
+    expect(() => Time.parse('24:00')).toThrow();
+    expect(() => Time.parse('23:60')).toThrow();
   });
 
   it('should be equals to self', () => {
