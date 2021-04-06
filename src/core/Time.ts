@@ -64,9 +64,8 @@ export class Time {
 
   static parse(value: string): TimeSerializable {
     const splitRawTime = value.split(Time.separator);
-    if (splitRawTime.length !== 2) {
-      throw new InvalidFormatError(value, 'Time');
-    }
+    if (splitRawTime.length !== 2) throw new InvalidFormatError(value, 'Time');
+
     const [rawHours, rawMinutes] = splitRawTime;
 
     if (rawHours.length !== 2 || rawMinutes.length !== 2) {
@@ -75,6 +74,10 @@ export class Time {
 
     const hours = Number.parseInt(rawHours);
     const minutes = Number.parseInt(rawMinutes);
+
+    if (hours >= 24 || minutes >= 60) {
+      throw new InvalidFormatError(value, 'Time');
+    }
 
     return { hours, minutes };
   }
@@ -101,11 +104,21 @@ export class Time {
     return this._hours === that._hours && this.minutes === that._minutes;
   }
 
+  /**
+   * Compare Time instances
+   * @param that Time to compare
+   * @returns positive if `this` is greater, negative if `this` is lesser, 0 if equals
+   */
   compareTo(that: Time): number {
     if (this._hours === that._hours) return this._minutes - that._minutes;
     return this._hours - that._hours;
   }
 
+  /**
+   * Check if `this` is after `that`
+   * @param that Time to compare
+   * @returns true if `this` is after `that`
+   */
   isAfter(that: Time): boolean {
     return this.compareTo(that) > 0;
   }

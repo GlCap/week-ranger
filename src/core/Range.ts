@@ -35,7 +35,7 @@ export class Range {
     const start = new Time(startRaw);
     const end = new Time(endRaw);
 
-    if (start.compareTo(end) > 0) throw new Error('Start is after End');
+    if (start.isAfter(end)) throw new InvalidFormatError(value, 'Range');
 
     return { start: start.toJSON(), end: end.toJSON() };
   }
@@ -56,15 +56,29 @@ export class Range {
   }
 
   equals(that: Range): boolean {
-    return this._start.equals(that._start) && this._end.equals(that._end);
+    return this.compareTo(that) === 0;
   }
 
+  /**
+   * Compares `Range` instances
+   * @param that `Range` to compare
+   * @returns positive if `this` is greater, negative if `this` is lesser, 0 if equals
+   */
   compareTo(that: Range): number {
-    return this._end.compareTo(that._start);
+    const start = this._start.compareTo(that._start);
+    const end = this._end.compareTo(that._end);
+
+    if (start > 0) return 1;
+    if (start < 0) return -1;
+
+    if (end > 0) return 1;
+    if (end < 0) return -1;
+
+    return 0;
   }
 
   isAfter(that: Range): boolean {
-    return this.compareTo(that) <= 0;
+    return this.compareTo(that) > 0;
   }
 
   get start(): Time {

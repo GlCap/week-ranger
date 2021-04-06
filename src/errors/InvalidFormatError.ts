@@ -1,7 +1,7 @@
 type ErrorType = 'Week' | 'Day' | 'Range' | 'Time';
 
 export class InvalidFormatError extends Error {
-  private readonly TIME_FORMAT = `HH:MM`;
+  private readonly TIME_FORMAT = `[0 <= HH < 24, 0 <= MM < 60]\nHH:MM`;
   private readonly RANGE_FORMAT = `${this.TIME_FORMAT}-${this.TIME_FORMAT}`;
   private readonly DAY_FORMAT = `${this.RANGE_FORMAT},${this.RANGE_FORMAT},${this.RANGE_FORMAT},...`;
   private readonly WEEK_FORMAT = `[0 < LINES < 7]\n${this.DAY_FORMAT}\n${this.DAY_FORMAT}\n${this.DAY_FORMAT}\n${this.DAY_FORMAT}\n${this.DAY_FORMAT}\n${this.DAY_FORMAT}\n${this.DAY_FORMAT}\n`;
