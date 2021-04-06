@@ -80,14 +80,17 @@ export class Time {
   }
 
   toString(): string {
-    return `${this._hours}${Time.separator}${this._minutes}`;
+    let hours = `${this._hours}`;
+    let minutes = `${this._minutes}`;
+
+    if (this._hours < 10) hours = `0${this._hours}`;
+    if (this._minutes < 10) minutes = `0${this._minutes}`;
+
+    return `${hours}${Time.separator}${minutes}`;
   }
 
-  toDate(from?: Date): Date {
-    if (from == null) {
-      return new Date(0, 0, 0, this._hours, this._minutes);
-    }
-    return new Date(from.setHours(this._hours, this._minutes));
+  toDate(from = new Date()): Date {
+    return new Date(from.setHours(this._hours, this._minutes, 0, 0));
   }
 
   toJSON(): TimeSerializable {
