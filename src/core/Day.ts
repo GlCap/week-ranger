@@ -12,10 +12,14 @@ export class Day {
 
   constructor();
   constructor(value: string, number?: WeekDays);
+  constructor(value: Array<string | Range>, number?: WeekDays);
   constructor(value: Range[], number?: WeekDays);
   constructor(value: DaySerializable | null);
   constructor(value: Day);
-  constructor(value?: string | DaySerializable | Day | Range[] | null, number?: WeekDays) {
+  constructor(
+    value?: string | DaySerializable | Day | Array<string | Range> | null,
+    number?: WeekDays,
+  ) {
     if (value == null) {
       this._number = null;
       this._ranges = new Map();
@@ -30,7 +34,16 @@ export class Day {
 
     if (Array.isArray(value)) {
       this._number = number ?? null;
-      this._ranges = new Map(value.map((r) => [r.toString(), r]));
+      this._ranges = new Map(
+        value.map((r: Range | string) => {
+          let range;
+
+          if (typeof r === 'string') range = new Range(r);
+          else range = r;
+
+          return [range.toString(), range] as const;
+        }),
+      );
       return;
     }
 
