@@ -4,6 +4,8 @@ import { InvalidFormatError } from '../errors';
 
 const WEEK_DAYS: WeekDays[] = [0, 1, 2, 3, 4, 5, 6];
 
+const compareRanges = (a: Range, b: Range): number => a.compareTo(b);
+
 export class Day {
   static readonly separator = ',';
 
@@ -58,11 +60,10 @@ export class Day {
     );
   }
 
-  private getRangesArray(): Range[] {
+  private rangesToArray(): Range[] {
     const array = [...this._ranges.values()];
-    const compareFn = (a: Range, b: Range): number => a.compareTo(b);
 
-    return array.sort(compareFn);
+    return array.sort(compareRanges);
   }
 
   private rangeOrString(range: string | Range): string {
@@ -107,7 +108,7 @@ export class Day {
 
     const ranges = dayRangesRaw
       .map((rangeRaw) => new Range(rangeRaw))
-      .sort((a, b) => b.compareTo(a))
+      .sort(compareRanges)
       .map((r) => r.toJSON());
 
     return {
@@ -117,7 +118,7 @@ export class Day {
   }
 
   toString(): string {
-    return this.getRangesArray()
+    return this.rangesToArray()
       .map((range) => range.toString())
       .join(Day.separator);
   }
@@ -127,7 +128,7 @@ export class Day {
 
     return {
       number: this._number,
-      ranges: this.getRangesArray().map((range) => range.toJSON()),
+      ranges: this.rangesToArray().map((range) => range.toJSON()),
     };
   }
 
@@ -166,7 +167,7 @@ export class Day {
   }
 
   get ranges(): Range[] {
-    return this.getRangesArray();
+    return this.rangesToArray();
   }
 
   get number(): WeekDays | null {
