@@ -9,12 +9,29 @@ export class Range {
   private readonly _end: Time;
 
   constructor(value: string);
+  constructor(value: [Time, Time]);
+  constructor(start: Time, end: Time);
   constructor(value: RangeSerializable);
   constructor(value: Range);
-  constructor(value: string | RangeSerializable | Range) {
+  constructor(value: string | [Time, Time] | RangeSerializable | Range | Time, valueEnd?: Time) {
     if (value instanceof Range) {
       this._start = value._start;
       this._end = value._end;
+      return;
+    }
+
+    if (value instanceof Time) {
+      this._start = value;
+      this._end = valueEnd ?? new Time(0);
+      return;
+    }
+
+    if (Array.isArray(value)) {
+      const [start, end] = value;
+      if (start.isAfter(end)) throw new Error('Invalid Range tuple, start cannot be after end.');
+
+      this._start = start;
+      this._end = end;
       return;
     }
 
@@ -58,15 +75,6 @@ export class Range {
     return this.compareTo(that) === 0;
   }
 
-  duration(ms = false): number {
-    const hours = this._end.hours - this._start.hours;
-    const minutes = this._end.minutes - this._start.minutes; // 15 40 - 14 20 = 1 h 20
-
-    const total = hours * 60 + minutes;
-
-    return ms ? total * 60 * 1000 : total;
-  }
-
   /**
    * Compares `Range` instances
    * @param that `Range` to compare
@@ -95,5 +103,14 @@ export class Range {
 
   get end(): Time {
     return this._end;
+  }
+
+  get duration(): number {
+    const hours = this._end.hours - this._start.hours;
+    const minutes = this._end.minutes - this._start.minutes;
+
+    const total = hours * 60 + minutes;
+
+    return total;
   }
 }
