@@ -1,5 +1,5 @@
 import { Day } from './Day';
-import { DaySerializable, WeekSerializable } from '../types';
+import { DaySerializable, WeekDays, WeekSerializable } from '../types';
 import { InvalidFormatError } from '../errors';
 
 const initialDay: DaySerializable = { ranges: [], number: -1 };
@@ -64,13 +64,13 @@ export class Week {
 
     return rawWeek.reduce(
       (acc, curr, index) => {
-        if (index === 0) acc.monday = Day.parse(curr, index);
-        if (index === 1) acc.tuesday = Day.parse(curr, index);
-        if (index === 2) acc.wednesday = Day.parse(curr, index);
-        if (index === 3) acc.thursday = Day.parse(curr, index);
-        if (index === 4) acc.friday = Day.parse(curr, index);
-        if (index === 5) acc.saturday = Day.parse(curr, index);
-        if (index === 6) acc.sunday = Day.parse(curr, index);
+        if (index === WeekDays.monday) acc.monday = Day.parse(curr, index);
+        if (index === WeekDays.tuesday) acc.tuesday = Day.parse(curr, index);
+        if (index === WeekDays.wednesday) acc.wednesday = Day.parse(curr, index);
+        if (index === WeekDays.thursday) acc.thursday = Day.parse(curr, index);
+        if (index === WeekDays.friday) acc.friday = Day.parse(curr, index);
+        if (index === WeekDays.saturday) acc.saturday = Day.parse(curr, index);
+        if (index === WeekDays.sunday) acc.sunday = Day.parse(curr, index);
 
         return acc;
       },

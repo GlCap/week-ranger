@@ -8,18 +8,19 @@ export class Day {
   static readonly separator = ',';
 
   private readonly _ranges: Map<string, Range>;
-  private readonly _number: WeekDays | -1;
+  private readonly _number: WeekDays | null;
 
   constructor();
-  constructor(value: string | null, number?: WeekDays);
+  constructor(value: string, number?: WeekDays);
+  constructor(value: Range[], number?: WeekDays);
   constructor(value: DaySerializable | null);
-  constructor(value: Day | null);
+  constructor(value: Day);
   constructor(
-    value?: string | DaySerializable | Day | null,
+    value?: string | DaySerializable | Day | Range[] | null,
     number?: WeekDays,
   ) {
     if (value == null) {
-      this._number = -1;
+      this._number = null;
       this._ranges = new Map();
       return;
     }
@@ -27,6 +28,12 @@ export class Day {
     if (value instanceof Day) {
       this._number = value._number;
       this._ranges = value._ranges;
+      return;
+    }
+
+    if (Array.isArray(value)) {
+      this._number = number ?? null;
+      this._ranges = new Map(value.map((r) => [r.toString(), r]));
       return;
     }
 
@@ -62,7 +69,7 @@ export class Day {
 
     return {
       ranges,
-      number: index ?? -1,
+      number: index ?? null,
     };
   }
 
@@ -82,6 +89,7 @@ export class Day {
   }
 
   compareTo(that: Day): number {
+    if (this._number == null || that._number == null) return 0;
     return this._number - that._number;
   }
 
@@ -105,7 +113,7 @@ export class Day {
     return this.getRangesArray();
   }
 
-  get number(): number {
+  get number(): WeekDays | null {
     return this._number;
   }
 }

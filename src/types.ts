@@ -8,10 +8,18 @@ export interface RangeSerializable {
   end: TimeSerializable;
 }
 
-export type WeekDays = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+export enum WeekDays {
+  'monday' = 0,
+  'tuesday' = 1,
+  'wednesday' = 2,
+  'thursday' = 3,
+  'friday' = 4,
+  'saturday' = 5,
+  'sunday' = 6,
+}
 
 export interface DaySerializable {
-  number: WeekDays | -1;
+  number: WeekDays | null;
   ranges: RangeSerializable[];
 }
 
