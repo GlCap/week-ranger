@@ -33,7 +33,7 @@
     "test:coverage": "jest --coverage",
     "test:watch-coverage": "jest --watch --coverage",
     "prebuild": "yarn clean",
-    "clean": "pnpify rimraf ./dist"
+    "clean": "rimraf ./dist"
   },
   "dependencies": {
     "tslib": "^2.2.0"
