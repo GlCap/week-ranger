@@ -59,6 +59,10 @@ export class Time {
     this._minutes = valueOrHours.minutes;
   }
 
+  static now(): string {
+    return new Time().toString();
+  }
+
   static parse(value: string): TimeSerializable {
     const splitRawTime = value.split(Time.separator);
     if (splitRawTime.length !== 2) throw new InvalidFormatError(value, 'Time');
