@@ -68,6 +68,36 @@ export class Day {
   private rangeOrString(range: string | Range): string {
     return typeof range === 'string' ? range : range.toString();
   }
+
+  /**
+   * Create a `Day` with constant `Range`s duration
+   * @param timeSlot the constant `Range` duration
+   * @param range the time `Range`
+   */
+  static slottable(timeSlot: number, range: string | Range): string {
+    const { start, end, duration } = typeof range === 'string' ? new Range(range) : range;
+    if (timeSlot > duration) {
+      throw new Error('Time slot cannot be greater than range duration.');
+    }
+    if (end.minutes % timeSlot !== 0) {
+      throw new Error('Time slot must be able to divide range-end minutes.');
+    }
+
+    let currentStart = start;
+    let currentEnd = start.add(timeSlot);
+    let current = new Range({ start: currentStart, end: currentEnd });
+    const ranges = [current];
+
+    while (!current.end.equals(end)) {
+      currentStart = currentEnd;
+      currentEnd = currentEnd.add(timeSlot);
+      current = new Range(currentStart, currentEnd);
+      ranges.push(current);
+    }
+
+    return new Day(ranges).toString();
+  }
+
   static parse(value: string, index?: WeekDays): DaySerializable {
     if (value.length === 0 || (index != null && !WEEK_DAYS.includes(index))) {
       throw new InvalidFormatError(value, 'Day');
