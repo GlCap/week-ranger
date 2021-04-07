@@ -15,7 +15,7 @@ export class Day {
   constructor(value: Array<string | Range>, number?: WeekDays);
   constructor(value: Range[], number?: WeekDays);
   constructor(value: DaySerializable | null);
-  constructor(value: Day);
+  constructor(value: Day, number?: WeekDays);
   constructor(
     value?: string | DaySerializable | Day | Array<string | Range> | null,
     number?: WeekDays,
@@ -27,7 +27,7 @@ export class Day {
     }
 
     if (value instanceof Day) {
-      this._number = value._number;
+      this._number = number ?? value._number;
       this._ranges = value._ranges;
       return;
     }

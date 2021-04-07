@@ -26,9 +26,21 @@ export class Week {
   private readonly _sunday: Day;
 
   constructor(value: string);
+  constructor(value: Day);
   constructor(value: WeekSerializable);
   constructor(value: Week);
-  constructor(value: string | WeekSerializable | Week) {
+  constructor(value: string | Day | WeekSerializable | Week) {
+    if (value instanceof Day) {
+      this._monday = new Day(value, WeekDays.monday);
+      this._tuesday = new Day(value, WeekDays.tuesday);
+      this._wednesday = new Day(value, WeekDays.wednesday);
+      this._thursday = new Day(value, WeekDays.thursday);
+      this._friday = new Day(value, WeekDays.friday);
+      this._saturday = new Day(value, WeekDays.saturday);
+      this._sunday = new Day(value, WeekDays.sunday);
+      return;
+    }
+
     if (value instanceof Week) {
       this._monday = value._monday;
       this._tuesday = value._tuesday;
