@@ -24,11 +24,7 @@ export class InvalidFormatError extends Error {
     }
   }
 
-  private parseMessage(
-    domain: ErrorType,
-    format: string,
-    provided: string,
-  ): string {
+  private parseMessage(domain: ErrorType, format: string, provided: string): string {
     return `[${domain}]: Provided string does not meet the required format.\n[Format]: ${format}\n[Provided]: ${provided}`;
   }
 }

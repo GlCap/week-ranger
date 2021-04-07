@@ -18,8 +18,7 @@ export class Range {
       return;
     }
 
-    const { start, end } =
-      typeof value === 'string' ? Range.parse(value) : value;
+    const { start, end } = typeof value === 'string' ? Range.parse(value) : value;
 
     this._start = new Time(start.hours, start.minutes);
     this._end = new Time(end.hours, end.minutes);

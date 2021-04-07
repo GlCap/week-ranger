@@ -23,10 +23,7 @@ export class Time {
   constructor(value: TimeSerializable);
   constructor(value: Time);
   constructor(value: Date);
-  constructor(
-    valueOrHours?: string | number | TimeSerializable | Time | Date,
-    minutes?: number,
-  ) {
+  constructor(valueOrHours?: string | number | TimeSerializable | Time | Date, minutes?: number) {
     if (valueOrHours == null) {
       const now = new Date();
       this._hours = now.getHours();

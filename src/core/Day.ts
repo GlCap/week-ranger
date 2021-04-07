@@ -15,10 +15,7 @@ export class Day {
   constructor(value: Range[], number?: WeekDays);
   constructor(value: DaySerializable | null);
   constructor(value: Day);
-  constructor(
-    value?: string | DaySerializable | Day | Range[] | null,
-    number?: WeekDays,
-  ) {
+  constructor(value?: string | DaySerializable | Day | Range[] | null, number?: WeekDays) {
     if (value == null) {
       this._number = null;
       this._ranges = new Map();
