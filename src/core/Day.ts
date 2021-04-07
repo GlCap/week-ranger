@@ -65,6 +65,9 @@ export class Day {
     return array.sort(compareFn);
   }
 
+  private rangeOrString(range: string | Range): string {
+    return typeof range === 'string' ? range : range.toString();
+  }
   static parse(value: string, index?: WeekDays): DaySerializable {
     if (value.length === 0 || (index != null && !WEEK_DAYS.includes(index))) {
       throw new InvalidFormatError(value, 'Day');
@@ -111,12 +114,25 @@ export class Day {
     return this.toString() === that.toString();
   }
 
-  set(range: Range): void {
+  set(range: Range): this {
     this._ranges.set(range.toString(), range);
+    return this;
   }
 
-  delete(range: string): void {
-    this._ranges.delete(range);
+  delete(range: string | Range): this {
+    this._ranges.delete(this.rangeOrString(range));
+    return this;
+  }
+
+  replace(replace: string | Range, range: Range): this {
+    const replaceString = this.rangeOrString(replace);
+    if (!this._ranges.has(replaceString) || this._ranges.has(range.toString())) return this;
+    this.delete(replaceString);
+    return this.set(range);
+  }
+
+  has(range: Range | string): boolean {
+    return this._ranges.has(this.rangeOrString(range));
   }
 
   get ranges(): Range[] {
