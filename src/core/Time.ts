@@ -1,6 +1,9 @@
 import { InvalidFormatError } from '../errors';
 import { TimeSerializable } from '../types';
 
+const HOUR_MINUTES = 60;
+const DAY_HOURS = 24;
+
 /**
  * 24 hours based Hours and Minutes time (HH:MM) separated by a `:`
  *
@@ -122,6 +125,25 @@ export class Time {
    */
   isAfter(that: Time): boolean {
     return this.compareTo(that) > 0;
+  }
+
+  /**
+   * Add minutes to a time
+   * @param minutes minutes to add
+   * @returns new Time instance with added minutes
+   */
+  add(minutes: number): Time {
+    const { _hours, _minutes } = this;
+
+    const minutesSum = minutes + _minutes;
+    const minutesToHours = minutesSum >= HOUR_MINUTES ? Math.floor(minutesSum / HOUR_MINUTES) : 0;
+
+    const hoursSum = _hours + minutesToHours;
+
+    const nextHours = hoursSum >= DAY_HOURS ? hoursSum % DAY_HOURS : hoursSum;
+    const nextMinutes = minutesSum >= HOUR_MINUTES ? minutesSum % HOUR_MINUTES : minutesSum;
+
+    return new Time(nextHours, nextMinutes);
   }
 
   get hours(): number {
