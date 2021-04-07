@@ -58,6 +58,15 @@ export class Range {
     return this.compareTo(that) === 0;
   }
 
+  duration(ms = false): number {
+    const hours = this._end.hours - this._start.hours;
+    const minutes = this._end.minutes - this._start.minutes; // 15 40 - 14 20 = 1 h 20
+
+    const total = hours * 60 + minutes;
+
+    return ms ? total * 60 * 1000 : total;
+  }
+
   /**
    * Compares `Range` instances
    * @param that `Range` to compare
