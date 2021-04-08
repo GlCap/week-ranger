@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/GlCap/week-ranger/compare/v0.1.0...v0.2.0) (2021-04-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* converted Week.today() to getter
+* renamed Range.isWithin no Range.contains
+
+### Features
+
+* add Day first and last getters ([51268b7](https://github.com/GlCap/week-ranger/commit/51268b7c5af29e0328cb4ed0dbc99aee2d3499d1))
+* add Day.contains ([85253aa](https://github.com/GlCap/week-ranger/commit/85253aa6c72c96d0708970c446337f92712969fe))
+* add Day.size getter ([ecebdf4](https://github.com/GlCap/week-ranger/commit/ecebdf4c05cd8d072234902b868ad3d44c400338))
+* add Day.toDate ([98e3df4](https://github.com/GlCap/week-ranger/commit/98e3df45c18f8aa6d24655c9852c0e5f9dbd7b75))
+* add Week.toTuple method ([0e52aad](https://github.com/GlCap/week-ranger/commit/0e52aad9c5bf3552cdb3d35a8b7a5f6ae1053b82))
+* removed Range.isWithin overload ([dae1f14](https://github.com/GlCap/week-ranger/commit/dae1f14571d3b71993eaa9da1bc5db52f200bab3))
+* renamed Range.isWithin no Range.contains ([b7afbf0](https://github.com/GlCap/week-ranger/commit/b7afbf013262733e389ad5dfa08a01ae7942bfdd))
+
+
+* converted Week.today() to getter ([e8e3b0f](https://github.com/GlCap/week-ranger/commit/e8e3b0f04ce56b4a71b04afaa56fc31dddff73c3))
+
 ## [0.1.0](https://github.com/GlCap/week-ranger/compare/v0.1.0-alpha.4-1...v0.1.0) (2021-04-08)
 
 
