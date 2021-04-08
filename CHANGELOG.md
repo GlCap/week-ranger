@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0](https://github.com/GlCap/week-ranger/compare/v0.1.0-alpha.4-1...v0.1.0) (2021-04-08)
+
+
+### Features
+
+* added Range.isWithin ([5119d42](https://github.com/GlCap/week-ranger/commit/5119d429ff28e34f53edf8591ac008dd2bfa8003))
+* use same Date day week numbers, allow skipping days by passing empty line ([b3cf8e5](https://github.com/GlCap/week-ranger/commit/b3cf8e5bf3050e2a81f4f6ed4393cb1832c1e82b))
+
 ## [0.1.0-alpha.4-1](https://github.com/GlCap/week-ranger/compare/v0.1.0-alpha.4...v0.1.0-alpha.4-1) (2021-04-07)
 
 ## [0.1.0-alpha.4](https://github.com/GlCap/week-ranger/compare/v0.1.0-alpha.3...v0.1.0-alpha.4) (2021-04-07)
