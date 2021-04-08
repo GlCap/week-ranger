@@ -1,4 +1,5 @@
 import { Range } from './Range';
+import { Time } from './Time';
 import { DaySerializable, WeekDays } from '../types';
 import { InvalidFormatError } from '../errors';
 import { WEEK_DAYS } from '../utils';
@@ -163,6 +164,18 @@ export class Day {
 
   has(range: Range | string): boolean {
     return this._ranges.has(this.rangeOrString(range));
+  }
+
+  /**
+   * Checks if provided `Range` or `Time` is contained within any of the `Range`s in this `Day`
+   * @param value `Range` or `Time`
+   */
+  contains(value: Time | Range): boolean {
+    return this.ranges.some((r) => r.contains(value));
+  }
+
+  get number(): WeekDays | null {
+    return this._number;
   }
 
   get ranges(): Range[] {
