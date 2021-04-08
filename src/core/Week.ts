@@ -5,6 +5,16 @@ import { WEEK_DAYS, WEEK_DAYS_LABEL } from '../utils';
 
 const SEPARATOR = '\n';
 
+export type WeekTuple = [
+  sunday: Day | null,
+  monday: Day | null,
+  tuesday: Day | null,
+  wednesday: Day | null,
+  thursday: Day | null,
+  friday: Day | null,
+  saturday: Day | null,
+];
+
 const initialDay: DaySerializable = { ranges: [], number: null };
 
 const initialWeek: WeekSerializable = {
@@ -72,10 +82,22 @@ export class Week {
     );
   }
 
-  toString(): string {
-    const array = [...this._weekMap.values()];
+  toTuple(): WeekTuple {
+    return [
+      this._weekMap.get(WeekDays.sunday) ?? null,
+      this._weekMap.get(WeekDays.monday) ?? null,
+      this._weekMap.get(WeekDays.tuesday) ?? null,
+      this._weekMap.get(WeekDays.wednesday) ?? null,
+      this._weekMap.get(WeekDays.thursday) ?? null,
+      this._weekMap.get(WeekDays.friday) ?? null,
+      this._weekMap.get(WeekDays.saturday) ?? null,
+    ];
+  }
 
-    return array.map((d) => d.toString()).join(SEPARATOR);
+  toString(): string {
+    return this.toTuple()
+      .map((d) => d?.toString() ?? '')
+      .join(SEPARATOR);
   }
 
   toJSON(): WeekSerializable {
