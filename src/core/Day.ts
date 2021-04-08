@@ -169,7 +169,11 @@ export class Day {
     return this.rangesToArray();
   }
 
-  get number(): WeekDays | null {
-    return this._number;
+  get first(): Range {
+    return this.ranges[0];
+  }
+
+  get last(): Range {
+    return this.ranges[this.ranges.length - 1];
   }
 }
