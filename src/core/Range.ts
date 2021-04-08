@@ -98,10 +98,10 @@ export class Range {
   }
 
   /**
-   * Checks if provided `Range` or `Time` is within this `Range`
+   * Checks if provided `Range` or `Time` is contained within this `Range`
    * @param value `Range` or `Time`
    */
-  isWithin(value: Time | Range): boolean {
+  contains(value: Time | Range): boolean {
     if (value instanceof Time) {
       return value.compareTo(this._start) >= 0 && value.compareTo(this._end) <= 0;
     }
