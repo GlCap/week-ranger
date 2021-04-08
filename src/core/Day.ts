@@ -193,4 +193,8 @@ export class Day {
   get last(): Range {
     return this.ranges[this.ranges.length - 1];
   }
+
+  get size(): number {
+    return this._ranges.size;
+  }
 }

@@ -96,7 +96,7 @@ export class Week {
 
   getDay(number: WeekDays): Day | null {
     const day = this._weekMap.get(number);
-    if (day == null || day.ranges.length === 0) return null;
+    if (day == null || day.size === 0) return null;
     return day;
   }
 
