@@ -122,7 +122,7 @@ export class Week {
     return day;
   }
 
-  today(): Day | null {
+  get today(): Day | null {
     const todayDate = new Date().getDay();
     return this.getDay(todayDate);
   }
