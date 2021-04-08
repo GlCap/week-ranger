@@ -3,6 +3,7 @@ import { TimeSerializable } from '../types';
 
 const HOUR_MINUTES = 60;
 const DAY_HOURS = 24;
+const SEPARATOR = ':';
 
 /**
  * 24 hours based Hours and Minutes time (HH:MM) separated by a `:`
@@ -15,8 +16,6 @@ const DAY_HOURS = 24;
  *
  */
 export class Time {
-  static readonly separator = ':' as const;
-
   private readonly _hours: number;
   private readonly _minutes: number;
 
@@ -67,7 +66,7 @@ export class Time {
   }
 
   static parse(value: string): TimeSerializable {
-    const splitRawTime = value.split(Time.separator);
+    const splitRawTime = value.split(SEPARATOR);
     if (splitRawTime.length !== 2) throw new InvalidFormatError(value, 'Time');
 
     const [rawHours, rawMinutes] = splitRawTime;
@@ -93,7 +92,7 @@ export class Time {
     if (this._hours < 10) hours = `0${this._hours}`;
     if (this._minutes < 10) minutes = `0${this._minutes}`;
 
-    return `${hours}${Time.separator}${minutes}`;
+    return `${hours}${SEPARATOR}${minutes}`;
   }
 
   toDate(from = new Date()): Date {

@@ -1,10 +1,13 @@
 import { Day } from './Day';
 import { DaySerializable, WeekDays, WeekSerializable } from '../types';
 import { InvalidFormatError } from '../errors';
+import { WEEK_DAYS, WEEK_DAYS_LABEL } from '../utils';
 
-const initialDay: DaySerializable = { ranges: [], number: -1 };
+const SEPARATOR = '\n';
 
-const initialValues: WeekSerializable = {
+const initialDay: DaySerializable = { ranges: [], number: null };
+
+const initialWeek: WeekSerializable = {
   monday: initialDay,
   tuesday: initialDay,
   wednesday: initialDay,
@@ -15,15 +18,7 @@ const initialValues: WeekSerializable = {
 };
 
 export class Week {
-  static readonly separator = '\n' as const;
-
-  private readonly _monday: Day;
-  private readonly _tuesday: Day;
-  private readonly _wednesday: Day;
-  private readonly _thursday: Day;
-  private readonly _friday: Day;
-  private readonly _saturday: Day;
-  private readonly _sunday: Day;
+  private readonly _weekMap: ReadonlyMap<WeekDays, Day>;
 
   constructor(value: string);
   constructor(value: Day);
@@ -31,36 +26,22 @@ export class Week {
   constructor(value: Week);
   constructor(value: string | Day | WeekSerializable | Week) {
     if (value instanceof Day) {
-      this._monday = new Day(value, WeekDays.monday);
-      this._tuesday = new Day(value, WeekDays.tuesday);
-      this._wednesday = new Day(value, WeekDays.wednesday);
-      this._thursday = new Day(value, WeekDays.thursday);
-      this._friday = new Day(value, WeekDays.friday);
-      this._saturday = new Day(value, WeekDays.saturday);
-      this._sunday = new Day(value, WeekDays.sunday);
+      this._weekMap = new Map(WEEK_DAYS.map((d) => [d, new Day(value, d)]));
       return;
     }
 
     if (value instanceof Week) {
-      this._monday = value._monday;
-      this._tuesday = value._tuesday;
-      this._wednesday = value._wednesday;
-      this._thursday = value._thursday;
-      this._friday = value._friday;
-      this._saturday = value._saturday;
-      this._sunday = value._sunday;
+      this._weekMap = new Map(value._weekMap);
       return;
     }
 
     const parsed = typeof value === 'string' ? Week.parse(value) : value;
 
-    this._monday = new Day(parsed.monday);
-    this._tuesday = new Day(parsed.tuesday);
-    this._wednesday = new Day(parsed.wednesday);
-    this._thursday = new Day(parsed.thursday);
-    this._friday = new Day(parsed.friday);
-    this._saturday = new Day(parsed.saturday);
-    this._sunday = new Day(parsed.sunday);
+    const temp = WEEK_DAYS_LABEL.map(
+      (l) => [WeekDays[l], new Day(parsed[l], WeekDays[l])] as const,
+    );
+
+    this._weekMap = new Map(temp);
   }
 
   static parse(value: string): WeekSerializable {
@@ -68,7 +49,7 @@ export class Week {
       throw new InvalidFormatError(value, 'Week');
     }
 
-    const rawWeek = value.split(this.separator);
+    const rawWeek = value.split(SEPARATOR);
 
     if (rawWeek.length > 7 || rawWeek.length < 1) {
       throw new InvalidFormatError(value, 'Week');
@@ -76,43 +57,36 @@ export class Week {
 
     return rawWeek.reduce(
       (acc, curr, index) => {
-        if (index === WeekDays.monday) acc.monday = Day.parse(curr, index);
-        if (index === WeekDays.tuesday) acc.tuesday = Day.parse(curr, index);
-        if (index === WeekDays.wednesday) acc.wednesday = Day.parse(curr, index);
-        if (index === WeekDays.thursday) acc.thursday = Day.parse(curr, index);
-        if (index === WeekDays.friday) acc.friday = Day.parse(curr, index);
-        if (index === WeekDays.saturday) acc.saturday = Day.parse(curr, index);
-        if (index === WeekDays.sunday) acc.sunday = Day.parse(curr, index);
+        const isNotEmpty = curr.length !== 0;
+        if (index === WeekDays.sunday && isNotEmpty) acc.sunday = Day.parse(curr, index);
+        if (index === WeekDays.monday && isNotEmpty) acc.monday = Day.parse(curr, index);
+        if (index === WeekDays.tuesday && isNotEmpty) acc.tuesday = Day.parse(curr, index);
+        if (index === WeekDays.wednesday && isNotEmpty) acc.wednesday = Day.parse(curr, index);
+        if (index === WeekDays.thursday && isNotEmpty) acc.thursday = Day.parse(curr, index);
+        if (index === WeekDays.friday && isNotEmpty) acc.friday = Day.parse(curr, index);
+        if (index === WeekDays.saturday && isNotEmpty) acc.saturday = Day.parse(curr, index);
 
         return acc;
       },
-      { ...initialValues },
+      { ...initialWeek },
     );
   }
 
   toString(): string {
-    const array = [
-      this._monday.toString(),
-      this._tuesday.toString(),
-      this._wednesday.toString(),
-      this._thursday.toString(),
-      this._friday.toString(),
-      this._saturday.toString(),
-      this._sunday.toString(),
-    ];
+    const array = [...this._weekMap.values()];
 
-    return array.join(Week.separator);
+    return array.map((d) => d.toString()).join(SEPARATOR);
   }
 
   toJSON(): WeekSerializable {
     return {
-      monday: this._monday.toJSON(),
-      tuesday: this._tuesday.toJSON(),
-      wednesday: this._wednesday.toJSON(),
-      thursday: this._thursday.toJSON(),
-      friday: this._friday.toJSON(),
-      saturday: this._saturday.toJSON(),
-      sunday: this._sunday.toJSON(),
+      sunday: this._weekMap.get(WeekDays.sunday)?.toJSON() ?? null,
+      monday: this._weekMap.get(WeekDays.monday)?.toJSON() ?? null,
+      tuesday: this._weekMap.get(WeekDays.tuesday)?.toJSON() ?? null,
+      wednesday: this._weekMap.get(WeekDays.wednesday)?.toJSON() ?? null,
+      thursday: this._weekMap.get(WeekDays.thursday)?.toJSON() ?? null,
+      friday: this._weekMap.get(WeekDays.friday)?.toJSON() ?? null,
+      saturday: this._weekMap.get(WeekDays.saturday)?.toJSON() ?? null,
     };
   }
 
@@ -120,36 +94,42 @@ export class Week {
     return this.toString() === that.toString();
   }
 
-  private getDay(day: Day): Day | null {
-    if (day.ranges.length === 0) return null;
+  getDay(number: WeekDays): Day | null {
+    const day = this._weekMap.get(number);
+    if (day == null || day.ranges.length === 0) return null;
     return day;
   }
 
+  today(): Day | null {
+    const todayDate = new Date().getDay();
+    return this.getDay(todayDate);
+  }
+
   get monday(): Day | null {
-    return this.getDay(this._monday);
+    return this.getDay(WeekDays.monday);
   }
 
   get tuesday(): Day | null {
-    return this.getDay(this._tuesday);
+    return this.getDay(WeekDays.tuesday);
   }
 
   get wednesday(): Day | null {
-    return this.getDay(this._wednesday);
+    return this.getDay(WeekDays.wednesday);
   }
 
   get thursday(): Day | null {
-    return this.getDay(this._thursday);
+    return this.getDay(WeekDays.thursday);
   }
 
   get friday(): Day | null {
-    return this.getDay(this._friday);
+    return this.getDay(WeekDays.friday);
   }
 
   get saturday(): Day | null {
-    return this.getDay(this._saturday);
+    return this.getDay(WeekDays.saturday);
   }
 
   get sunday(): Day | null {
-    return this.getDay(this._sunday);
+    return this.getDay(WeekDays.sunday);
   }
 }

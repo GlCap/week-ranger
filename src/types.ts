@@ -9,13 +9,13 @@ export interface RangeSerializable {
 }
 
 export enum WeekDays {
-  'monday' = 0,
-  'tuesday' = 1,
-  'wednesday' = 2,
-  'thursday' = 3,
-  'friday' = 4,
-  'saturday' = 5,
-  'sunday' = 6,
+  'sunday' = 0,
+  'monday' = 1,
+  'tuesday' = 2,
+  'wednesday' = 3,
+  'thursday' = 4,
+  'friday' = 5,
+  'saturday' = 6,
 }
 
 export interface DaySerializable {
@@ -23,12 +23,14 @@ export interface DaySerializable {
   ranges: RangeSerializable[];
 }
 
-export interface WeekSerializable {
+export type WeekDaysMap = Record<keyof typeof WeekDays, DaySerializable | null>;
+
+export interface WeekSerializable extends WeekDaysMap {
+  sunday: DaySerializable | null;
   monday: DaySerializable | null;
   tuesday: DaySerializable | null;
   wednesday: DaySerializable | null;
   thursday: DaySerializable | null;
   friday: DaySerializable | null;
   saturday: DaySerializable | null;
-  sunday: DaySerializable | null;
 }

@@ -1,14 +1,13 @@
 import { Range } from './Range';
 import { DaySerializable, WeekDays } from '../types';
 import { InvalidFormatError } from '../errors';
-
-const WEEK_DAYS: WeekDays[] = [0, 1, 2, 3, 4, 5, 6];
+import { WEEK_DAYS } from '../utils';
 
 const compareRanges = (a: Range, b: Range): number => a.compareTo(b);
 
-export class Day {
-  static readonly separator = ',';
+const SEPARATOR = ',';
 
+export class Day {
   private readonly _ranges: Map<string, Range>;
   private readonly _number: WeekDays | null;
 
@@ -16,7 +15,7 @@ export class Day {
   constructor(value: string, number?: WeekDays);
   constructor(value: Array<string | Range>, number?: WeekDays);
   constructor(value: Range[], number?: WeekDays);
-  constructor(value: DaySerializable | null);
+  constructor(value: DaySerializable | null, number?: WeekDays);
   constructor(value: Day, number?: WeekDays);
   constructor(
     value?: string | DaySerializable | Day | Array<string | Range> | null,
@@ -51,7 +50,7 @@ export class Day {
 
     const parsed = typeof value === 'string' ? Day.parse(value, number) : value;
 
-    this._number = parsed.number;
+    this._number = number ?? parsed.number;
     this._ranges = new Map(
       parsed.ranges.map((range) => {
         const r = new Range(range);
@@ -104,7 +103,7 @@ export class Day {
       throw new InvalidFormatError(value, 'Day');
     }
 
-    const dayRangesRaw = value.split(Day.separator);
+    const dayRangesRaw = value.split(SEPARATOR);
 
     const ranges = dayRangesRaw
       .map((rangeRaw) => new Range(rangeRaw))
@@ -120,7 +119,7 @@ export class Day {
   toString(): string {
     return this.rangesToArray()
       .map((range) => range.toString())
-      .join(Day.separator);
+      .join(SEPARATOR);
   }
 
   toJSON(): DaySerializable | null {

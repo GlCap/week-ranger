@@ -2,9 +2,9 @@ import { Time } from './Time';
 import { RangeSerializable } from '../types';
 import { InvalidFormatError } from '../errors';
 
-export class Range {
-  static readonly separator = '-' as const;
+const SEPARATOR = '-';
 
+export class Range {
   private readonly _start: Time;
   private readonly _end: Time;
 
@@ -42,7 +42,7 @@ export class Range {
   }
 
   static parse(value: string): RangeSerializable {
-    const rawTime = value.split(Range.separator);
+    const rawTime = value.split(SEPARATOR);
     if (rawTime.length !== 2) {
       throw new InvalidFormatError(value, 'Range');
     }
@@ -57,7 +57,7 @@ export class Range {
   }
 
   toString(): string {
-    return `${this._start.toString()}${Range.separator}${this._end.toString()}`;
+    return `${this._start.toString()}${SEPARATOR}${this._end.toString()}`;
   }
 
   toDate(from?: Date): [Date, Date] {
