@@ -123,6 +123,10 @@ export class Day {
       .join(SEPARATOR);
   }
 
+  toDate(): Array<[Date, Date]> {
+    return this.rangesToArray().map((r) => r.toDate());
+  }
+
   toJSON(): DaySerializable | null {
     if (this._ranges.size === 0) return null;
 
