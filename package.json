@@ -71,7 +71,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn format && lint-staged",
+      "pre-commit": "pretty-quick --staged && lint-staged",
       "pre-push": "tsc --noEmit"
     }
   },
