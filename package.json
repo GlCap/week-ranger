@@ -12,6 +12,12 @@
     "validate"
   ],
   "author": "Gianluca Marco Caputo <glmcaputo@gmail.com>",
+  "repository": "github:GlCap/week-ranger",
+  "homepage": "https://github.com/GlCap/week-ranger#readme",
+  "bugs": {
+    "url": "https://github.com/GlCap/week-ranger/issues",
+    "email": "glmcaputo@gmail.com"
+  },
   "license": "MIT",
   "files": [
     "dist",
