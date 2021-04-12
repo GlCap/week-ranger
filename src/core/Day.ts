@@ -177,7 +177,8 @@ export class Day {
    * @param extract if true, return the `Range`
    */
   contains(value: Time | Range): boolean;
-  contains(value: Time | Range, extract: boolean): Range | null;
+  contains(value: Time | Range, extract: true): Range | null;
+  contains(value: Time | Range, extract: false): boolean;
   contains(value: Time | Range, extract = false): boolean | Range | null {
     if (extract) return this.ranges.find((r) => r.contains(value)) ?? null;
     return this.ranges.some((r) => r.contains(value));
