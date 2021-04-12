@@ -1,8 +1,4 @@
 # Prettier ignore file
 
-# GraphQL
-*.gql
-*.graphql
-
-# Yarn
-*.lock
+dist
+coverage

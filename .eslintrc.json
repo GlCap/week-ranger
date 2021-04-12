@@ -6,11 +6,7 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "extends": [
-    "standard-with-typescript",
-    "plugin:eslint-comments/recommended",
-    "prettier"
-  ],
+  "extends": ["standard-with-typescript", "plugin:eslint-comments/recommended", "prettier"],
   "rules": {},
   "settings": {
     "import/parsers": {

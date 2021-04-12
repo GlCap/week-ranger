@@ -30,7 +30,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "format": "prettier --write \"src/**/*.ts\"",
+    "format": "prettier --write .",
     "lint": "eslint \"{src,apps,libs,test}/**/*.{ts,js}\" --fix",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "yarn typecheck --watch",
