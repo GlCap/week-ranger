@@ -1,7 +1,7 @@
 import { Range } from './Range';
 import { Time } from './Time';
 import { DaySerializable, WeekDays } from '../types';
-import { InvalidFormatError } from '../errors';
+import { WeekRangerError } from '../errors';
 import { WEEK_DAYS } from '../utils';
 
 const compareRanges = (a: Range, b: Range): number => a.compareTo(b);
@@ -87,10 +87,10 @@ export class Day {
   static slottable(timeSlot: number, range: string | Range): string {
     const { start, end, duration } = typeof range === 'string' ? new Range(range) : range;
     if (timeSlot > duration) {
-      throw new Error('Time slot cannot be greater than range duration.');
+      throw new WeekRangerError('Time slot cannot be greater than range duration.', 'Day', true);
     }
     if (end.minutes % timeSlot !== 0) {
-      throw new Error('Time slot must be able to divide range-end minutes.');
+      throw new WeekRangerError('Time slot must be able to divide range-end minutes.', 'Day', true);
     }
 
     let currentStart = start;
@@ -110,7 +110,7 @@ export class Day {
 
   static parse(value: string, index?: WeekDays | null): DaySerializable {
     if (value.length === 0 || (index != null && !WEEK_DAYS.includes(index))) {
-      throw new InvalidFormatError(value, 'Day');
+      throw new WeekRangerError(value, 'Day');
     }
 
     const splitValue = value.split(SEPARATOR_OPTIONAL);

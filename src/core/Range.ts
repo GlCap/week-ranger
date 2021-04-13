@@ -1,6 +1,6 @@
 import { Time } from './Time';
 import { RangeSerializable } from '../types';
-import { InvalidFormatError } from '../errors';
+import { WeekRangerError } from '../errors';
 
 const SEPARATOR = '-';
 
@@ -28,7 +28,9 @@ export class Range {
 
     if (Array.isArray(value)) {
       const [start, end] = value;
-      if (start.isAfter(end)) throw new Error('Invalid Range tuple, start cannot be after end.');
+      if (start.isAfter(end)) {
+        throw new WeekRangerError('Invalid Range tuple, start cannot be after end.', 'Range');
+      }
 
       this._start = start;
       this._end = end;
@@ -44,14 +46,14 @@ export class Range {
   static parse(value: string): RangeSerializable {
     const rawTime = value.split(SEPARATOR);
     if (rawTime.length !== 2) {
-      throw new InvalidFormatError(value, 'Range');
+      throw new WeekRangerError(value, 'Range');
     }
     const [startRaw, endRaw] = rawTime;
 
     const start = new Time(startRaw);
     const end = new Time(endRaw);
 
-    if (start.isAfter(end)) throw new InvalidFormatError(value, 'Range');
+    if (start.isAfter(end)) throw new WeekRangerError(value, 'Range');
 
     return { start: start.toJSON(), end: end.toJSON() };
   }

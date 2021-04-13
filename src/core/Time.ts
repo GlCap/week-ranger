@@ -1,4 +1,4 @@
-import { InvalidFormatError } from '../errors';
+import { WeekRangerError } from '../errors';
 import { TimeSerializable } from '../types';
 
 const HOUR_MINUTES = 60;
@@ -67,19 +67,19 @@ export class Time {
 
   static parse(value: string): TimeSerializable {
     const splitRawTime = value.split(SEPARATOR);
-    if (splitRawTime.length !== 2) throw new InvalidFormatError(value, 'Time');
+    if (splitRawTime.length !== 2) throw new WeekRangerError(value, 'Time');
 
     const [rawHours, rawMinutes] = splitRawTime;
 
     if (rawHours.length !== 2 || rawMinutes.length !== 2) {
-      throw new InvalidFormatError(value, 'Time');
+      throw new WeekRangerError(value, 'Time');
     }
 
     const hours = Number.parseInt(rawHours);
     const minutes = Number.parseInt(rawMinutes);
 
     if (hours >= 24 || minutes >= 60) {
-      throw new InvalidFormatError(value, 'Time');
+      throw new WeekRangerError(value, 'Time');
     }
 
     return { hours, minutes };

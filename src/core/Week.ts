@@ -1,6 +1,6 @@
 import { Day } from './Day';
 import { DaySerializable, WeekDays, WeekSerializable } from '../types';
-import { InvalidFormatError } from '../errors';
+import { WeekRangerError } from '../errors';
 import { WEEK_DAYS, WEEK_DAYS_LABEL } from '../utils';
 
 const SEPARATOR = '\n';
@@ -56,13 +56,13 @@ export class Week {
 
   static parse(value: string): WeekSerializable {
     if (value.length === 0) {
-      throw new InvalidFormatError(value, 'Week');
+      throw new WeekRangerError(value, 'Week');
     }
 
     const rawWeek = value.split(SEPARATOR);
 
     if (rawWeek.length > 7 || rawWeek.length < 1) {
-      throw new InvalidFormatError(value, 'Week');
+      throw new WeekRangerError(value, 'Week');
     }
 
     return rawWeek.reduce(

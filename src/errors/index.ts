@@ -1,1 +1,1 @@
-export * from './InvalidFormatError';
+export * from './WeekRangerError';
