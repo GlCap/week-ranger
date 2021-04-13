@@ -1,5 +1,5 @@
-import { Range } from '../src/core/Range';
-import { Day } from '../src/core/Day';
+import { Range } from '../Range';
+import { Day } from '../Day';
 
 const dayString = '08:30-10:30,06:30-07:30,07:30-10:30';
 const dayDateString = `${new Date(0).toISOString()};08:30-10:30,06:30-07:30,07:30-10:30`;

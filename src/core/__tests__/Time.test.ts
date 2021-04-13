@@ -1,4 +1,4 @@
-import { Time } from '../src/core/Time';
+import { Time } from '../Time';
 
 const timeString = '12:30';
 const timeAfterString = '14:05';

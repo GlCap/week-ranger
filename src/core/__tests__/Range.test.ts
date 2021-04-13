@@ -1,4 +1,4 @@
-import { Range } from '../src/core/Range';
+import { Range } from '../Range';
 
 describe('Range class', () => {
   const rangeString = '08:30-10:05';
