@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.2](https://github.com/GlCap/week-ranger/compare/v0.2.1...v0.2.2) (2021-04-13)
+
+### Features
+
+- add Date reference to Day ([e0ac684](https://github.com/GlCap/week-ranger/commit/e0ac6849066f5219058e5b947a9d42c90c2532e1))
+- improved error handling ([5a174d4](https://github.com/GlCap/week-ranger/commit/5a174d47e0f1069742b0117a1fb10fd90d8ffc6d))
+
+### Bug Fixes
+
+- imroved Day.contains overload type ([a07b2d4](https://github.com/GlCap/week-ranger/commit/a07b2d4a8076b4da1601ccf0ac4093bfadebacc9))
+
 ### [0.2.1](https://github.com/GlCap/week-ranger/compare/v0.2.0...v0.2.1) (2021-04-12)
 
 ### Features
