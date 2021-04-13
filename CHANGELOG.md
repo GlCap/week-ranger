@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.3](https://github.com/GlCap/week-ranger/compare/v0.2.2...v0.2.3) (2021-04-13)
+
+### Features
+
+- add getDayStartDate and getDayEndDate methods to Day ([143e411](https://github.com/GlCap/week-ranger/commit/143e411a5abd2ba003968bb8f8000c1a8e73c13a))
+
 ### [0.2.2](https://github.com/GlCap/week-ranger/compare/v0.2.1...v0.2.2) (2021-04-13)
 
 ### Features
