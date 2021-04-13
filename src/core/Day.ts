@@ -24,7 +24,7 @@ export class Day {
     value?: string | DaySerializable | Day | Array<string | Range> | null,
     numberOrDate?: WeekDays | Date,
   ) {
-    const date = numberOrDate instanceof Date ? numberOrDate : null;
+    const date = numberOrDate instanceof Date ? new Date(numberOrDate.setHours(0, 0, 0, 0)) : null;
     const number = numberOrDate instanceof Date ? numberOrDate.getDay() : numberOrDate ?? null;
 
     if (value == null) {
@@ -213,6 +213,18 @@ export class Day {
     return this.ranges.some((r) => r.contains(value));
   }
 
+  getDayStartDate(): Date | null {
+    const start = this._date?.setHours(0, 0, 0, 0);
+    if (start == null) return null;
+    return new Date(start);
+  }
+
+  getDayEndDate(): Date | null {
+    const end = this._date?.setHours(23, 59, 59, 999);
+    if (end == null) return null;
+    return new Date(end);
+  }
+
   get number(): WeekDays | null {
     return this._date?.getDay() ?? this._number;
   }
@@ -226,7 +238,8 @@ export class Day {
   }
 
   get last(): Range {
-    return this.ranges[this.ranges.length - 1];
+    const ranges = this.ranges;
+    return ranges[ranges.length - 1];
   }
 
   get size(): number {
