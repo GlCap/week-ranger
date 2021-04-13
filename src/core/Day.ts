@@ -7,35 +7,43 @@ import { WEEK_DAYS } from '../utils';
 const compareRanges = (a: Range, b: Range): number => a.compareTo(b);
 
 const SEPARATOR = ',';
+const SEPARATOR_OPTIONAL = ';';
 
 export class Day {
   private readonly _ranges: Map<string, Range>;
   private readonly _number: WeekDays | null;
+  private readonly _date: Date | null;
 
   constructor();
-  constructor(value: string, number?: WeekDays);
-  constructor(value: Array<string | Range>, number?: WeekDays);
-  constructor(value: Range[], number?: WeekDays);
-  constructor(value: DaySerializable | null, number?: WeekDays);
-  constructor(value: Day, number?: WeekDays);
+  constructor(value: string, numberOrDate?: WeekDays | Date);
+  constructor(value: Array<string | Range>, numberOrDate?: WeekDays | Date);
+  constructor(value: Range[], numberOrDate?: WeekDays | Date);
+  constructor(value: DaySerializable | null, numberOrDate?: WeekDays | Date);
+  constructor(value: Day, numberOrDate?: WeekDays | Date);
   constructor(
     value?: string | DaySerializable | Day | Array<string | Range> | null,
-    number?: WeekDays,
+    numberOrDate?: WeekDays | Date,
   ) {
+    const date = numberOrDate instanceof Date ? numberOrDate : null;
+    const number = numberOrDate instanceof Date ? numberOrDate.getDay() : numberOrDate ?? null;
+
     if (value == null) {
-      this._number = null;
+      this._number = number;
+      this._date = date;
       this._ranges = new Map();
       return;
     }
 
     if (value instanceof Day) {
       this._number = number ?? value._number;
+      this._date = date ?? value._date;
       this._ranges = value._ranges;
       return;
     }
 
     if (Array.isArray(value)) {
-      this._number = number ?? null;
+      this._number = number;
+      this._date = date;
       this._ranges = new Map(
         value.map((r: Range | string) => {
           let range;
@@ -49,9 +57,10 @@ export class Day {
       return;
     }
 
-    const parsed = typeof value === 'string' ? Day.parse(value, number) : value;
+    const parsed = typeof value === 'string' ? Day.parse(value, number ?? undefined) : value;
 
     this._number = number ?? parsed.number;
+    this._date = date ?? parsed.date;
     this._ranges = new Map(
       parsed.ranges.map((range) => {
         const r = new Range(range);
@@ -60,7 +69,7 @@ export class Day {
     );
   }
 
-  private rangesToArray(): Range[] {
+  private sortRanges(): Range[] {
     const array = [...this._ranges.values()];
 
     return array.sort(compareRanges);
@@ -99,12 +108,24 @@ export class Day {
     return new Day(ranges).toString();
   }
 
-  static parse(value: string, index?: WeekDays): DaySerializable {
+  static parse(value: string, index?: WeekDays | null): DaySerializable {
     if (value.length === 0 || (index != null && !WEEK_DAYS.includes(index))) {
       throw new InvalidFormatError(value, 'Day');
     }
 
-    const dayRangesRaw = value.split(SEPARATOR);
+    const splitValue = value.split(SEPARATOR_OPTIONAL);
+
+    const [isoDateOrRanges, rawRangesOrUndefined] = splitValue;
+
+    let date = null;
+    let rawRanges = isoDateOrRanges;
+
+    if (rawRangesOrUndefined != null) {
+      date = new Date(new Date(isoDateOrRanges).setHours(0, 0, 0, 0));
+      rawRanges = rawRangesOrUndefined;
+    }
+
+    const dayRangesRaw = rawRanges.split(SEPARATOR);
 
     const ranges = dayRangesRaw
       .map((rangeRaw) => new Range(rangeRaw))
@@ -112,27 +133,35 @@ export class Day {
       .map((r) => r.toJSON());
 
     return {
+      date,
       ranges,
-      number: index ?? null,
+      number: date?.getDay() ?? index ?? null,
     };
   }
 
   toString(): string {
-    return this.rangesToArray()
+    const rangesString = this.sortRanges()
       .map((range) => range.toString())
       .join(SEPARATOR);
+
+    if (this._date != null) {
+      return `${this._date.toISOString()}${SEPARATOR_OPTIONAL}${rangesString}`;
+    }
+
+    return rangesString;
   }
 
   toDate(): Array<[Date, Date]> {
-    return this.rangesToArray().map((r) => r.toDate());
+    return this.sortRanges().map((r) => r.toDate(this._date ?? undefined));
   }
 
   toJSON(): DaySerializable | null {
     if (this._ranges.size === 0) return null;
 
     return {
+      date: this._date,
       number: this._number,
-      ranges: this.rangesToArray().map((range) => range.toJSON()),
+      ranges: this.sortRanges().map((range) => range.toJSON()),
     };
   }
 
@@ -185,11 +214,11 @@ export class Day {
   }
 
   get number(): WeekDays | null {
-    return this._number;
+    return this._date?.getDay() ?? this._number;
   }
 
   get ranges(): Range[] {
-    return this.rangesToArray();
+    return this.sortRanges();
   }
 
   get first(): Range {

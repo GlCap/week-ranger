@@ -15,7 +15,7 @@ export type WeekTuple = [
   saturday: Day | null,
 ];
 
-const initialDay: DaySerializable = { ranges: [], number: null };
+const initialDay: DaySerializable = { date: null, ranges: [], number: null };
 
 const initialWeek: WeekSerializable = {
   monday: initialDay,

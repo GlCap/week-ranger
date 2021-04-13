@@ -19,6 +19,7 @@ export enum WeekDays {
 }
 
 export interface DaySerializable {
+  date: Date | null;
   number: WeekDays | null;
   ranges: RangeSerializable[];
 }

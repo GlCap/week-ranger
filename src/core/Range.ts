@@ -60,10 +60,7 @@ export class Range {
     return `${this._start.toString()}${SEPARATOR}${this._end.toString()}`;
   }
 
-  toDate(from?: Date): [Date, Date] {
-    if (from == null) {
-      return [this._start.toDate(), this._end.toDate()];
-    }
+  toDate(from: Date = new Date()): [Date, Date] {
     return [this._start.toDate(from), this._end.toDate(from)];
   }
 
