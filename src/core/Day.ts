@@ -1,6 +1,6 @@
 import { Range } from './Range';
 import { Time } from './Time';
-import { DaySerializable, WeekDays } from '../types';
+import { DayParsable, DaySerializable, WeekDays } from '../types';
 import { WeekRangerError } from '../errors';
 import { WEEK_DAYS } from '../utils';
 
@@ -18,10 +18,10 @@ export class Day {
   constructor(value: string, numberOrDate?: WeekDays | Date);
   constructor(value: Array<string | Range>, numberOrDate?: WeekDays | Date);
   constructor(value: Range[], numberOrDate?: WeekDays | Date);
-  constructor(value: DaySerializable | null, numberOrDate?: WeekDays | Date);
+  constructor(value: DayParsable | null, numberOrDate?: WeekDays | Date);
   constructor(value: Day, numberOrDate?: WeekDays | Date);
   constructor(
-    value?: string | DaySerializable | Day | Array<string | Range> | null,
+    value?: string | DayParsable | Day | Array<string | Range> | null,
     numberOrDate?: WeekDays | Date,
   ) {
     const date = numberOrDate instanceof Date ? new Date(numberOrDate.setHours(0, 0, 0, 0)) : null;
@@ -59,13 +59,13 @@ export class Day {
 
     const parsed = typeof value === 'string' ? Day.parse(value, number ?? undefined) : value;
 
-    this._number = number ?? parsed.number;
-    this._date = date ?? parsed.date;
+    this._number = number ?? parsed.number ?? null;
+    this._date = date ?? parsed.date ?? null;
     this._ranges = new Map(
-      parsed.ranges.map((range) => {
-        const r = new Range(range);
-        return [r.toString(), r];
-      }),
+      parsed.ranges?.map((r) => {
+        const range = new Range(r);
+        return [range.toString(), range];
+      }) ?? [],
     );
   }
 

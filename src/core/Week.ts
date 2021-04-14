@@ -1,5 +1,5 @@
 import { Day } from './Day';
-import { DaySerializable, WeekDays, WeekSerializable } from '../types';
+import { DaySerializable, WeekDays, WeekParsable, WeekSerializable } from '../types';
 import { WeekRangerError } from '../errors';
 import { WEEK_DAYS, WEEK_DAYS_LABEL } from '../utils';
 
@@ -28,13 +28,13 @@ const initialWeek: WeekSerializable = {
 };
 
 export class Week {
-  private readonly _weekMap: ReadonlyMap<WeekDays, Day>;
+  private readonly _weekMap: ReadonlyMap<WeekDays, Day | null>;
 
   constructor(value: string);
   constructor(value: Day);
-  constructor(value: WeekSerializable);
+  constructor(value: WeekParsable);
   constructor(value: Week);
-  constructor(value: string | Day | WeekSerializable | Week) {
+  constructor(value: string | Day | WeekParsable | Week) {
     if (value instanceof Day) {
       this._weekMap = new Map(WEEK_DAYS.map((d) => [d, new Day(value, d)]));
       return;
@@ -47,9 +47,12 @@ export class Week {
 
     const parsed = typeof value === 'string' ? Week.parse(value) : value;
 
-    const temp = WEEK_DAYS_LABEL.map(
-      (l) => [WeekDays[l], new Day(parsed[l], WeekDays[l])] as const,
-    );
+    const temp = WEEK_DAYS_LABEL.map<[WeekDays, Day | null]>((l) => {
+      const number = WeekDays[l];
+      const parsableDay = parsed[l];
+      if (parsableDay == null) return [number, null];
+      return [number, new Day(parsableDay, number)];
+    });
 
     this._weekMap = new Map(temp);
   }
