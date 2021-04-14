@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.4](https://github.com/GlCap/week-ranger/compare/v0.2.3...v0.2.4) (2021-04-14)
+
+### Features
+
+- add WeekParsable and DayParsable to allow parsing partial objects ([18c37f1](https://github.com/GlCap/week-ranger/commit/18c37f19dd527b98614787c7a242e95538ab6798))
+
 ### [0.2.3](https://github.com/GlCap/week-ranger/compare/v0.2.2...v0.2.3) (2021-04-13)
 
 ### Features
