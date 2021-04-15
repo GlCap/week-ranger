@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.5](https://github.com/GlCap/week-ranger/compare/v0.2.4...v0.2.5) (2021-04-15)
+
+### Features
+
+- add browser compatibilty ([8c4f622](https://github.com/GlCap/week-ranger/commit/8c4f6222152bfe0a9b1214a4c7c5d26141604872))
+
 ### [0.2.4](https://github.com/GlCap/week-ranger/compare/v0.2.3...v0.2.4) (2021-04-14)
 
 ### Features
