@@ -1,1 +1,10 @@
-{ "extends": "./tsconfig", "exclude": ["dist", "__tests__"] }
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "outDir": "./dist/esm",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  },
+  "exclude": ["dist", "**/__tests__/**"]
+}

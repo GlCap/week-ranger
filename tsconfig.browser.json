@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "outDir": "./dist/browser",
+    "target": "es5",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "lib": ["es2016", "dom", "es5"],
+    "downlevelIteration": true,
+    "declaration": false,
+    "declarationMap": false,
+    "inlineSourceMap": true
+  },
+  "exclude": ["dist", "**/__tests__/**"]
+}

@@ -20,16 +20,17 @@
   },
   "license": "MIT",
   "files": [
-    "dist",
-    "src"
+    "src",
+    "dist"
   ],
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/esm/index.js",
+  "browser": "dist/browser/index.js",
+  "types": "dist/esm/index.d.ts",
   "engines": {
     "node": ">=14"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.browser.json",
     "format": "prettier --write .",
     "lint": "eslint \"{src,apps,libs,test}/**/*.{ts,js}\" --fix",
     "typecheck": "tsc --noEmit",
