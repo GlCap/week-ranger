@@ -1,9 +1,10 @@
-export type ErrorType = 'Week' | 'Day' | 'Range' | 'Time';
+export type ErrorType = 'Week' | 'Day' | 'TimeRange' | 'Time' | 'TimeRangeChain';
 
 export class WeekRangerError extends Error {
   private readonly TIME_FORMAT = `[0 <= HH < 24, 0 <= MM < 60]\nHH:MM`;
   private readonly RANGE_FORMAT = `${this.TIME_FORMAT}-${this.TIME_FORMAT}`;
-  private readonly DAY_FORMAT = `${this.RANGE_FORMAT},${this.RANGE_FORMAT},${this.RANGE_FORMAT},...`;
+  private readonly RANGE_CHAIN_FORMAT = `${this.RANGE_FORMAT},${this.RANGE_FORMAT},${this.RANGE_FORMAT},...`;
+  private readonly DAY_FORMAT = `ISO DATE;${this.RANGE_FORMAT}`;
   private readonly WEEK_FORMAT = `[0 < LINES < 7]\n${this.DAY_FORMAT}\n${this.DAY_FORMAT}\n${this.DAY_FORMAT}\n${this.DAY_FORMAT}\n${this.DAY_FORMAT}\n${this.DAY_FORMAT}\n${this.DAY_FORMAT}\n`;
 
   constructor(message: string);
@@ -17,8 +18,11 @@ export class WeekRangerError extends Error {
       case 'Time':
         this.message = this.parseMessage(type, this.TIME_FORMAT, messageOrValue);
         break;
-      case 'Range':
+      case 'TimeRange':
         this.message = this.parseMessage(type, this.RANGE_FORMAT, messageOrValue);
+        break;
+      case 'TimeRangeChain':
+        this.message = this.parseMessage(type, this.RANGE_CHAIN_FORMAT, messageOrValue);
         break;
       case 'Day':
         this.message = this.parseMessage(type, this.DAY_FORMAT, messageOrValue);

@@ -1,4 +1,4 @@
-import { Range } from '../Range';
+import { TimeRange } from '../TimeRange';
 
 describe('Range class', () => {
   const rangeString = '08:30-10:05';
@@ -7,10 +7,10 @@ describe('Range class', () => {
   const rangeBeforeString = '05:00-08:30';
   const rangeSameStartString = '08:30-10:00';
 
-  const range = new Range(rangeString);
-  const rangeAfter = new Range(rangeAfterString);
-  const rangeBefore = new Range(rangeBeforeString);
-  const rangeSameEnd = new Range(rangeSameStartString);
+  const range = new TimeRange(rangeString);
+  const rangeAfter = new TimeRange(rangeAfterString);
+  const rangeBefore = new TimeRange(rangeBeforeString);
+  const rangeSameEnd = new TimeRange(rangeSameStartString);
 
   describe('getters', () => {
     test('start should be before end', () => {
@@ -21,8 +21,8 @@ describe('Range class', () => {
 
   describe('constructor', () => {
     it('can be created from another Range', () => {
-      expect(new Range(range)).toBeDefined();
-      expect(range).toStrictEqual(new Range(range));
+      expect(new TimeRange(range)).toBeDefined();
+      expect(range).toStrictEqual(new TimeRange(range));
     });
   });
 
@@ -30,7 +30,7 @@ describe('Range class', () => {
     it.each([rangeString, rangeAfterString, rangeBeforeString, rangeSameStartString])(
       'should parse a formatted string',
       (range) => {
-        expect(Range.parse(range)).toBeDefined();
+        expect(TimeRange.parse(range)).toBeDefined();
       },
     );
 
@@ -38,15 +38,15 @@ describe('Range class', () => {
       const rangeError = '08:30-07:30';
       const rangeErrorShort = '08:3007:30';
 
-      expect(() => Range.parse(rangeErrorShort)).toThrow();
-      expect(() => Range.parse(rangeError)).toThrow();
+      expect(() => TimeRange.parse(rangeErrorShort)).toThrow();
+      expect(() => TimeRange.parse(rangeError)).toThrow();
     });
   });
 
   describe('toString', () => {
     it('should serialize to a parsable string', () => {
       expect(range.toString()).toStrictEqual(rangeString);
-      expect(new Range(range.toString())).toStrictEqual(range);
+      expect(new TimeRange(range.toString())).toStrictEqual(range);
     });
   });
 
@@ -65,7 +65,7 @@ describe('Range class', () => {
   describe('toJSON', () => {
     it('should serialize to JSON', () => {
       expect(JSON.parse(JSON.stringify(range))).toStrictEqual(range.toJSON());
-      expect(new Range(range.toJSON())).toStrictEqual(range);
+      expect(new TimeRange(range.toJSON())).toStrictEqual(range);
     });
   });
 

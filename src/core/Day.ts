@@ -1,27 +1,27 @@
-import { Range } from './Range';
-import { Time } from './Time';
+import { TimeRange, TimeRangeChain } from '../primitives';
 import { DayParsable, DaySerializable, WeekDays } from '../types';
 import { WeekRangerError } from '../errors';
 import { WEEK_DAYS } from '../utils';
 
-const compareRanges = (a: Range, b: Range): number => a.compareTo(b);
+const compareRanges = (a: TimeRange, b: TimeRange): number => a.compareTo(b);
 
 const SEPARATOR = ',';
 const SEPARATOR_OPTIONAL = ';';
 
 export class Day {
-  private readonly _ranges: Map<string, Range>;
+  private readonly _ranges: TimeRangeChain;
   private readonly _number: WeekDays | null;
   private readonly _date: Date | null;
 
   constructor();
   constructor(value: string, numberOrDate?: WeekDays | Date);
-  constructor(value: Array<string | Range>, numberOrDate?: WeekDays | Date);
-  constructor(value: Range[], numberOrDate?: WeekDays | Date);
+  constructor(value: TimeRange[], numberOrDate?: WeekDays | Date);
+  constructor(value: string[], numberOrDate?: WeekDays | Date);
+  constructor(value: Array<string | TimeRange>, numberOrDate?: WeekDays | Date);
   constructor(value: DayParsable | null, numberOrDate?: WeekDays | Date);
   constructor(value: Day, numberOrDate?: WeekDays | Date);
   constructor(
-    value?: string | DayParsable | Day | Array<string | Range> | null,
+    value?: string | DayParsable | Day | TimeRange[] | string[] | Array<string | TimeRange> | null,
     numberOrDate?: WeekDays | Date,
   ) {
     const date = numberOrDate instanceof Date ? new Date(numberOrDate.setHours(0, 0, 0, 0)) : null;
@@ -30,7 +30,7 @@ export class Day {
     if (value == null) {
       this._number = number;
       this._date = date;
-      this._ranges = new Map();
+      this._ranges = new TimeRangeChain();
       return;
     }
 
@@ -44,16 +44,8 @@ export class Day {
     if (Array.isArray(value)) {
       this._number = number;
       this._date = date;
-      this._ranges = new Map(
-        value.map((r: Range | string) => {
-          let range;
+      this._ranges = new TimeRangeChain(value);
 
-          if (typeof r === 'string') range = new Range(r);
-          else range = r;
-
-          return [range.toString(), range] as const;
-        }),
-      );
       return;
     }
 
@@ -61,22 +53,10 @@ export class Day {
 
     this._number = number ?? parsed.number ?? null;
     this._date = date ?? parsed.date ?? null;
-    this._ranges = new Map(
-      parsed.ranges?.map((r) => {
-        const range = new Range(r);
-        return [range.toString(), range];
-      }) ?? [],
-    );
-  }
-
-  private sortRanges(): Range[] {
-    const array = [...this._ranges.values()];
-
-    return array.sort(compareRanges);
-  }
-
-  private rangeOrString(range: string | Range): string {
-    return typeof range === 'string' ? range : range.toString();
+    this._ranges =
+      parsed.ranges != null
+        ? new TimeRangeChain(parsed.ranges.map((r) => new TimeRange(r)))
+        : new TimeRangeChain();
   }
 
   /**
@@ -84,28 +64,9 @@ export class Day {
    * @param timeSlot the constant `Range` duration
    * @param range the time `Range`
    */
-  static slottable(timeSlot: number, range: string | Range): string {
-    const { start, end, duration } = typeof range === 'string' ? new Range(range) : range;
-    if (timeSlot > duration) {
-      throw new WeekRangerError('Time slot cannot be greater than range duration.', 'Day', true);
-    }
-    if (end.minutes % timeSlot !== 0) {
-      throw new WeekRangerError('Time slot must be able to divide range-end minutes.', 'Day', true);
-    }
-
-    let currentStart = start;
-    let currentEnd = start.add(timeSlot);
-    let current = new Range({ start: currentStart, end: currentEnd });
-    const ranges = [current];
-
-    while (!current.end.equals(end)) {
-      currentStart = currentEnd;
-      currentEnd = currentEnd.add(timeSlot);
-      current = new Range(currentStart, currentEnd);
-      ranges.push(current);
-    }
-
-    return new Day(ranges).toString();
+  static slottable(timeSlot: number, range: string | TimeRange): string {
+    const timeRangeChain = new TimeRangeChain(TimeRangeChain.slottable(timeSlot, range));
+    return new Day(timeRangeChain.chain).toString();
   }
 
   static parse(value: string, index?: WeekDays | null): DaySerializable {
@@ -128,7 +89,7 @@ export class Day {
     const dayRangesRaw = rawRanges.split(SEPARATOR);
 
     const ranges = dayRangesRaw
-      .map((rangeRaw) => new Range(rangeRaw))
+      .map((rangeRaw) => new TimeRange(rangeRaw))
       .sort(compareRanges)
       .map((r) => r.toJSON());
 
@@ -140,9 +101,7 @@ export class Day {
   }
 
   toString(): string {
-    const rangesString = this.sortRanges()
-      .map((range) => range.toString())
-      .join(SEPARATOR);
+    const rangesString = this._ranges.toString();
 
     if (this._date != null) {
       return `${this._date.toISOString()}${SEPARATOR_OPTIONAL}${rangesString}`;
@@ -152,16 +111,14 @@ export class Day {
   }
 
   toDate(): Array<[Date, Date]> {
-    return this.sortRanges().map((r) => r.toDate(this._date ?? undefined));
+    return this._ranges.chain.map((r) => r.toDate(this._date ?? undefined));
   }
 
-  toJSON(): DaySerializable | null {
-    if (this._ranges.size === 0) return null;
-
+  toJSON(): DaySerializable {
     return {
       date: this._date,
       number: this._number,
-      ranges: this.sortRanges().map((range) => range.toJSON()),
+      ranges: this._ranges.toJSON(),
     };
   }
 
@@ -176,41 +133,6 @@ export class Day {
 
   equals(that: Day): boolean {
     return this.toString() === that.toString();
-  }
-
-  set(range: Range): this {
-    this._ranges.set(range.toString(), range);
-    return this;
-  }
-
-  delete(range: string | Range): this {
-    this._ranges.delete(this.rangeOrString(range));
-    return this;
-  }
-
-  replace(replace: string | Range, range: Range): this {
-    const replaceString = this.rangeOrString(replace);
-    if (!this._ranges.has(replaceString) || this._ranges.has(range.toString())) return this;
-    this.delete(replaceString);
-    return this.set(range);
-  }
-
-  has(range: Range | string): boolean {
-    return this._ranges.has(this.rangeOrString(range));
-  }
-
-  /**
-   * Checks if provided `Range` or `Time` is contained within any of the `Range`s in this `Day`
-   *
-   * @param value `Range` or `Time`
-   * @param extract if true, return the `Range`
-   */
-  contains(value: Time | Range): boolean;
-  contains(value: Time | Range, extract: true): Range | null;
-  contains(value: Time | Range, extract: false): boolean;
-  contains(value: Time | Range, extract = false): boolean | Range | null {
-    if (extract) return this.ranges.find((r) => r.contains(value)) ?? null;
-    return this.ranges.some((r) => r.contains(value));
   }
 
   getDayStartDate(): Date | null {
@@ -229,20 +151,7 @@ export class Day {
     return this._date?.getDay() ?? this._number;
   }
 
-  get ranges(): Range[] {
-    return this.sortRanges();
-  }
-
-  get first(): Range {
-    return this.ranges[0];
-  }
-
-  get last(): Range {
-    const ranges = this.ranges;
-    return ranges[ranges.length - 1];
-  }
-
-  get size(): number {
-    return this._ranges.size;
+  get ranges(): TimeRangeChain {
+    return this._ranges;
   }
 }

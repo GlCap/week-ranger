@@ -28,7 +28,7 @@ const initialWeek: WeekSerializable = {
 };
 
 export class Week {
-  private readonly _weekMap: ReadonlyMap<WeekDays, Day | null>;
+  private readonly _weekMap: Map<WeekDays, Day>;
 
   constructor(value: string);
   constructor(value: Day);
@@ -47,10 +47,9 @@ export class Week {
 
     const parsed = typeof value === 'string' ? Week.parse(value) : value;
 
-    const temp = WEEK_DAYS_LABEL.map<[WeekDays, Day | null]>((l) => {
+    const temp = WEEK_DAYS_LABEL.map<[WeekDays, Day]>((l) => {
       const number = WeekDays[l];
-      const parsableDay = parsed[l];
-      if (parsableDay == null) return [number, null];
+      const parsableDay = parsed[l] ?? new Day([], number).toJSON();
       return [number, new Day(parsableDay, number)];
     });
 
@@ -105,13 +104,15 @@ export class Week {
 
   toJSON(): WeekSerializable {
     return {
-      sunday: this._weekMap.get(WeekDays.sunday)?.toJSON() ?? null,
-      monday: this._weekMap.get(WeekDays.monday)?.toJSON() ?? null,
-      tuesday: this._weekMap.get(WeekDays.tuesday)?.toJSON() ?? null,
-      wednesday: this._weekMap.get(WeekDays.wednesday)?.toJSON() ?? null,
-      thursday: this._weekMap.get(WeekDays.thursday)?.toJSON() ?? null,
-      friday: this._weekMap.get(WeekDays.friday)?.toJSON() ?? null,
-      saturday: this._weekMap.get(WeekDays.saturday)?.toJSON() ?? null,
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      sunday: this.getDay(WeekDays.sunday)!.toJSON(),
+      monday: this.getDay(WeekDays.monday)!.toJSON(),
+      tuesday: this.getDay(WeekDays.tuesday)!.toJSON(),
+      wednesday: this.getDay(WeekDays.wednesday)!.toJSON(),
+      thursday: this.getDay(WeekDays.thursday)!.toJSON(),
+      friday: this.getDay(WeekDays.friday)!.toJSON(),
+      saturday: this.getDay(WeekDays.saturday)!.toJSON(),
+      /* eslint-enable @typescript-eslint/no-non-null-assertion */
     };
   }
 
@@ -119,42 +120,54 @@ export class Week {
     return this.toString() === that.toString();
   }
 
-  getDay(number: WeekDays): Day | null {
+  getDay(number: WeekDays): Day {
     const day = this._weekMap.get(number);
-    if (day == null || day.size === 0) return null;
+
+    if (day == null) {
+      const temp = new Day([], number);
+      this._weekMap.set(number, temp);
+      return temp;
+    }
+
     return day;
   }
 
-  get today(): Day | null {
+  setDay(day: Day, number: WeekDays): Day {
+    this._weekMap.set(number, day);
+
+    return day;
+  }
+
+  get today(): Day {
     const todayDate = new Date().getDay();
     return this.getDay(todayDate);
   }
 
-  get monday(): Day | null {
+  get monday(): Day {
     return this.getDay(WeekDays.monday);
   }
 
-  get tuesday(): Day | null {
+  get tuesday(): Day {
     return this.getDay(WeekDays.tuesday);
   }
 
-  get wednesday(): Day | null {
+  get wednesday(): Day {
     return this.getDay(WeekDays.wednesday);
   }
 
-  get thursday(): Day | null {
+  get thursday(): Day {
     return this.getDay(WeekDays.thursday);
   }
 
-  get friday(): Day | null {
+  get friday(): Day {
     return this.getDay(WeekDays.friday);
   }
 
-  get saturday(): Day | null {
+  get saturday(): Day {
     return this.getDay(WeekDays.saturday);
   }
 
-  get sunday(): Day | null {
+  get sunday(): Day {
     return this.getDay(WeekDays.sunday);
   }
 }

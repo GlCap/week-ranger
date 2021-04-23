@@ -1,4 +1,4 @@
-import { Range } from '../Range';
+import { TimeRange } from '../../primitives';
 import { Day } from '../Day';
 
 const dayString = '08:30-10:30,06:30-07:30,07:30-10:30';
@@ -21,9 +21,9 @@ describe('Day class', () => {
 
     it('should instance from a Range array', () => {
       expect(new Day([])).toBeDefined();
-      expect(new Day([new Range('07:30-08:30'), new Range('08:30-10:30')])).toBeDefined();
+      expect(new Day([new TimeRange('07:30-08:30'), new TimeRange('08:30-10:30')])).toBeDefined();
       expect(new Day(['07:30-08:30', '08:30-10:30'])).toBeDefined();
-      expect(new Day(['07:30-08:30', new Range('08:30-10:30')])).toBeDefined();
+      expect(new Day(['07:30-08:30', new TimeRange('08:30-10:30')])).toBeDefined();
     });
   });
   describe('parse', () => {
@@ -46,7 +46,7 @@ describe('Day class', () => {
   describe('toJSON', () => {
     it('should serialize to JSON', () => {
       expect(day.toJSON()).toStrictEqual(JSON.parse(JSON.stringify(day)));
-      expect(new Day().toJSON()).toBe(null);
+      expect(new Day().toJSON()).toStrictEqual({ date: null, number: null, ranges: [] });
     });
   });
 
@@ -64,53 +64,7 @@ describe('Day class', () => {
     expect(tuesday.isAfter(monday)).toBeTruthy();
   });
 
-  describe('has', () => {
-    it('should return true if a Range is in a Day', () => {
-      expect(day.has(new Range('08:30-10:30'))).toBe(true);
-    });
-    it('should return false if a Range is not in a Day', () => {
-      expect(day.has(new Range('08:30-11:30'))).toBe(false);
-    });
-  });
-
-  describe('set', () => {
-    test('can set ranges', () => {
-      const rangeSet = new Range('14:30-15:30');
-      const daySet = new Day(day).set(rangeSet);
-      expect(daySet.has(rangeSet)).toBeTruthy();
-    });
-  });
-
-  describe('delete', () => {
-    it('can delete ranges', () => {
-      const rangeSet = new Range('14:30-15:30');
-      const daySet = new Day(day).set(rangeSet).delete(rangeSet.toString());
-      expect(daySet.has(rangeSet)).toBeFalsy();
-    });
-  });
-
-  describe('replace', () => {
-    it('should replace a Range with another Range', () => {
-      const rangeSet = new Range('14:30-15:30');
-      const rangeReplace = new Range('15:30-16:30');
-      const rangeReplaceSame = new Range('15:30-16:30');
-      const daySet = new Day(day).set(rangeSet);
-
-      expect(daySet.has(rangeSet)).toBeTruthy();
-      expect(daySet.replace(rangeSet.toString(), rangeReplace).has(rangeReplace)).toBeTruthy();
-      expect(
-        daySet.replace(rangeReplaceSame.toString(), rangeReplace).has(rangeReplace),
-      ).toBeTruthy();
-    });
-  });
-
   describe('getters', () => {
-    it('should ranges should be a sorted Range array', () => {
-      const ranges = day.ranges;
-
-      expect([...ranges].sort((a, b) => a.compareTo(b))).toStrictEqual(ranges);
-    });
-
     it('should track the day of the week as a number', () => {
       expect(day.number).toBeGreaterThanOrEqual(0);
       expect(day.number).toBeLessThanOrEqual(6);

@@ -26,5 +26,5 @@ export interface DaySerializable {
 
 export type DayParsable = Partial<DaySerializable>;
 
-export type WeekSerializable = Record<keyof typeof WeekDays, DaySerializable | null>;
-export type WeekParsable = Partial<Record<keyof typeof WeekDays, DayParsable | null>>;
+export type WeekSerializable = Record<keyof typeof WeekDays, DaySerializable>;
+export type WeekParsable = Partial<Record<keyof typeof WeekDays, DayParsable>>;

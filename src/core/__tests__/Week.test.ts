@@ -49,18 +49,18 @@ describe('Week class', () => {
       expect(workWeek.wednesday).toBeInstanceOf(Day);
       expect(workWeek.thursday).toBeInstanceOf(Day);
       expect(workWeek.friday).toBeInstanceOf(Day);
-      expect(workWeek.saturday).toBeNull();
-      expect(workWeek.sunday).toBeNull();
+      expect(workWeek.saturday).toBeInstanceOf(Day);
+      expect(workWeek.sunday).toBeInstanceOf(Day);
 
       const weekMissing = new Week(stringMissingTuesdaySundaySaturday);
       expect(weekMissing).toBeInstanceOf(Week);
-      expect(weekMissing.sunday).toBeNull();
+      expect(weekMissing.sunday).toBeInstanceOf(Day);
       expect(weekMissing.monday).toBeInstanceOf(Day);
-      expect(weekMissing.tuesday).toBeNull();
+      expect(weekMissing.tuesday).toBeInstanceOf(Day);
       expect(weekMissing.wednesday).toBeInstanceOf(Day);
       expect(weekMissing.thursday).toBeInstanceOf(Day);
       expect(weekMissing.friday).toBeInstanceOf(Day);
-      expect(weekMissing.saturday).toBeNull();
+      expect(weekMissing.saturday).toBeInstanceOf(Day);
     });
 
     it('should throw on invalid string format', () => {

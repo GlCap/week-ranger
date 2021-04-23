@@ -4,7 +4,7 @@ import { WeekRangerError } from '../errors';
 
 const SEPARATOR = '-';
 
-export class Range {
+export class TimeRange {
   private readonly _start: Time;
   private readonly _end: Time;
 
@@ -12,9 +12,12 @@ export class Range {
   constructor(value: [Time, Time]);
   constructor(start: Time, end: Time);
   constructor(value: RangeSerializable);
-  constructor(value: Range);
-  constructor(value: string | [Time, Time] | RangeSerializable | Range | Time, valueEnd?: Time) {
-    if (value instanceof Range) {
+  constructor(value: TimeRange);
+  constructor(
+    value: string | [Time, Time] | RangeSerializable | TimeRange | Time,
+    valueEnd?: Time,
+  ) {
+    if (value instanceof TimeRange) {
       this._start = value._start;
       this._end = value._end;
       return;
@@ -29,7 +32,7 @@ export class Range {
     if (Array.isArray(value)) {
       const [start, end] = value;
       if (start.isAfter(end)) {
-        throw new WeekRangerError('Invalid Range tuple, start cannot be after end.', 'Range');
+        throw new WeekRangerError('Invalid Range tuple, start cannot be after end.', 'TimeRange');
       }
 
       this._start = start;
@@ -37,7 +40,7 @@ export class Range {
       return;
     }
 
-    const { start, end } = typeof value === 'string' ? Range.parse(value) : value;
+    const { start, end } = typeof value === 'string' ? TimeRange.parse(value) : value;
 
     this._start = new Time(start.hours, start.minutes);
     this._end = new Time(end.hours, end.minutes);
@@ -46,14 +49,14 @@ export class Range {
   static parse(value: string): RangeSerializable {
     const rawTime = value.split(SEPARATOR);
     if (rawTime.length !== 2) {
-      throw new WeekRangerError(value, 'Range');
+      throw new WeekRangerError(value, 'TimeRange');
     }
     const [startRaw, endRaw] = rawTime;
 
     const start = new Time(startRaw);
     const end = new Time(endRaw);
 
-    if (start.isAfter(end)) throw new WeekRangerError(value, 'Range');
+    if (start.isAfter(end)) throw new WeekRangerError(value, 'TimeRange');
 
     return { start: start.toJSON(), end: end.toJSON() };
   }
@@ -70,7 +73,7 @@ export class Range {
     return { end: this._end.toJSON(), start: this._start.toJSON() };
   }
 
-  equals(that: Range): boolean {
+  equals(that: TimeRange): boolean {
     return this.compareTo(that) === 0;
   }
 
@@ -79,7 +82,7 @@ export class Range {
    * @param that `Range` to compare
    * @returns positive if `this` is greater, negative if `this` is lesser, 0 if equals
    */
-  compareTo(that: Range): number {
+  compareTo(that: TimeRange): number {
     const start = this._start.compareTo(that._start);
     const end = this._end.compareTo(that._end);
 
@@ -92,7 +95,7 @@ export class Range {
     return 0;
   }
 
-  isAfter(that: Range): boolean {
+  isAfter(that: TimeRange): boolean {
     return this.compareTo(that) > 0;
   }
 
@@ -100,7 +103,7 @@ export class Range {
    * Checks if provided `Range` or `Time` is contained within this `Range`
    * @param value `Range` or `Time`
    */
-  contains(value: Time | Range): boolean {
+  contains(value: Time | TimeRange): boolean {
     if (value instanceof Time) {
       return value.compareTo(this._start) >= 0 && value.compareTo(this._end) <= 0;
     }
