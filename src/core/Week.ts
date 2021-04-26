@@ -1,21 +1,22 @@
 import { Day } from './Day';
-import { DaySerializable, WeekDays, WeekParsable, WeekSerializable } from '../types';
+import { TimeRangeSerializable, WeekDays, WeekParsable, WeekSerializable } from '../types';
 import { WeekRangerError } from '../errors';
 import { WEEK_DAYS, WEEK_DAYS_LABEL } from '../utils';
+import { RangeSerie } from '../primitives/RangeSerie';
 
 const SEPARATOR = '\n';
 
 export type WeekTuple = [
-  sunday: Day | null,
-  monday: Day | null,
-  tuesday: Day | null,
-  wednesday: Day | null,
-  thursday: Day | null,
-  friday: Day | null,
-  saturday: Day | null,
+  sunday: RangeSerie | null,
+  monday: RangeSerie | null,
+  tuesday: RangeSerie | null,
+  wednesday: RangeSerie | null,
+  thursday: RangeSerie | null,
+  friday: RangeSerie | null,
+  saturday: RangeSerie | null,
 ];
 
-const initialDay: DaySerializable = { date: null, ranges: [], number: null };
+const initialDay: TimeRangeSerializable[] = [];
 
 const initialWeek: WeekSerializable = {
   monday: initialDay,
@@ -28,15 +29,15 @@ const initialWeek: WeekSerializable = {
 };
 
 export class Week {
-  private readonly _weekMap: Map<WeekDays, Day>;
+  private readonly _weekMap: Map<WeekDays, RangeSerie>;
 
   constructor(value: string);
-  constructor(value: Day);
+  constructor(value: RangeSerie);
   constructor(value: WeekParsable);
   constructor(value: Week);
-  constructor(value: string | Day | WeekParsable | Week) {
-    if (value instanceof Day) {
-      this._weekMap = new Map(WEEK_DAYS.map((d) => [d, new Day(value, d)]));
+  constructor(value: string | RangeSerie | WeekParsable | Week) {
+    if (value instanceof RangeSerie) {
+      this._weekMap = new Map(WEEK_DAYS.map((d) => [d, new RangeSerie(value)]));
       return;
     }
 
@@ -47,10 +48,10 @@ export class Week {
 
     const parsed = typeof value === 'string' ? Week.parse(value) : value;
 
-    const temp = WEEK_DAYS_LABEL.map<[WeekDays, Day]>((l) => {
+    const temp = WEEK_DAYS_LABEL.map<[WeekDays, RangeSerie]>((l) => {
       const number = WeekDays[l];
-      const parsableDay = parsed[l] ?? new Day([], number).toJSON();
-      return [number, new Day(parsableDay, number)];
+      const parsableDay = parsed[l] ?? new RangeSerie([]).toJSON();
+      return [number, new RangeSerie(parsableDay)];
     });
 
     this._weekMap = new Map(temp);
@@ -70,13 +71,13 @@ export class Week {
     return rawWeek.reduce(
       (acc, curr, index) => {
         const isNotEmpty = curr.length !== 0;
-        if (index === WeekDays.sunday && isNotEmpty) acc.sunday = Day.parse(curr, index);
-        if (index === WeekDays.monday && isNotEmpty) acc.monday = Day.parse(curr, index);
-        if (index === WeekDays.tuesday && isNotEmpty) acc.tuesday = Day.parse(curr, index);
-        if (index === WeekDays.wednesday && isNotEmpty) acc.wednesday = Day.parse(curr, index);
-        if (index === WeekDays.thursday && isNotEmpty) acc.thursday = Day.parse(curr, index);
-        if (index === WeekDays.friday && isNotEmpty) acc.friday = Day.parse(curr, index);
-        if (index === WeekDays.saturday && isNotEmpty) acc.saturday = Day.parse(curr, index);
+        if (index === WeekDays.sunday && isNotEmpty) acc.sunday = RangeSerie.parse(curr);
+        if (index === WeekDays.monday && isNotEmpty) acc.monday = RangeSerie.parse(curr);
+        if (index === WeekDays.tuesday && isNotEmpty) acc.tuesday = RangeSerie.parse(curr);
+        if (index === WeekDays.wednesday && isNotEmpty) acc.wednesday = RangeSerie.parse(curr);
+        if (index === WeekDays.thursday && isNotEmpty) acc.thursday = RangeSerie.parse(curr);
+        if (index === WeekDays.friday && isNotEmpty) acc.friday = RangeSerie.parse(curr);
+        if (index === WeekDays.saturday && isNotEmpty) acc.saturday = RangeSerie.parse(curr);
 
         return acc;
       },
@@ -104,15 +105,13 @@ export class Week {
 
   toJSON(): WeekSerializable {
     return {
-      /* eslint-disable @typescript-eslint/no-non-null-assertion */
-      sunday: this.getDay(WeekDays.sunday)!.toJSON(),
-      monday: this.getDay(WeekDays.monday)!.toJSON(),
-      tuesday: this.getDay(WeekDays.tuesday)!.toJSON(),
-      wednesday: this.getDay(WeekDays.wednesday)!.toJSON(),
-      thursday: this.getDay(WeekDays.thursday)!.toJSON(),
-      friday: this.getDay(WeekDays.friday)!.toJSON(),
-      saturday: this.getDay(WeekDays.saturday)!.toJSON(),
-      /* eslint-enable @typescript-eslint/no-non-null-assertion */
+      sunday: this.getDay(WeekDays.sunday).ranges.toJSON(),
+      monday: this.getDay(WeekDays.monday).ranges.toJSON(),
+      tuesday: this.getDay(WeekDays.tuesday).ranges.toJSON(),
+      wednesday: this.getDay(WeekDays.wednesday).ranges.toJSON(),
+      thursday: this.getDay(WeekDays.thursday).ranges.toJSON(),
+      friday: this.getDay(WeekDays.friday).ranges.toJSON(),
+      saturday: this.getDay(WeekDays.saturday).ranges.toJSON(),
     };
   }
 
@@ -121,21 +120,21 @@ export class Week {
   }
 
   getDay(number: WeekDays): Day {
-    const day = this._weekMap.get(number);
+    const rangeSerie = this._weekMap.get(number);
 
-    if (day == null) {
-      const temp = new Day([], number);
+    if (rangeSerie == null) {
+      const temp = new RangeSerie([]);
       this._weekMap.set(number, temp);
-      return temp;
+      return new Day(temp.serie, number);
     }
 
-    return day;
+    return new Day(rangeSerie.serie, number);
   }
 
-  setDay(day: Day, number: WeekDays): Day {
-    this._weekMap.set(number, day);
+  setDay(serie: RangeSerie, number: WeekDays): RangeSerie {
+    this._weekMap.set(number, serie);
 
-    return day;
+    return serie;
   }
 
   get today(): Day {

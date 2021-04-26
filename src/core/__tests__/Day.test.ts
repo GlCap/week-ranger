@@ -1,8 +1,8 @@
 import { TimeRange } from '../../primitives';
 import { Day } from '../Day';
 
-const dayString = '08:30-10:30,06:30-07:30,07:30-10:30';
-const dayDateString = `${new Date(0).toISOString()};08:30-10:30,06:30-07:30,07:30-10:30`;
+const dayString = '0;08:30-10:30,06:30-07:30,07:30-10:30';
+const dayDateString = `${0};08:30-10:30,06:30-07:30,07:30-10:30`;
 const day = new Day(dayString, 0);
 const monday = new Day(dayString, 0);
 const tuesday = new Day(dayString, 1);
@@ -10,8 +10,8 @@ const tuesday = new Day(dayString, 1);
 describe('Day class', () => {
   describe('constructor', () => {
     it('should instance without params', () => {
-      expect(new Day()).toBeDefined();
-      expect(new Day().equals(new Day())).toBeTruthy();
+      expect(new Day(0)).toBeDefined();
+      expect(new Day(0).equals(new Day(0))).toBeTruthy();
     });
 
     it('should instance from another Day instance', () => {
@@ -20,10 +20,12 @@ describe('Day class', () => {
     });
 
     it('should instance from a Range array', () => {
-      expect(new Day([])).toBeDefined();
-      expect(new Day([new TimeRange('07:30-08:30'), new TimeRange('08:30-10:30')])).toBeDefined();
-      expect(new Day(['07:30-08:30', '08:30-10:30'])).toBeDefined();
-      expect(new Day(['07:30-08:30', new TimeRange('08:30-10:30')])).toBeDefined();
+      expect(new Day([], 0)).toBeDefined();
+      expect(
+        new Day([new TimeRange('07:30-08:30'), new TimeRange('08:30-10:30')], 0),
+      ).toBeDefined();
+      expect(new Day(['07:30-08:30', '08:30-10:30'], 0)).toBeDefined();
+      expect(new Day(['07:30-08:30', new TimeRange('08:30-10:30')], 0)).toBeDefined();
     });
   });
   describe('parse', () => {
@@ -46,13 +48,13 @@ describe('Day class', () => {
   describe('toJSON', () => {
     it('should serialize to JSON', () => {
       expect(day.toJSON()).toStrictEqual(JSON.parse(JSON.stringify(day)));
-      expect(new Day().toJSON()).toStrictEqual({ date: null, number: null, ranges: [] });
+      expect(new Day(0).toJSON()).toStrictEqual({ number: 0, ranges: [] });
     });
   });
 
   describe('compareTo', () => {
     it('can be compared', () => {
-      expect(new Day().compareTo(new Day())).toBe(0);
+      expect(new Day(0).compareTo(new Day(0))).toBe(0);
       expect(monday.compareTo(monday)).toBe(0);
       expect(monday.compareTo(tuesday)).toBeLessThan(0);
       expect(tuesday.compareTo(monday)).toBeGreaterThan(0);

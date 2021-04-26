@@ -1,10 +1,10 @@
 import { TimeRange } from '../TimeRange';
-import { TimeRangeChain } from '../TimeRangeChain';
+import { RangeSerie } from '../RangeSerie';
 
 const chain = '08:30-10:30,06:30-07:30,07:30-10:30';
 
 describe('TimeRangeChain class', () => {
-  const timeRangeChain = new TimeRangeChain(chain);
+  const timeRangeChain = new RangeSerie(chain);
 
   describe('has', () => {
     it('should return true if a Range is in a Day', () => {
@@ -18,7 +18,7 @@ describe('TimeRangeChain class', () => {
   describe('set', () => {
     test('can set ranges', () => {
       const rangeSet = new TimeRange('14:30-15:30');
-      const daySet = new TimeRangeChain(timeRangeChain).set(rangeSet);
+      const daySet = new RangeSerie(timeRangeChain).set(rangeSet);
       expect(daySet.has(rangeSet)).toBeTruthy();
     });
   });
@@ -26,7 +26,7 @@ describe('TimeRangeChain class', () => {
   describe('delete', () => {
     it('can delete ranges', () => {
       const rangeSet = new TimeRange('14:30-15:30');
-      const daySet = new TimeRangeChain(timeRangeChain).set(rangeSet).delete(rangeSet.toString());
+      const daySet = new RangeSerie(timeRangeChain).set(rangeSet).delete(rangeSet.toString());
       expect(daySet.has(rangeSet)).toBeFalsy();
     });
   });
@@ -36,7 +36,7 @@ describe('TimeRangeChain class', () => {
       const rangeSet = new TimeRange('14:30-15:30');
       const rangeReplace = new TimeRange('15:30-16:30');
       const rangeReplaceSame = new TimeRange('15:30-16:30');
-      const daySet = new TimeRangeChain(timeRangeChain).set(rangeSet);
+      const daySet = new RangeSerie(timeRangeChain).set(rangeSet);
 
       expect(daySet.has(rangeSet)).toBeTruthy();
       expect(daySet.replace(rangeSet.toString(), rangeReplace).has(rangeReplace)).toBeTruthy();

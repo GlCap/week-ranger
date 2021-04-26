@@ -1,5 +1,5 @@
 import { Time } from './Time';
-import { RangeSerializable } from '../types';
+import { TimeRangeSerializable } from '../types';
 import { WeekRangerError } from '../errors';
 
 const SEPARATOR = '-';
@@ -11,10 +11,10 @@ export class TimeRange {
   constructor(value: string);
   constructor(value: [Time, Time]);
   constructor(start: Time, end: Time);
-  constructor(value: RangeSerializable);
+  constructor(value: TimeRangeSerializable);
   constructor(value: TimeRange);
   constructor(
-    value: string | [Time, Time] | RangeSerializable | TimeRange | Time,
+    value: string | [Time, Time] | TimeRangeSerializable | TimeRange | Time,
     valueEnd?: Time,
   ) {
     if (value instanceof TimeRange) {
@@ -46,7 +46,7 @@ export class TimeRange {
     this._end = new Time(end.hours, end.minutes);
   }
 
-  static parse(value: string): RangeSerializable {
+  static parse(value: string): TimeRangeSerializable {
     const rawTime = value.split(SEPARATOR);
     if (rawTime.length !== 2) {
       throw new WeekRangerError(value, 'TimeRange');
@@ -69,7 +69,7 @@ export class TimeRange {
     return [this._start.toDate(from), this._end.toDate(from)];
   }
 
-  toJSON(): RangeSerializable {
+  toJSON(): TimeRangeSerializable {
     return { end: this._end.toJSON(), start: this._start.toJSON() };
   }
 

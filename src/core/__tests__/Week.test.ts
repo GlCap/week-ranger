@@ -1,3 +1,4 @@
+import { RangeSerie } from '../../primitives';
 import { Day } from '../Day';
 import { Week } from '../Week';
 
@@ -24,7 +25,7 @@ describe('Week class', () => {
     });
 
     it('should instance from a Day', () => {
-      const day = new Day('08:30-10:30,06:30-07:30,07:30-10:30');
+      const day = new RangeSerie('08:30-10:30,06:30-07:30,07:30-10:30');
       expect(new Week(day)).toBeInstanceOf(Week);
       expect(new Week(day).equals(new Week(stringFullWeek))).toBeTruthy();
     });

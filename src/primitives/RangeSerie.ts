@@ -1,12 +1,12 @@
 import { Time, TimeRange } from '.';
 import { WeekRangerError } from '..';
-import { RangeSerializable } from '../types';
+import { TimeRangeSerializable } from '../types';
 
 const SEPARATOR = ',';
 
 const compareRanges = (a: TimeRange, b: TimeRange): number => a.compareTo(b);
 
-export class TimeRangeChain {
+export class RangeSerie {
   private readonly _ranges: Map<string, TimeRange>;
 
   constructor();
@@ -14,29 +14,37 @@ export class TimeRangeChain {
   constructor(value: string[]);
   constructor(value: TimeRange[]);
   constructor(value: Array<string | TimeRange>);
-  constructor(value: TimeRangeChain);
+  constructor(value: TimeRangeSerializable[]);
+  constructor(value: RangeSerie);
 
   constructor(
-    value?: string | TimeRange[] | string[] | Array<string | TimeRange> | TimeRangeChain | null,
+    value?:
+      | string
+      | TimeRange[]
+      | string[]
+      | TimeRangeSerializable[]
+      | Array<string | TimeRange>
+      | RangeSerie
+      | null,
   ) {
     if (value == null) {
       this._ranges = new Map();
       return;
     }
 
-    if (value instanceof TimeRangeChain) {
+    if (value instanceof RangeSerie) {
       this._ranges = value._ranges;
       return;
     }
 
     if (Array.isArray(value)) {
       this._ranges = new Map(
-        value.map((r: string | TimeRange) => {
+        value.map((r: string | TimeRange | TimeRangeSerializable) => {
           let range: TimeRange;
 
           if (r instanceof TimeRange) range = r;
           else if (typeof r === 'string') range = new TimeRange(r);
-          else return [] as any;
+          else range = new TimeRange(r);
 
           return [range.toString(), range] as const;
         }),
@@ -44,7 +52,7 @@ export class TimeRangeChain {
       return;
     }
 
-    const parsed = typeof value === 'string' ? TimeRangeChain.parse(value) : value;
+    const parsed = typeof value === 'string' ? RangeSerie.parse(value) : value;
 
     this._ranges = new Map(
       parsed.map((r) => {
@@ -83,10 +91,10 @@ export class TimeRangeChain {
       ranges.push(current);
     }
 
-    return new TimeRangeChain(ranges).toString();
+    return new RangeSerie(ranges).toString();
   }
 
-  static parse(value: string): RangeSerializable[] {
+  static parse(value: string): TimeRangeSerializable[] {
     if (value.length === 0) {
       throw new WeekRangerError(value, 'Day');
     }
@@ -123,11 +131,11 @@ export class TimeRangeChain {
     return this.sortRanges().map((r) => r.toDate());
   }
 
-  toJSON(): RangeSerializable[] {
+  toJSON(): TimeRangeSerializable[] {
     return this.sortRanges().map((range) => range.toJSON());
   }
 
-  equals(that: TimeRangeChain): boolean {
+  equals(that: RangeSerie): boolean {
     return this.toString() === that.toString();
   }
 
@@ -162,20 +170,20 @@ export class TimeRangeChain {
   contains(value: Time | TimeRange, extract: true): TimeRange | null;
   contains(value: Time | TimeRange, extract: false): boolean;
   contains(value: Time | TimeRange, extract = false): boolean | TimeRange | null {
-    if (extract) return this.chain.find((r) => r.contains(value)) ?? null;
-    return this.chain.some((r) => r.contains(value));
+    if (extract) return this.serie.find((r) => r.contains(value)) ?? null;
+    return this.serie.some((r) => r.contains(value));
   }
 
-  get chain(): TimeRange[] {
+  get serie(): TimeRange[] {
     return this.sortRanges();
   }
 
   get first(): TimeRange {
-    return this.chain[0];
+    return this.serie[0];
   }
 
   get last(): TimeRange {
-    const ranges = this.chain;
+    const ranges = this.serie;
     return ranges[ranges.length - 1];
   }
 

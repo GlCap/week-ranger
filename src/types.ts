@@ -3,7 +3,7 @@ export interface TimeSerializable {
   minutes: number;
 }
 
-export interface RangeSerializable {
+export interface TimeRangeSerializable {
   start: TimeSerializable;
   end: TimeSerializable;
 }
@@ -19,12 +19,16 @@ export enum WeekDays {
 }
 
 export interface DaySerializable {
-  date: Date | null;
-  number: WeekDays | null;
-  ranges: RangeSerializable[];
+  number: WeekDays;
+  ranges: TimeRangeSerializable[];
+}
+
+export interface DatedDaySerializable {
+  date: Date;
+  ranges: TimeRangeSerializable[];
 }
 
 export type DayParsable = Partial<DaySerializable>;
 
-export type WeekSerializable = Record<keyof typeof WeekDays, DaySerializable>;
-export type WeekParsable = Partial<Record<keyof typeof WeekDays, DayParsable>>;
+export type WeekSerializable = Record<keyof typeof WeekDays, TimeRangeSerializable[]>;
+export type WeekParsable = Partial<Record<keyof typeof WeekDays, TimeRangeSerializable[]>>;
