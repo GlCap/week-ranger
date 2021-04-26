@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/GlCap/week-ranger/compare/v0.3.0...v0.3.1) (2021-04-26)
+
+### Bug Fixes
+
+- missing module exports ([ff988cd](https://github.com/GlCap/week-ranger/commit/ff988cd8a3bdf18f459293a6d4ac17ab265363d5))
+
 ## [0.3.0](https://github.com/GlCap/week-ranger/compare/v0.2.6...v0.3.0) (2021-04-26)
 
 ### Features
