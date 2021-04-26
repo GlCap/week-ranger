@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/GlCap/week-ranger/compare/v0.2.6...v0.3.0) (2021-04-26)
+
+### Features
+
+- add TimeRangeChain, rename Range to TimeRangeChain, rework Day ([de2ff2b](https://github.com/GlCap/week-ranger/commit/de2ff2bf120d526e8e6c4db90e6c4c56a5637c3e))
+- split Day, implemented DatedDay, renamed TimeRangeChain to RangeSerie ([27c6613](https://github.com/GlCap/week-ranger/commit/27c66138fc8eb9a77c1450512c740c0003c2dccf))
+
 ### [0.2.6](https://github.com/GlCap/week-ranger/compare/v0.2.5...v0.2.6) (2021-04-23)
 
 ### [0.2.5](https://github.com/GlCap/week-ranger/compare/v0.2.4...v0.2.5) (2021-04-15)
