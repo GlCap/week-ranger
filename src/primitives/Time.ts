@@ -3,6 +3,7 @@ import { TimeSerializable } from '../types';
 
 const HOUR_MINUTES = 60;
 const DAY_HOURS = 24;
+const MINUTES_DAY = 60 * 24;
 
 const computeMinutes = (hours: number, minutes: number): number => hours * HOUR_MINUTES + minutes;
 
@@ -146,14 +147,27 @@ export class Time {
   /**
    * Add minutes to a time
    * @param minutes minutes to add
-   * @returns new Time instance with added minutes
    */
   add(minutes: number): Time {
     const { globalMinutes } = this;
 
-    const minutesSum = minutes + globalMinutes;
+    const minutesSum = globalMinutes + minutes;
 
     return Time.fromMinutes(minutesSum);
+  }
+
+  /**
+   * Subtract minutes to a time
+   * @param minutes minutes to subtract
+   */
+  sub(minutes: number): Time {
+    const { globalMinutes } = this;
+
+    const diff = globalMinutes - minutes;
+
+    const nextMinutes = diff > 0 ? diff : MINUTES_DAY + diff;
+
+    return Time.fromMinutes(nextMinutes);
   }
 
   get hours(): number {

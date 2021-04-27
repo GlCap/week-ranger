@@ -135,4 +135,15 @@ describe('Time class', () => {
       expect(new Time(time).add(minutes).equals(new Time(sum))).toBe(true);
     });
   });
+  describe('sub', () => {
+    it.each([
+      [15, '09:15', '09:00'],
+      [60, '09:15', '08:15'],
+      [60 * 2, '09:15', '07:15'],
+      [60 * 24, '09:15', '09:15'],
+      [60 * 23, '09:15', '10:15'],
+    ])('should subtract %i minutes from %s', (minutes, time, diff) => {
+      expect(new Time(time).sub(minutes).equals(new Time(diff))).toBe(true);
+    });
+  });
 });
