@@ -31,18 +31,26 @@ describe('Time class', () => {
     it('can be created from a Time', () => {
       expect(new Time(time)).toBeDefined();
     });
+  });
 
-    it('can be compared to a Date', () => {
-      const date = new Date(0);
-      expect(time.toDate(date)).toStrictEqual(date);
+  describe('getters', () => {
+    const time = new Time(timeString);
+    it('hours should be 12', () => {
+      expect(time.hours).toBe(12);
+    });
+
+    it('minutes should be 30', () => {
+      expect(time.minutes).toBe(30);
     });
   });
 
   describe('now', () => {
-    const timeNow = Time.now();
     const dateNow = new Date();
-    expect(new Time(timeNow).hours).toBe(dateNow.getHours());
-    expect(new Time(timeNow).minutes).toBe(dateNow.getMinutes());
+    const timeNow = Time.now();
+    const testTime = new Time(timeNow);
+
+    expect(testTime.hours).toStrictEqual(dateNow.getHours());
+    expect(testTime.minutes).toStrictEqual(dateNow.getMinutes());
   });
 
   describe('parse', () => {
@@ -56,17 +64,6 @@ describe('Time class', () => {
         expect(() => Time.parse(time)).toThrow();
       },
     );
-  });
-
-  describe('getters', () => {
-    const time = new Time(timeString);
-    it('hours should be 12', () => {
-      expect(time.hours).toBe(12);
-    });
-
-    it('minutes should be 30', () => {
-      expect(time.minutes).toBe(30);
-    });
   });
 
   describe('equals', () => {

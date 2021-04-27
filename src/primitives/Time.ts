@@ -3,6 +3,18 @@ import { TimeSerializable } from '../types';
 
 const HOUR_MINUTES = 60;
 const DAY_HOURS = 24;
+
+const computeMinutes = (hours: number, minutes: number): number => hours * HOUR_MINUTES + minutes;
+
+const totalMinutesToTimeHours = (num: number): number => {
+  const hours = Math.floor(num / HOUR_MINUTES);
+  return hours > DAY_HOURS ? hours % DAY_HOURS : hours;
+};
+
+const totalMinutesToTimeMinutes = (num: number): number => {
+  return num % HOUR_MINUTES;
+};
+
 const SEPARATOR = ':';
 
 /**
@@ -16,8 +28,7 @@ const SEPARATOR = ':';
  *
  */
 export class Time {
-  private readonly _hours: number;
-  private readonly _minutes: number;
+  private readonly globalMinutes: number;
 
   constructor();
   constructor(value: string);
@@ -28,41 +39,44 @@ export class Time {
   constructor(valueOrHours?: string | number | TimeSerializable | Time | Date, minutes?: number) {
     if (valueOrHours == null) {
       const now = new Date();
-      this._hours = now.getHours();
-      this._minutes = now.getMinutes();
+
+      this.globalMinutes = computeMinutes(now.getHours(), now.getMinutes());
       return;
     }
 
     if (valueOrHours instanceof Date) {
-      this._hours = valueOrHours.getHours();
-      this._minutes = valueOrHours.getMinutes();
+      this.globalMinutes = computeMinutes(valueOrHours.getHours(), valueOrHours.getMinutes());
       return;
     }
 
     if (valueOrHours instanceof Time) {
-      this._hours = valueOrHours._hours;
-      this._minutes = valueOrHours._minutes;
+      this.globalMinutes = valueOrHours.globalMinutes;
       return;
     }
+
     if (typeof valueOrHours === 'string') {
       const parsed = Time.parse(valueOrHours);
-      this._hours = parsed.hours;
-      this._minutes = parsed.minutes;
+      this.globalMinutes = computeMinutes(parsed.hours, parsed.minutes);
       return;
     }
 
     if (typeof valueOrHours === 'number') {
-      this._hours = valueOrHours;
-      this._minutes = minutes ?? 0;
+      this.globalMinutes = computeMinutes(valueOrHours, minutes ?? 0);
       return;
     }
 
-    this._hours = valueOrHours.hours;
-    this._minutes = valueOrHours.minutes;
+    this.globalMinutes = computeMinutes(valueOrHours.hours, valueOrHours.minutes);
   }
 
   static now(): string {
     return new Time().toString();
+  }
+
+  static fromMinutes(totalMinutes: number): Time {
+    const hours = totalMinutesToTimeHours(totalMinutes);
+    const minutes = totalMinutesToTimeMinutes(totalMinutes);
+
+    return new Time(hours, minutes);
   }
 
   static parse(value: string): TimeSerializable {
@@ -86,25 +100,21 @@ export class Time {
   }
 
   toString(): string {
-    let hours = `${this._hours}`;
-    let minutes = `${this._minutes}`;
+    let hours = `${this.hours}`;
+    let minutes = `${this.minutes}`;
 
-    if (this._hours < 10) hours = `0${this._hours}`;
-    if (this._minutes < 10) minutes = `0${this._minutes}`;
+    if (this.hours < 10) hours = `0${hours}`;
+    if (this.minutes < 10) minutes = `0${minutes}`;
 
     return `${hours}${SEPARATOR}${minutes}`;
   }
 
   toDate(from = new Date()): Date {
-    return new Date(from.setHours(this._hours, this._minutes, 0, 0));
+    return new Date(from.setHours(this.hours, this.minutes, 0, 0));
   }
 
   toJSON(): TimeSerializable {
-    return { hours: this._hours, minutes: this._minutes };
-  }
-
-  equals(that: Time): boolean {
-    return this._hours === that._hours && this.minutes === that._minutes;
+    return { hours: this.hours, minutes: this.minutes };
   }
 
   /**
@@ -113,8 +123,15 @@ export class Time {
    * @returns positive if `this` is greater, negative if `this` is lesser, 0 if equals
    */
   compareTo(that: Time): number {
-    if (this._hours === that._hours) return this._minutes - that._minutes;
-    return this._hours - that._hours;
+    return this.globalMinutes - that.globalMinutes;
+  }
+
+  /**
+   * Compares the instance with another Time and returns true if they are equals
+   * @param that Time to compare
+   */
+  equals(that: Time): boolean {
+    return this.compareTo(that) === 0;
   }
 
   /**
@@ -132,24 +149,18 @@ export class Time {
    * @returns new Time instance with added minutes
    */
   add(minutes: number): Time {
-    const { _hours, _minutes } = this;
+    const { globalMinutes } = this;
 
-    const minutesSum = minutes + _minutes;
-    const minutesToHours = minutesSum >= HOUR_MINUTES ? Math.floor(minutesSum / HOUR_MINUTES) : 0;
+    const minutesSum = minutes + globalMinutes;
 
-    const hoursSum = _hours + minutesToHours;
-
-    const nextHours = hoursSum >= DAY_HOURS ? hoursSum % DAY_HOURS : hoursSum;
-    const nextMinutes = minutesSum >= HOUR_MINUTES ? minutesSum % HOUR_MINUTES : minutesSum;
-
-    return new Time(nextHours, nextMinutes);
+    return Time.fromMinutes(minutesSum);
   }
 
   get hours(): number {
-    return this._hours;
+    return totalMinutesToTimeHours(this.globalMinutes);
   }
 
   get minutes(): number {
-    return this._minutes;
+    return totalMinutesToTimeMinutes(this.globalMinutes);
   }
 }
