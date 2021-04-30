@@ -1,10 +1,9 @@
 import { TimeRange } from '../TimeRange';
 import { RangeSerie } from '../RangeSerie';
-
-const chain = '08:30-10:30,06:30-07:30,07:30-10:30';
+import { Time } from '../Time';
 
 describe('TimeRangeChain class', () => {
-  const timeRangeChain = new RangeSerie(chain);
+  const timeRangeChain = new RangeSerie('08:30-10:30,06:30-07:30,07:30-10:30');
 
   describe('has', () => {
     it('should return true if a Range is in a Day', () => {
@@ -18,16 +17,16 @@ describe('TimeRangeChain class', () => {
   describe('set', () => {
     test('can set ranges', () => {
       const rangeSet = new TimeRange('14:30-15:30');
-      const daySet = new RangeSerie(timeRangeChain).set(rangeSet);
-      expect(daySet.has(rangeSet)).toBeTruthy();
+      const serieSet = new RangeSerie(timeRangeChain).set(rangeSet);
+      expect(serieSet.has(rangeSet)).toBeTruthy();
     });
   });
 
   describe('delete', () => {
     it('can delete ranges', () => {
       const rangeSet = new TimeRange('14:30-15:30');
-      const daySet = new RangeSerie(timeRangeChain).set(rangeSet).delete(rangeSet.toString());
-      expect(daySet.has(rangeSet)).toBeFalsy();
+      const serieSet = new RangeSerie(timeRangeChain).set(rangeSet).delete(rangeSet.toString());
+      expect(serieSet.has(rangeSet)).toBeFalsy();
     });
   });
 
@@ -36,13 +35,49 @@ describe('TimeRangeChain class', () => {
       const rangeSet = new TimeRange('14:30-15:30');
       const rangeReplace = new TimeRange('15:30-16:30');
       const rangeReplaceSame = new TimeRange('15:30-16:30');
-      const daySet = new RangeSerie(timeRangeChain).set(rangeSet);
+      const serieSet = new RangeSerie(timeRangeChain).set(rangeSet);
 
-      expect(daySet.has(rangeSet)).toBeTruthy();
-      expect(daySet.replace(rangeSet.toString(), rangeReplace).has(rangeReplace)).toBeTruthy();
+      expect(serieSet.has(rangeSet)).toBeTruthy();
+      expect(serieSet.replace(rangeSet.toString(), rangeReplace).has(rangeReplace)).toBeTruthy();
       expect(
-        daySet.replace(rangeReplaceSame.toString(), rangeReplace).has(rangeReplace),
+        serieSet.replace(rangeReplaceSame.toString(), rangeReplace).has(rangeReplace),
       ).toBeTruthy();
     });
+  });
+
+  describe('contains', () => {
+    const testChain = new RangeSerie('08:30-10:30,13:00-18:30');
+    const testErrorChain = new RangeSerie('13:00-18:30');
+
+    const data = [
+      new Time('08:30'),
+      new Time('09:00'),
+      new Time('09:30'),
+      new Time('10:30'),
+      new TimeRange('08:30-10:30'),
+      new TimeRange('09:00-10:00'),
+      new TimeRange('09:15-10:00'),
+      new TimeRange('08:45-10:00'),
+    ];
+
+    it.each(data)(
+      `should return true or the containing range if %s is contained in ${testChain.toString()}`,
+      (range) => {
+        const extracted = testChain.contains(range, true);
+
+        expect(extracted?.contains(range)).toBe(true);
+        expect(testChain.contains(range)).toBe(true);
+      },
+    );
+
+    it.each(data)(
+      `should return false or null range if %s is not contained in ${testErrorChain.toString()}`,
+      (range) => {
+        const extracted = testErrorChain.contains(range, true);
+
+        expect(extracted).toBe(null);
+        expect(testErrorChain.contains(range)).toBe(false);
+      },
+    );
   });
 });
