@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/GlCap/week-ranger/compare/v0.4.0...v0.5.0) (2021-04-30)
+
+### ⚠ BREAKING CHANGES
+
+- renamed and adjusted DatedDay methods
+
+### Features
+
+- renamed and adjusted DatedDay methods ([84bb826](https://github.com/GlCap/week-ranger/commit/84bb826ac490976c2515d38974574e8782761c36))
+
 ## [0.4.0](https://github.com/GlCap/week-ranger/compare/v0.3.1...v0.4.0) (2021-04-27)
 
 ### Features
