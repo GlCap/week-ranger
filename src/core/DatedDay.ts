@@ -111,15 +111,13 @@ export class DatedDay {
     return this.toString() === that.toString();
   }
 
-  getDayStartDate(): Date | null {
-    const start = this._date?.setHours(0, 0, 0, 0);
-    if (start == null) return null;
+  startOfDay(): Date {
+    const start = this._date.setHours(0, 0, 0, 0);
     return new Date(start);
   }
 
-  getDayEndDate(): Date | null {
-    const end = this._date?.setHours(23, 59, 59, 999);
-    if (end == null) return null;
+  endOfDay(): Date {
+    const end = this._date.setHours(23, 59, 59, 999);
     return new Date(end);
   }
 
