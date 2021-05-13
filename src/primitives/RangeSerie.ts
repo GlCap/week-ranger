@@ -1,6 +1,7 @@
-import { Time, TimeRange } from '.';
-import { WeekRangerError } from '..';
+import { WeekRangerError } from '../errors';
 import { TimeRangeSerializable } from '../types';
+import { Time } from './Time';
+import { TimeRange } from './TimeRange';
 
 const SEPARATOR = ',';
 
