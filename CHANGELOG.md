@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.1](https://github.com/GlCap/week-ranger/compare/v0.5.0...v0.5.1) (2021-05-13)
+
+### Bug Fixes
+
+- fixed import cycles ([1f16753](https://github.com/GlCap/week-ranger/commit/1f167537010cecdb357a1898af2a767e1b723a5c))
+
 ## [0.5.0](https://github.com/GlCap/week-ranger/compare/v0.4.0...v0.5.0) (2021-04-30)
 
 ### ⚠ BREAKING CHANGES
