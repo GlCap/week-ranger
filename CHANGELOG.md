@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.2](https://github.com/GlCap/week-ranger/compare/v0.5.1...v0.5.2) (2021-09-06)
+
+### Bug Fixes
+
+- check validity when creating new instance from Time value ([ef116ce](https://github.com/GlCap/week-ranger/commit/ef116ce8fc34428345f4d2673d5ee1967799a911))
+
 ### [0.5.1](https://github.com/GlCap/week-ranger/compare/v0.5.0...v0.5.1) (2021-05-13)
 
 ### Bug Fixes
