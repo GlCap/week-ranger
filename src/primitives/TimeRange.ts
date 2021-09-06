@@ -14,33 +14,42 @@ export class TimeRange {
   constructor(value: TimeRangeSerializable);
   constructor(value: TimeRange);
   constructor(
-    value: string | [Time, Time] | TimeRangeSerializable | TimeRange | Time,
+    valueOrStart: string | [Time, Time] | TimeRangeSerializable | TimeRange | Time,
     valueEnd?: Time,
   ) {
-    if (value instanceof TimeRange) {
-      this._start = value._start;
-      this._end = value._end;
+    const rangeError = new WeekRangerError(
+      `Invalid TimeRange tuple, start cannot be after end.`,
+      'TimeRange',
+    );
+
+    if (valueOrStart instanceof TimeRange) {
+      this._start = valueOrStart._start;
+      this._end = valueOrStart._end;
       return;
     }
 
-    if (value instanceof Time) {
-      this._start = value;
-      this._end = valueEnd ?? new Time(0);
+    if (valueOrStart instanceof Time) {
+      const end = valueEnd ?? valueOrStart.add(5);
+
+      if (valueOrStart.isAfter(end)) throw rangeError;
+
+      this._start = valueOrStart;
+      this._end = end;
       return;
     }
 
-    if (Array.isArray(value)) {
-      const [start, end] = value;
-      if (start.isAfter(end)) {
-        throw new WeekRangerError('Invalid Range tuple, start cannot be after end.', 'TimeRange');
-      }
+    if (Array.isArray(valueOrStart)) {
+      const [start, end] = valueOrStart;
+
+      if (start.isAfter(end)) throw rangeError;
 
       this._start = start;
       this._end = end;
       return;
     }
 
-    const { start, end } = typeof value === 'string' ? TimeRange.parse(value) : value;
+    const { start, end } =
+      typeof valueOrStart === 'string' ? TimeRange.parse(valueOrStart) : valueOrStart;
 
     this._start = new Time(start.hours, start.minutes);
     this._end = new Time(end.hours, end.minutes);
