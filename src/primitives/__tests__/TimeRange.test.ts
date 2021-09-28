@@ -44,6 +44,16 @@ describe('TimeRange class', () => {
     });
   });
 
+  describe('numberOfSlotsInRange', () => {
+    it('should return the max number of slots in a time range', () => {
+      expect(TimeRange.numberOfSlotsInRange(new TimeRange('09:00-12:00'), 30)).toBe(6);
+      expect(TimeRange.numberOfSlotsInRange(new TimeRange('09:00-09:00'), 30)).toBe(0);
+      expect(TimeRange.numberOfSlotsInRange(new TimeRange('09:00-09:30'), 50)).toBe(0);
+      expect(TimeRange.numberOfSlotsInRange(new TimeRange('09:00-09:33'), 30)).toBe(0);
+      expect(TimeRange.numberOfSlotsInRange(new TimeRange('09:00-09:30'), 27)).toBe(0);
+    });
+  });
+
   describe('toString', () => {
     it('should serialize to a parsable string', () => {
       expect(range.toString()).toStrictEqual(rangeString);

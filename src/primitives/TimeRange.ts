@@ -70,6 +70,18 @@ export class TimeRange {
     return { start: start.toJSON(), end: end.toJSON() };
   }
 
+  /**
+   * Computes the number of time slots in a `TimeRange`
+   * @param range : `TimeRange` object, its duration must be a multiple of 5
+   * @param timeSlot : slot duration
+   * @returns the number of slot in the duration, 0 if the provided params are invalid
+   */
+  static numberOfSlotsInRange(range: TimeRange, timeSlot: number): number {
+    if (timeSlot % 5 !== 0 || range.duration % 5 !== 0 || timeSlot >= range.duration) return 0;
+
+    return range.duration / timeSlot;
+  }
+
   toString(): string {
     return `${this._start.toString()}${SEPARATOR}${this._end.toString()}`;
   }
