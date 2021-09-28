@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/GlCap/week-ranger/compare/v0.5.2...v0.6.0) (2021-09-28)
+
+### Features
+
+- add numberOfSlotsInRange static method ([8ed44a9](https://github.com/GlCap/week-ranger/commit/8ed44a904be10d34ee6f378aa1c1e07ef9e52e55))
+- add TimeRange.overlaps method and testing ([4e0bbbf](https://github.com/GlCap/week-ranger/commit/4e0bbbfc7b7bff99305c8324c79f29084a738848))
+- completely reworked RangeSerie slottable static method ([51218fb](https://github.com/GlCap/week-ranger/commit/51218fbeebf26d4371885a6bcdad5656c11e7a05))
+
 ### [0.5.2](https://github.com/GlCap/week-ranger/compare/v0.5.1...v0.5.2) (2021-09-06)
 
 ### Bug Fixes
