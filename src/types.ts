@@ -32,3 +32,8 @@ export type DayParsable = Partial<DaySerializable>;
 
 export type WeekSerializable = Record<keyof typeof WeekDays, TimeRangeSerializable[]>;
 export type WeekParsable = Partial<Record<keyof typeof WeekDays, TimeRangeSerializable[]>>;
+
+export interface RangeSerieSlottableOptions {
+  timeRequired?: number;
+  allowedMinutesOverflow?: number;
+}

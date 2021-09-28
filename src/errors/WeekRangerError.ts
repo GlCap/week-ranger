@@ -1,4 +1,4 @@
-export type ErrorType = 'Week' | 'Day' | 'TimeRange' | 'Time' | 'TimeRangeChain';
+export type ErrorType = 'Week' | 'Day' | 'TimeRange' | 'Time' | 'RangeSerie';
 
 export class WeekRangerError extends Error {
   private readonly TIME_FORMAT = `[0 <= HH < 24, 0 <= MM < 60]\nHH:MM`;
@@ -21,7 +21,7 @@ export class WeekRangerError extends Error {
       case 'TimeRange':
         this.message = this.parseMessage(type, this.RANGE_FORMAT, messageOrValue);
         break;
-      case 'TimeRangeChain':
+      case 'RangeSerie':
         this.message = this.parseMessage(type, this.RANGE_CHAIN_FORMAT, messageOrValue);
         break;
       case 'Day':

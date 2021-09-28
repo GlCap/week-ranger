@@ -2,7 +2,7 @@ import { TimeRange } from '../TimeRange';
 import { RangeSerie } from '../RangeSerie';
 import { Time } from '../Time';
 
-describe('TimeRangeChain class', () => {
+describe('RangeSerie class', () => {
   const timeRangeChain = new RangeSerie('08:30-10:30,06:30-07:30,07:30-10:30');
 
   describe('has', () => {
@@ -47,7 +47,7 @@ describe('TimeRangeChain class', () => {
 
   describe('contains', () => {
     const testChain = new RangeSerie('08:30-10:30,13:00-18:30');
-    const testErrorChain = new RangeSerie('13:00-18:30');
+    const testErrorChain = new RangeSerie('13:00-18:30,19:00-20:00');
 
     const data = [
       new Time('08:30'),
@@ -79,5 +79,22 @@ describe('TimeRangeChain class', () => {
         expect(testErrorChain.contains(range)).toBe(false);
       },
     );
+  });
+
+  describe('slottable', () => {
+    it('should return a splitted TimeRange', () => {
+      expect(RangeSerie.slottable(30, '10:00-12:00')).toBe(
+        '10:00-10:30,10:30-11:00,11:00-11:30,11:30-12:00',
+      );
+      expect(RangeSerie.slottable(30, '10:00-12:00', { allowedMinutesOverflow: 30 })).toBe(
+        '10:00-10:30,10:30-11:00,11:00-11:30,11:30-12:00,12:00-12:30',
+      );
+      expect(RangeSerie.slottable(30, '10:00-12:00', { timeRequired: 60 })).toBe(
+        '10:00-11:00,10:30-11:30,11:00-12:00',
+      );
+      expect(
+        RangeSerie.slottable(30, '10:00-12:00', { timeRequired: 60, allowedMinutesOverflow: 30 }),
+      ).toBe('10:00-11:00,10:30-11:30,11:00-12:00,11:30-12:30');
+    });
   });
 });

@@ -1,5 +1,5 @@
 import { WeekRangerError } from '../errors';
-import { TimeRangeSerializable } from '../types';
+import { RangeSerieSlottableOptions, TimeRangeSerializable } from '../types';
 import { Time } from './Time';
 import { TimeRange } from './TimeRange';
 
@@ -63,33 +63,48 @@ export class RangeSerie {
     );
   }
 
-  static slottable(timeSlot: number, range: string | TimeRange): string {
-    const { start, end, duration } = typeof range === 'string' ? new TimeRange(range) : range;
-    if (timeSlot > duration) {
+  /**
+   * Split a `TimeRange` in a `RangeSerie` using provided settings
+   *
+   * @param timeSlot time slot duration in minutes, must be a multiple of 5
+   * @param range the `TimeRange` to split
+   * @param options extra optional options
+   * @returns
+   */
+  static slottable(
+    timeSlot: number,
+    range: string | TimeRange,
+    options: RangeSerieSlottableOptions = {},
+  ): string {
+    const timeRange = typeof range === 'string' ? new TimeRange(range) : range;
+    const { timeRequired = timeSlot, allowedMinutesOverflow = 0 } = options;
+
+    const maxSlots = TimeRange.numberOfSlotsInRange(timeRange, timeSlot);
+
+    if (maxSlots === 0) {
       throw new WeekRangerError(
-        'Time slot cannot be greater than range duration.',
-        'TimeRangeChain',
-        true,
-      );
-    }
-    if (end.minutes % timeSlot !== 0) {
-      throw new WeekRangerError(
-        'Time slot must be able to divide range-end minutes.',
-        'TimeRangeChain',
+        `The provided timeSlot and timeRange will not produce any serie.
+        Check that both timeSlot and range duration are a multiple of 5
+        or that time slot is not greater than or equal to timeRange duration.`,
+        'RangeSerie',
         true,
       );
     }
 
-    let currentStart = start;
-    let currentEnd = start.add(timeSlot);
-    let current = new TimeRange({ start: currentStart, end: currentEnd });
-    const ranges = [current];
+    const ranges: TimeRange[] = [];
 
-    while (!current.end.equals(end)) {
-      currentStart = currentEnd;
-      currentEnd = currentEnd.add(timeSlot);
-      current = new TimeRange(currentStart, currentEnd);
-      ranges.push(current);
+    let currentStart = timeRange.start;
+
+    for (let index = 0; index <= maxSlots; index++) {
+      // create a TimeRange of the required duration
+      const slot = new TimeRange(currentStart, currentStart.add(timeRequired));
+
+      // check if the slot is contained in the range
+      // add the slot to the ranges array if it satisfies the required conditions
+      if (isSlotAvailable(slot, timeRange, allowedMinutesOverflow)) ranges.push(slot);
+
+      // set the next start at a timeSlot duration from the current start
+      currentStart = currentStart.add(timeSlot);
     }
 
     return new RangeSerie(ranges).toString();
@@ -191,4 +206,12 @@ export class RangeSerie {
   get size(): number {
     return this._ranges.size;
   }
+}
+
+function isSlotAvailable(
+  slot: TimeRange,
+  range: TimeRange,
+  allowedMinutesOverflow: number,
+): boolean {
+  return range.end.add(allowedMinutesOverflow).compareTo(slot.end) >= 0;
 }
