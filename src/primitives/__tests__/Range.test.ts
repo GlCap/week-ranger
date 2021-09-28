@@ -122,4 +122,16 @@ describe('TimeRange class', () => {
       expect(new TimeRange('09:00-11:00').contains(new TimeRange('09:00-13:00'))).toBe(false);
     });
   });
+
+  describe('overlaps', () => {
+    it('should check if another TimeRange overlaps', () => {
+      expect(new TimeRange('09:00-11:00').overlaps(new TimeRange('09:00-11:00'))).toBe(true);
+      expect(new TimeRange('09:00-11:00').overlaps(new TimeRange('09:00-12:00'))).toBe(true);
+      expect(new TimeRange('09:00-11:00').overlaps(new TimeRange('08:00-12:00'))).toBe(true);
+      expect(new TimeRange('09:00-11:00').overlaps(new TimeRange('08:00-10:00'))).toBe(true);
+
+      expect(new TimeRange('09:00-11:00').overlaps(new TimeRange('08:00-09:00'))).toBe(false);
+      expect(new TimeRange('09:00-11:00').overlaps(new TimeRange('11:00-12:00'))).toBe(false);
+    });
+  });
 });

@@ -87,8 +87,7 @@ export class TimeRange {
   }
 
   /**
-   * Compares `Range` instances
-   * @param that `Range` to compare
+   * Compares `TimeRange` instances
    * @returns positive if `this` is greater, negative if `this` is lesser, 0 if equals
    */
   compareTo(that: TimeRange): number {
@@ -110,7 +109,6 @@ export class TimeRange {
 
   /**
    * Checks if provided `TimeRange` or `Time` is contained within this `TimeRange`
-   * @param that `TimeRange` or `Time`
    */
   contains(that: Time | TimeRange): boolean {
     if (that instanceof Time) {
@@ -119,6 +117,12 @@ export class TimeRange {
 
     return this._start.compareTo(that._start) <= 0 && this._end.compareTo(that._end) >= 0;
   }
+
+  /**
+   * Checks if provided `TimeRange` overlaps
+   */
+  overlaps(that: TimeRange): boolean {
+    return this._start.compareTo(that._end) < 0 && this._end.compareTo(that._start) > 0;
   }
 
   get start(): Time {
