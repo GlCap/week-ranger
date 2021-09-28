@@ -109,14 +109,16 @@ export class TimeRange {
   }
 
   /**
-   * Checks if provided `Range` or `Time` is contained within this `Range`
-   * @param value `Range` or `Time`
+   * Checks if provided `TimeRange` or `Time` is contained within this `TimeRange`
+   * @param that `TimeRange` or `Time`
    */
-  contains(value: Time | TimeRange): boolean {
-    if (value instanceof Time) {
-      return value.compareTo(this._start) >= 0 && value.compareTo(this._end) <= 0;
+  contains(that: Time | TimeRange): boolean {
+    if (that instanceof Time) {
+      return that.compareTo(this._start) >= 0 && that.compareTo(this._end) <= 0;
     }
-    return value._start.compareTo(this._start) >= 0 && value._end.compareTo(this._end) <= 0;
+
+    return this._start.compareTo(that._start) <= 0 && this._end.compareTo(that._end) >= 0;
+  }
   }
 
   get start(): Time {

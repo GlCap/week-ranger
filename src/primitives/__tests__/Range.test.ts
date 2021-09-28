@@ -1,6 +1,7 @@
+import { Time } from '../Time';
 import { TimeRange } from '../TimeRange';
 
-describe('Range class', () => {
+describe('TimeRange class', () => {
   const rangeString = '08:30-10:05';
 
   const rangeAfterString = '10:05-11:55';
@@ -10,7 +11,7 @@ describe('Range class', () => {
   const range = new TimeRange(rangeString);
   const rangeAfter = new TimeRange(rangeAfterString);
   const rangeBefore = new TimeRange(rangeBeforeString);
-  const rangeSameEnd = new TimeRange(rangeSameStartString);
+  const rangeSameStart = new TimeRange(rangeSameStartString);
 
   describe('getters', () => {
     test('start should be before end', () => {
@@ -77,8 +78,8 @@ describe('Range class', () => {
     expect(range.compareTo(rangeBefore)).toBeGreaterThan(0);
     expect(rangeBefore.compareTo(range)).toBeLessThan(0);
 
-    expect(range.compareTo(rangeSameEnd)).toBeGreaterThan(0);
-    expect(rangeSameEnd.compareTo(range)).toBeLessThan(0);
+    expect(range.compareTo(rangeSameStart)).toBeGreaterThan(0);
+    expect(rangeSameStart.compareTo(range)).toBeLessThan(0);
   });
 
   describe('equals', () => {
@@ -86,13 +87,13 @@ describe('Range class', () => {
       expect(range.equals(range)).toBeTruthy();
       expect(rangeAfter.equals(rangeAfter)).toBeTruthy();
       expect(rangeBefore.equals(rangeBefore)).toBeTruthy();
-      expect(rangeSameEnd.equals(rangeSameEnd)).toBeTruthy();
+      expect(rangeSameStart.equals(rangeSameStart)).toBeTruthy();
     });
 
     it('should be false', () => {
       expect(range.equals(rangeAfter)).toBeFalsy();
       expect(range.equals(rangeBefore)).toBeFalsy();
-      expect(range.equals(rangeSameEnd)).toBeFalsy();
+      expect(range.equals(rangeSameStart)).toBeFalsy();
     });
   });
 
@@ -105,6 +106,20 @@ describe('Range class', () => {
     it('should not be after', () => {
       expect(range.isAfter(rangeAfter)).toBeFalsy();
       expect(rangeBefore.isAfter(range)).toBeFalsy();
+    });
+  });
+
+  describe('contains', () => {
+    it('should check if another Range or Time is contained', () => {
+      expect(new TimeRange('09:00-11:00').contains(new Time('09:00'))).toBe(true);
+      expect(new TimeRange('09:00-11:00').contains(new Time('11:00'))).toBe(true);
+      expect(new TimeRange('09:00-11:00').contains(new Time('10:00'))).toBe(true);
+      expect(new TimeRange('09:00-11:00').contains(new Time('08:00'))).toBe(false);
+
+      expect(new TimeRange('09:00-11:00').contains(new TimeRange('09:00-11:00'))).toBe(true);
+      expect(new TimeRange('09:00-11:00').contains(new TimeRange('08:00-10:00'))).toBe(false);
+      expect(new TimeRange('09:00-11:00').contains(new TimeRange('10:00-12:00'))).toBe(false);
+      expect(new TimeRange('09:00-11:00').contains(new TimeRange('09:00-13:00'))).toBe(false);
     });
   });
 });
