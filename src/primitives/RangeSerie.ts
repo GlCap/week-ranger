@@ -75,7 +75,7 @@ export class RangeSerie {
     timeSlot: number,
     range: string | TimeRange,
     options: RangeSerieSlottableOptions = {},
-  ): string {
+  ): RangeSerie {
     const timeRange = typeof range === 'string' ? new TimeRange(range) : range;
     const { timeRequired = timeSlot, allowedMinutesOverflow = 0 } = options;
 
@@ -107,7 +107,7 @@ export class RangeSerie {
       currentStart = currentStart.add(timeSlot);
     }
 
-    return new RangeSerie(ranges).toString();
+    return new RangeSerie(ranges);
   }
 
   static parse(value: string): TimeRangeSerializable[] {
@@ -180,9 +180,14 @@ export class RangeSerie {
    * Checks if provided `Range` or `Time` is contained within any of the `Range`s in this `Day`
    *
    * @param value `Range` or `Time`
-   * @param extract if true, return the `Range`
    */
   contains(value: Time | TimeRange): boolean;
+  /**
+   * Checks if provided `Range` or `Time` is contained within any of the `Range`s in this `Day`
+   *
+   * @param value `Range` or `Time`
+   * @param extract if true, return the `Range`
+   */
   contains(value: Time | TimeRange, extract: true): TimeRange | null;
   contains(value: Time | TimeRange, extract: false): boolean;
   contains(value: Time | TimeRange, extract = false): boolean | TimeRange | null {
