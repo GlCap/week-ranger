@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/GlCap/week-ranger/compare/v0.6.0...v0.7.0) (2022-03-09)
+
+### Features
+
+- slottable returns RangeSerie ([edfdd0f](https://github.com/GlCap/week-ranger/commit/edfdd0fa8406edf078afb12726eb354f91b38169))
+
 ## [0.6.0](https://github.com/GlCap/week-ranger/compare/v0.5.2...v0.6.0) (2021-09-28)
 
 ### Features
