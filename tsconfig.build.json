@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
-    "outDir": "./dist/esm",
+    "outDir": "./dist/cjs",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true

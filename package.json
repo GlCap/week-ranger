@@ -23,9 +23,8 @@
     "src",
     "dist"
   ],
-  "main": "dist/esm/index.js",
+  "main": "dist/cjs/index.js",
   "browser": "dist/browser/index.js",
-  "types": "dist/esm/index.d.ts",
   "engines": {
     "node": ">=14"
   },
@@ -34,12 +33,12 @@
     "format": "prettier --write .",
     "lint": "eslint \"{src,apps,libs,test}/**/*.{ts,js}\" --fix",
     "typecheck": "tsc --noEmit",
-    "typecheck:watch": "yarn typecheck --watch",
+    "typecheck:watch": "pnpm typecheck --watch",
     "test": "jest --runInBand",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:watch-coverage": "jest --watch --coverage",
-    "prebuild": "yarn clean",
+    "prebuild": "pnpm clean",
     "clean": "rimraf ./dist"
   },
   "dependencies": {
