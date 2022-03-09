@@ -12,6 +12,8 @@ jobs:
         with:
           node-version: 14
 
+      - uses: pnpm/action-setup@v2.1.0
+
       - uses: actions/checkout@v2
 
       - name: Install Dependencies
