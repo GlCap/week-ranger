@@ -65,9 +65,9 @@ export class Day {
     timeSlot: number,
     range: string | TimeRange,
     number: WeekDays = WeekDays.monday,
-  ): string {
+  ): Day {
     const timeRangeChain = new RangeSerie(RangeSerie.slottable(timeSlot, range));
-    return new Day(timeRangeChain.serie, number).toString();
+    return new Day(timeRangeChain.serie, number);
   }
 
   static parse(value: string, number?: WeekDays | null): DaySerializable {
