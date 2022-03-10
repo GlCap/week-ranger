@@ -83,18 +83,30 @@ describe('RangeSerie class', () => {
 
   describe('slottable', () => {
     it('should return a splitted TimeRange', () => {
-      expect(RangeSerie.slottable(30, '10:00-12:00')).toBe(
-        '10:00-10:30,10:30-11:00,11:00-11:30,11:30-12:00',
-      );
-      expect(RangeSerie.slottable(30, '10:00-12:00', { allowedMinutesOverflow: 30 })).toBe(
-        '10:00-10:30,10:30-11:00,11:00-11:30,11:30-12:00,12:00-12:30',
-      );
-      expect(RangeSerie.slottable(30, '10:00-12:00', { timeRequired: 60 })).toBe(
-        '10:00-11:00,10:30-11:30,11:00-12:00',
-      );
       expect(
-        RangeSerie.slottable(30, '10:00-12:00', { timeRequired: 60, allowedMinutesOverflow: 30 }),
-      ).toBe('10:00-11:00,10:30-11:30,11:00-12:00,11:30-12:30');
+        RangeSerie.slottable(30, '10:00-12:00').equals(
+          new RangeSerie('10:00-10:30,10:30-11:00,11:00-11:30,11:30-12:00'),
+        ),
+      ).toBeTruthy();
+
+      expect(
+        RangeSerie.slottable(30, '10:00-12:00', { allowedMinutesOverflow: 30 }).equals(
+          new RangeSerie('10:00-10:30,10:30-11:00,11:00-11:30,11:30-12:00,12:00-12:30'),
+        ),
+      ).toBeTruthy();
+
+      expect(
+        RangeSerie.slottable(30, '10:00-12:00', { timeRequired: 60 }).equals(
+          new RangeSerie('10:00-11:00,10:30-11:30,11:00-12:00'),
+        ),
+      ).toBeTruthy();
+
+      expect(
+        RangeSerie.slottable(30, '10:00-12:00', {
+          timeRequired: 60,
+          allowedMinutesOverflow: 30,
+        }).equals(new RangeSerie('10:00-11:00,10:30-11:30,11:00-12:00,11:30-12:30')),
+      ).toBeTruthy();
     });
   });
 });

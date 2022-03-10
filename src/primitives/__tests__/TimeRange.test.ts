@@ -124,6 +124,7 @@ describe('TimeRange class', () => {
       expect(new TimeRange('09:00-11:00').contains(new Time('09:00'))).toBe(true);
       expect(new TimeRange('09:00-11:00').contains(new Time('11:00'))).toBe(true);
       expect(new TimeRange('09:00-11:00').contains(new Time('10:00'))).toBe(true);
+      expect(new TimeRange('08:30-18:30').contains(new Time('09:00'))).toBe(true);
       expect(new TimeRange('09:00-11:00').contains(new Time('08:00'))).toBe(false);
 
       expect(new TimeRange('09:00-11:00').contains(new TimeRange('09:00-11:00'))).toBe(true);
