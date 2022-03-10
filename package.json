@@ -39,7 +39,8 @@
     "test:coverage": "jest --coverage",
     "test:watch-coverage": "jest --watch --coverage",
     "prebuild": "pnpm clean",
-    "clean": "rimraf ./dist"
+    "clean": "rimraf ./dist",
+    "prepublish": "pnpm clean && pnpm build"
   },
   "dependencies": {
     "tslib": "^2.2.0"
