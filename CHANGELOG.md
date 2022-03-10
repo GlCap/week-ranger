@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.1](https://github.com/GlCap/week-ranger/compare/v0.7.0...v0.7.1) (2022-03-10)
+
+### Features
+
+- changed Day.slottable return type to Day ([0a4a4cb](https://github.com/GlCap/week-ranger/commit/0a4a4cbdad67e1a8fb585872bcb355ea80b8e41f))
+
 ## [0.7.0](https://github.com/GlCap/week-ranger/compare/v0.6.0...v0.7.0) (2022-03-09)
 
 ### Features
