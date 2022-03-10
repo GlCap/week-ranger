@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.2](https://github.com/GlCap/week-ranger/compare/v0.7.1...v0.7.2) (2022-03-10)
+
+### Features
+
+- converted all Dates to UTC values ([0c049bf](https://github.com/GlCap/week-ranger/commit/0c049bf04cddab4e6c37920fe9453a2aa9df9a08))
+
 ### [0.7.1](https://github.com/GlCap/week-ranger/compare/v0.7.0...v0.7.1) (2022-03-10)
 
 ### Features
