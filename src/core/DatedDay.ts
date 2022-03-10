@@ -58,11 +58,11 @@ export class DatedDay {
    * Create a `Day` with constant `Range`s duration
    * @param timeSlot the constant `Range` duration
    * @param range the time `Range`
-   * @param number the 0 indexed day of week
+   * @param date the date if the day
    */
-  static slottable(timeSlot: number, range: string | TimeRange, date: Date): string {
+  static slottable(timeSlot: number, range: string | TimeRange, date: Date): DatedDay {
     const timeRangeChain = new RangeSerie(RangeSerie.slottable(timeSlot, range));
-    return new DatedDay(timeRangeChain.serie, date).toString();
+    return new DatedDay(timeRangeChain.serie, date);
   }
 
   static parse(value: string, date?: Date | null): DatedDaySerializable {
@@ -112,12 +112,12 @@ export class DatedDay {
   }
 
   startOfDay(): Date {
-    const start = this._date.setHours(0, 0, 0, 0);
+    const start = this._date.setUTCHours(0, 0, 0, 0);
     return new Date(start);
   }
 
   endOfDay(): Date {
-    const end = this._date.setHours(23, 59, 59, 999);
+    const end = this._date.setUTCHours(23, 59, 59, 999);
     return new Date(end);
   }
 

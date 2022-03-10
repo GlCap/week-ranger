@@ -49,8 +49,8 @@ describe('Time class', () => {
     const timeNow = Time.now();
     const testTime = new Time(timeNow);
 
-    expect(testTime.hours).toStrictEqual(dateNow.getHours());
-    expect(testTime.minutes).toStrictEqual(dateNow.getMinutes());
+    expect(testTime.hours).toStrictEqual(dateNow.getUTCHours());
+    expect(testTime.minutes).toStrictEqual(dateNow.getUTCMinutes());
   });
 
   describe('parse', () => {

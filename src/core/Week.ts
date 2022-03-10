@@ -138,7 +138,7 @@ export class Week {
   }
 
   get today(): Day {
-    const todayDate = new Date().getDay();
+    const todayDate = new Date().getUTCDay();
     return this.getDay(todayDate);
   }
 

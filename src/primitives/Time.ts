@@ -41,12 +41,12 @@ export class Time {
     if (valueOrHours == null) {
       const now = new Date();
 
-      this.globalMinutes = computeMinutes(now.getHours(), now.getMinutes());
+      this.globalMinutes = computeMinutes(now.getUTCHours(), now.getUTCMinutes());
       return;
     }
 
     if (valueOrHours instanceof Date) {
-      this.globalMinutes = computeMinutes(valueOrHours.getHours(), valueOrHours.getMinutes());
+      this.globalMinutes = computeMinutes(valueOrHours.getUTCHours(), valueOrHours.getUTCMinutes());
       return;
     }
 
@@ -111,7 +111,7 @@ export class Time {
   }
 
   toDate(from = new Date()): Date {
-    return new Date(from.setHours(this.hours, this.minutes, 0, 0));
+    return new Date(from.setUTCHours(this.hours, this.minutes, 0, 0));
   }
 
   toJSON(): TimeSerializable {
