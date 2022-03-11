@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/GlCap/week-ranger/compare/v0.7.8...v0.8.0) (2022-03-11)
+
+### Features
+
+- add toLocaleString method to all data structures ([e88ab3f](https://github.com/GlCap/week-ranger/commit/e88ab3fc33653bcc55b8ea47ddd3657cd8e1946f))
+
 ### [0.7.8](https://github.com/GlCap/week-ranger/compare/v0.7.7...v0.7.8) (2022-03-10)
 
 ### [0.7.7](https://github.com/GlCap/week-ranger/compare/v0.7.6...v0.7.7) (2022-03-10)
