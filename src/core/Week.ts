@@ -103,6 +103,12 @@ export class Week {
       .join(SEPARATOR);
   }
 
+  toLocaleString(): string {
+    return this.toTuple()
+      .map((d) => d?.toLocaleString() ?? '')
+      .join(SEPARATOR);
+  }
+
   toJSON(): WeekSerializable {
     return {
       sunday: this.getDay(WeekDays.sunday).ranges.toJSON(),

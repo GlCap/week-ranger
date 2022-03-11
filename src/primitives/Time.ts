@@ -7,7 +7,7 @@ const MINUTES_DAY = 60 * 24;
 
 const computeMinutes = (hours: number, minutes: number): number => hours * HOUR_MINUTES + minutes;
 
-const totalMinutesToTimeHours = (num: number): number => {
+export const totalMinutesToTimeHours = (num: number): number => {
   const hours = Math.floor(num / HOUR_MINUTES);
   return hours > DAY_HOURS ? hours % DAY_HOURS : hours;
 };
@@ -100,12 +100,29 @@ export class Time {
     return { hours, minutes };
   }
 
-  toString(): string {
-    let hours = `${this.hours}`;
-    let minutes = `${this.minutes}`;
+  private formatHoursAndMinutes(
+    hours: number,
+    minutes: number,
+  ): { hours: string; minutes: string } {
+    let hoursString = `${hours}`;
+    let minutesString = `${minutes}`;
 
-    if (this.hours < 10) hours = `0${hours}`;
-    if (this.minutes < 10) minutes = `0${minutes}`;
+    if (hours < 10) hoursString = `0${hours}`;
+    if (minutes < 10) minutesString = `0${minutes}`;
+
+    return { hours: hoursString, minutes: minutesString };
+  }
+
+  toLocaleString(): string {
+    const date = new Date(new Date().setUTCHours(this.hours, this.minutes));
+
+    const { hours, minutes } = this.formatHoursAndMinutes(date.getHours(), date.getMinutes());
+
+    return `${hours}${SEPARATOR}${minutes}`;
+  }
+
+  toString(): string {
+    const { hours, minutes } = this.formatHoursAndMinutes(this.hours, this.minutes);
 
     return `${hours}${SEPARATOR}${minutes}`;
   }

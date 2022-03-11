@@ -143,6 +143,14 @@ export class RangeSerie {
     return rangesString;
   }
 
+  toLocaleString(): string {
+    const rangesString = this.sortRanges()
+      .map((range) => range.toLocaleString())
+      .join(SEPARATOR);
+
+    return rangesString;
+  }
+
   toDate(): Array<[Date, Date]> {
     return this.sortRanges().map((r) => r.toDate());
   }

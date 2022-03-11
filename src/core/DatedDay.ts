@@ -82,10 +82,16 @@ export class DatedDay {
     return { ranges, date: dayDate };
   }
 
-  toString(): string {
-    const rangesString = this._ranges.toString();
+  private formatString(date: string, ranges: string): string {
+    return `${date}${SEPARATOR}${ranges}`;
+  }
 
-    return `${this._date.toString()}${SEPARATOR}${rangesString}`;
+  toString(): string {
+    return this.formatString(this._date.toString(), this._ranges.toString());
+  }
+
+  toLocaleString(): string {
+    return this.formatString(this._date.toLocaleString(), this._ranges.toLocaleString());
   }
 
   toDate(date?: Date): Array<[Date, Date]> {

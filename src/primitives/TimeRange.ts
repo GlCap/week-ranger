@@ -82,8 +82,16 @@ export class TimeRange {
     return range.duration / timeSlot;
   }
 
+  private formatString(start: string, end: string): string {
+    return `${start}${SEPARATOR}${end}`;
+  }
+
   toString(): string {
-    return `${this._start.toString()}${SEPARATOR}${this._end.toString()}`;
+    return this.formatString(this._start.toString(), this._end.toString());
+  }
+
+  toLocaleString(): string {
+    return this.formatString(this._start.toLocaleString(), this._end.toLocaleString());
   }
 
   toDate(from: Date = new Date()): [Date, Date] {

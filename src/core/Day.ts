@@ -92,10 +92,16 @@ export class Day {
     return { ranges, number: dayNumber };
   }
 
-  toString(): string {
-    const rangesString = this._ranges.toString();
+  private formatString(day: string | number, ranges: string): string {
+    return `${day}${SEPARATOR}${ranges}`;
+  }
 
-    return `${this._number}${SEPARATOR}${rangesString}`;
+  toString(): string {
+    return this.formatString(this._number, this._ranges.toString());
+  }
+
+  toLocaleString(): string {
+    return this.formatString(this._number, this._ranges.toLocaleString());
   }
 
   toDate(date?: Date): Array<[Date, Date]> {

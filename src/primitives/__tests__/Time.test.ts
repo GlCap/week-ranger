@@ -79,6 +79,16 @@ describe('Time class', () => {
     });
   });
 
+  describe('toLocaleString', () => {
+    it.each(Array.from({ length: 24 }, (_, k) => k))('should serialize to %s', (hours) => {
+      const timeZoneOffset = new Date().getTimezoneOffset();
+      const localTime = new Time({ hours, minutes: 0 });
+      const utcTime = localTime.add(timeZoneOffset);
+
+      expect(localTime.toString()).toBe(utcTime.toLocaleString());
+    });
+  });
+
   describe('toJSON', () => {
     it('should be serializable and de-serializable', () => {
       const time = new Time(timeString);
