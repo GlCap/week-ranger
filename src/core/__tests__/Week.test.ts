@@ -25,9 +25,9 @@ describe('Week class', () => {
     });
 
     it('should instance from a Day', () => {
-      const day = new RangeSerie('08:30-10:30,06:30-07:30,07:30-10:30');
-      expect(new Week(day)).toBeInstanceOf(Week);
-      expect(new Week(day).equals(new Week(stringFullWeek))).toBeTruthy();
+      const serie = new RangeSerie('08:30-10:30,06:30-07:30,07:30-10:30');
+      expect(new Week(serie)).toBeInstanceOf(Week);
+      expect(new Week(serie).equals(new Week(stringFullWeek))).toBeTruthy();
     });
   });
 

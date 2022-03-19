@@ -146,14 +146,14 @@ export class Week extends Map<WeekDays, RangeSerie> {
     if (rangeSerie == null) {
       const temp = new RangeSerie([]);
       this.set(number, temp);
-      return new Day(temp.serie, number);
+      return new Day(temp, number);
     }
 
-    return new Day(rangeSerie.serie, number);
+    return new Day(rangeSerie, number);
   }
 
-  setDay(number: WeekDays, day: Day): this {
-    return this.set(number, day);
+  setDay(number: WeekDays, value: Day | RangeSerie): this {
+    return this.set(number, value);
   }
 }
 

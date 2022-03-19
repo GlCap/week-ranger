@@ -12,8 +12,9 @@ export class Day extends RangeSerie {
 
   constructor(value: WeekDays);
   constructor(value: string, number?: WeekDays);
-  constructor(value: TimeRange[], number: WeekDays);
-  constructor(value: string[], number: WeekDays);
+  constructor(value: RangeSerie, number?: WeekDays);
+  constructor(value: TimeRange[], number?: WeekDays);
+  constructor(value: string[], number?: WeekDays);
   constructor(value: Array<string | TimeRange>, number: WeekDays);
   constructor(value: DayParsable, number?: WeekDays);
   constructor(value: Day, number?: WeekDays);
@@ -22,6 +23,7 @@ export class Day extends RangeSerie {
       | string
       | DayParsable
       | Day
+      | RangeSerie
       | TimeRange[]
       | string[]
       | Array<string | TimeRange>
@@ -31,6 +33,13 @@ export class Day extends RangeSerie {
     if (typeof value === 'number') {
       super(new RangeSerie());
       this._number = value;
+      return;
+    }
+
+    if (value instanceof RangeSerie) {
+      super(value);
+      this._number = number ?? 0;
+
       return;
     }
 
