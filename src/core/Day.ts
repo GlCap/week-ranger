@@ -1,18 +1,13 @@
 import { TimeRange, RangeSerie } from '../primitives';
-import { DayParsable, DaySerializable, WeekDays } from '../types';
+import { DayParsable, DaySerializable, DaySlottableOptions, WeekDays } from '../types';
 import { WeekRangerError } from '../errors';
 import { WEEK_DAYS } from '../utils';
 
-export class Day {
-  private readonly _ranges: RangeSerie;
+export class Day extends RangeSerie {
   private readonly _number: WeekDays;
 
   get number(): WeekDays {
     return this._number;
-  }
-
-  get ranges(): RangeSerie {
-    return this._ranges;
   }
 
   constructor(value: WeekDays);
@@ -34,45 +29,49 @@ export class Day {
     number?: WeekDays,
   ) {
     if (typeof value === 'number') {
+      super(new RangeSerie());
       this._number = value;
-      this._ranges = new RangeSerie();
       return;
     }
 
     if (value instanceof Day) {
+      super(value);
       this._number = number ?? value._number;
-      this._ranges = value._ranges;
+
       return;
     }
 
     if (Array.isArray(value)) {
+      super(new RangeSerie(value));
       this._number = number ?? 0;
-      this._ranges = new RangeSerie(value);
 
       return;
     }
 
     const parsed = typeof value === 'string' ? Day.parse(value, number ?? undefined) : value;
 
-    this._number = number ?? parsed.number ?? 0;
-    this._ranges =
+    const ranges =
       parsed.ranges != null
         ? new RangeSerie(parsed.ranges.map((r) => new TimeRange(r)))
         : new RangeSerie();
+
+    super(ranges);
+    this._number = number ?? parsed.number ?? 0;
   }
 
   /**
    * Create a `Day` with constant `Range`s duration
    * @param timeSlot the constant `Range` duration
    * @param range the time `Range`
-   * @param number the 0 indexed day of week
+   * @param options extra optional options
    */
   static slottable(
     timeSlot: number,
     range: string | TimeRange,
-    number: WeekDays = WeekDays.monday,
+    options: DaySlottableOptions = {},
   ): Day {
-    const timeRangeChain = new RangeSerie(RangeSerie.slottable(timeSlot, range));
+    const { number = WeekDays.monday } = options;
+    const timeRangeChain = new RangeSerie(RangeSerie.slottable(timeSlot, range, options));
     return new Day(timeRangeChain.serie, number);
   }
 
@@ -93,9 +92,9 @@ export class Day {
 
     if (!WEEK_DAYS.includes(dayNumber)) throw new WeekRangerError(value, 'Day');
 
-    const ranges = new RangeSerie(rawRanges).toJSON();
+    const rangeSerie = new RangeSerie(rawRanges).toJSON();
 
-    return { ranges, number: dayNumber };
+    return { ...rangeSerie, number: dayNumber };
   }
 
   private formatString(day: string | number, ranges: string): string {
@@ -103,27 +102,27 @@ export class Day {
   }
 
   toString(): string {
-    return this.formatString(this._number, this._ranges.toString());
+    return this.formatString(this._number, super.toString());
   }
 
   toLocaleString(): string {
-    return this.formatString(this._number, this._ranges.toLocaleString());
+    return this.formatString(this._number, super.toLocaleString());
   }
 
   toDate(date?: Date): Array<[Date, Date]> {
-    return this._ranges.serie.map((r) => r.toDate(date));
+    return this.serie.map((r) => r.toDate(date));
   }
 
   toJSON(): DaySerializable {
     return {
+      ...super.toJSON(),
       number: this._number,
-      ranges: this._ranges.toJSON(),
     };
   }
 
   compareTo(that: Day): number {
     if (this._number != null && that._number != null) return this._number - that._number;
-    return this._ranges.size - that._ranges.size;
+    return this.size - this.size;
   }
 
   isAfter(that: Day): boolean {

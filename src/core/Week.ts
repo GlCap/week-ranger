@@ -64,7 +64,7 @@ export class Week extends Map<WeekDays, RangeSerie> {
 
     const temp = WEEK_DAYS_LABEL.map<[WeekDays, RangeSerie]>((l) => {
       const number = WeekDays[l];
-      const parsableDay = parsed[l] ?? new RangeSerie([]).toJSON();
+      const parsableDay = parsed[l] ?? new RangeSerie([]).toJSON().ranges;
       return [number, new RangeSerie(parsableDay)];
     });
 
@@ -85,13 +85,14 @@ export class Week extends Map<WeekDays, RangeSerie> {
     return rawWeek.reduce(
       (acc, curr, index) => {
         const isNotEmpty = curr.length !== 0;
-        if (index === WeekDays.sunday && isNotEmpty) acc.sunday = RangeSerie.parse(curr);
-        if (index === WeekDays.monday && isNotEmpty) acc.monday = RangeSerie.parse(curr);
-        if (index === WeekDays.tuesday && isNotEmpty) acc.tuesday = RangeSerie.parse(curr);
-        if (index === WeekDays.wednesday && isNotEmpty) acc.wednesday = RangeSerie.parse(curr);
-        if (index === WeekDays.thursday && isNotEmpty) acc.thursday = RangeSerie.parse(curr);
-        if (index === WeekDays.friday && isNotEmpty) acc.friday = RangeSerie.parse(curr);
-        if (index === WeekDays.saturday && isNotEmpty) acc.saturday = RangeSerie.parse(curr);
+        if (index === WeekDays.sunday && isNotEmpty) acc.sunday = RangeSerie.parse(curr).ranges;
+        if (index === WeekDays.monday && isNotEmpty) acc.monday = RangeSerie.parse(curr).ranges;
+        if (index === WeekDays.tuesday && isNotEmpty) acc.tuesday = RangeSerie.parse(curr).ranges;
+        if (index === WeekDays.wednesday && isNotEmpty)
+          acc.wednesday = RangeSerie.parse(curr).ranges;
+        if (index === WeekDays.thursday && isNotEmpty) acc.thursday = RangeSerie.parse(curr).ranges;
+        if (index === WeekDays.friday && isNotEmpty) acc.friday = RangeSerie.parse(curr).ranges;
+        if (index === WeekDays.saturday && isNotEmpty) acc.saturday = RangeSerie.parse(curr).ranges;
 
         return acc;
       },
@@ -125,13 +126,13 @@ export class Week extends Map<WeekDays, RangeSerie> {
 
   toJSON(): WeekSerializable {
     return {
-      sunday: this.getDay(WeekDays.sunday).ranges.toJSON(),
-      monday: this.getDay(WeekDays.monday).ranges.toJSON(),
-      tuesday: this.getDay(WeekDays.tuesday).ranges.toJSON(),
-      wednesday: this.getDay(WeekDays.wednesday).ranges.toJSON(),
-      thursday: this.getDay(WeekDays.thursday).ranges.toJSON(),
-      friday: this.getDay(WeekDays.friday).ranges.toJSON(),
-      saturday: this.getDay(WeekDays.saturday).ranges.toJSON(),
+      sunday: this.getDay(WeekDays.sunday).toJSON().ranges,
+      monday: this.getDay(WeekDays.monday).toJSON().ranges,
+      tuesday: this.getDay(WeekDays.tuesday).toJSON().ranges,
+      wednesday: this.getDay(WeekDays.wednesday).toJSON().ranges,
+      thursday: this.getDay(WeekDays.thursday).toJSON().ranges,
+      friday: this.getDay(WeekDays.friday).toJSON().ranges,
+      saturday: this.getDay(WeekDays.saturday).toJSON().ranges,
     };
   }
 
@@ -152,7 +153,7 @@ export class Week extends Map<WeekDays, RangeSerie> {
   }
 
   setDay(number: WeekDays, day: Day): this {
-    return this.set(number, day.ranges);
+    return this.set(number, day);
   }
 }
 

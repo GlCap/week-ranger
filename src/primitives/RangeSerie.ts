@@ -1,5 +1,9 @@
 import { WeekRangerError } from '../errors';
-import { RangeSerieSlottableOptions, TimeRangeSerializable } from '../types';
+import type {
+  RangeSerieSerializable,
+  RangeSerieSlottableOptions,
+  TimeRangeSerializable,
+} from '../types';
 import { Time } from './Time';
 import { TimeRange } from './TimeRange';
 
@@ -23,6 +27,7 @@ export class RangeSerie extends Map<string, TimeRange> {
       | TimeRange[]
       | string[]
       | TimeRangeSerializable[]
+      | RangeSerieSerializable
       | Array<string | TimeRange | TimeRangeSerializable>
       | Map<string, TimeRange>
       | RangeSerie
@@ -50,17 +55,25 @@ export class RangeSerie extends Map<string, TimeRange> {
 
     const parsed = typeof value === 'string' ? RangeSerie.parse(value) : value;
 
-    super(new Map(parsed.map(mapToTimeRangeTuple)));
+    super(new Map(parsed.ranges.map(mapToTimeRangeTuple)));
   }
 
   static fromArray(value: string[]): RangeSerie;
   static fromArray(value: TimeRange[]): RangeSerie;
   static fromArray(value: TimeRangeSerializable[]): RangeSerie;
+  static fromArray(value: RangeSerieSerializable): RangeSerie;
   static fromArray(value: Array<string | TimeRange | TimeRangeSerializable>): RangeSerie;
   static fromArray(
-    value: TimeRange[] | string[] | TimeRangeSerializable[] | Array<string | TimeRange>,
+    value:
+      | TimeRange[]
+      | string[]
+      | RangeSerieSerializable
+      | TimeRangeSerializable[]
+      | Array<string | TimeRange | TimeRangeSerializable>,
   ): RangeSerie {
-    const mappedValues = value.map(mapToTimeRangeTuple);
+    const mappedValues = Array.isArray(value)
+      ? value.map(mapToTimeRangeTuple)
+      : value.ranges.map(mapToTimeRangeTuple);
 
     return new RangeSerie(new Map(mappedValues));
   }
@@ -112,7 +125,7 @@ export class RangeSerie extends Map<string, TimeRange> {
     return new RangeSerie(ranges);
   }
 
-  static parse(value: string): TimeRangeSerializable[] {
+  static parse(value: string): RangeSerieSerializable {
     if (value.length === 0) {
       throw new WeekRangerError(value, 'Day');
     }
@@ -124,7 +137,7 @@ export class RangeSerie extends Map<string, TimeRange> {
       .sort(compareRanges)
       .map((r) => r.toJSON());
 
-    return ranges;
+    return { ranges };
   }
 
   private sortRanges(): TimeRange[] {
@@ -205,8 +218,8 @@ export class RangeSerie extends Map<string, TimeRange> {
     return this.sortRanges().map((r) => r.toDate());
   }
 
-  toJSON(): TimeRangeSerializable[] {
-    return this.sortRanges().map((range) => range.toJSON());
+  toJSON(): RangeSerieSerializable {
+    return { ranges: this.sortRanges().map((range) => range.toJSON()) };
   }
 }
 

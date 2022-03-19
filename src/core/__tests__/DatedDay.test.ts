@@ -8,7 +8,7 @@ const day = new DatedDay(dayString, testDate);
 const monday = new DatedDay(dayString, new Date(2021, 3, 21));
 const tuesday = new DatedDay(dayString, new Date(2021, 3, 22));
 
-describe('Day class', () => {
+describe('DatedDay class', () => {
   describe('constructor', () => {
     it('should instance without params', () => {
       expect(new DatedDay(testDate)).toBeDefined();

@@ -11,6 +11,10 @@ export interface TimeRangeSerializable {
   end: TimeSerializable;
 }
 
+export interface RangeSerieSerializable {
+  ranges: TimeRangeSerializable[];
+}
+
 export enum WeekDays {
   sunday = 0,
   monday = 1,
@@ -21,14 +25,12 @@ export enum WeekDays {
   saturday = 6,
 }
 
-export interface DaySerializable {
+export interface DaySerializable extends RangeSerieSerializable {
   number: WeekDays;
-  ranges: TimeRangeSerializable[];
 }
 
-export interface DatedDaySerializable {
+export interface DatedDaySerializable extends RangeSerieSerializable {
   date: Date;
-  ranges: TimeRangeSerializable[];
 }
 
 export type DayParsable = Partial<DaySerializable>;
@@ -48,4 +50,12 @@ export type WeekTuple = [
 export interface RangeSerieSlottableOptions {
   timeRequired?: number;
   allowedMinutesOverflow?: number;
+}
+
+export interface DatedDaySlottableOptions extends RangeSerieSlottableOptions {
+  date?: Date;
+}
+
+export interface DaySlottableOptions extends RangeSerieSlottableOptions {
+  number?: WeekDays;
 }
