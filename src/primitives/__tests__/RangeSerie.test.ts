@@ -25,7 +25,8 @@ describe('RangeSerie class', () => {
   describe('delete', () => {
     it('can delete ranges', () => {
       const rangeSet = new TimeRange('14:30-15:30');
-      const serieSet = new RangeSerie(timeRangeChain).set(rangeSet).delete(rangeSet.toString());
+      const serieSet = new RangeSerie(timeRangeChain).set(rangeSet);
+      serieSet.delete(rangeSet.toString());
       expect(serieSet.has(rangeSet)).toBeFalsy();
     });
   });

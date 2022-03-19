@@ -2,17 +2,33 @@ import { Time } from './Time';
 import { TimeRangeSerializable } from '../types';
 import { WeekRangerError } from '../errors';
 
-const SEPARATOR = '-';
-
 export class TimeRange {
   private readonly _start: Time;
   private readonly _end: Time;
+
+  get start(): Time {
+    return this._start;
+  }
+
+  get end(): Time {
+    return this._end;
+  }
+
+  get duration(): number {
+    const hours = this._end.hours - this._start.hours;
+    const minutes = this._end.minutes - this._start.minutes;
+
+    const total = hours * 60 + minutes;
+
+    return total;
+  }
 
   constructor(value: string);
   constructor(value: [Time, Time]);
   constructor(start: Time, end: Time);
   constructor(value: TimeRangeSerializable);
   constructor(value: TimeRange);
+  constructor(value: string | TimeRange | TimeRangeSerializable);
   constructor(
     valueOrStart: string | [Time, Time] | TimeRangeSerializable | TimeRange | Time,
     valueEnd?: Time,
@@ -144,21 +160,6 @@ export class TimeRange {
   overlaps(that: TimeRange): boolean {
     return this._start.compareTo(that._end) < 0 && this._end.compareTo(that._start) > 0;
   }
-
-  get start(): Time {
-    return this._start;
-  }
-
-  get end(): Time {
-    return this._end;
-  }
-
-  get duration(): number {
-    const hours = this._end.hours - this._start.hours;
-    const minutes = this._end.minutes - this._start.minutes;
-
-    const total = hours * 60 + minutes;
-
-    return total;
-  }
 }
+
+const SEPARATOR = '-';

@@ -3,11 +3,17 @@ import { DayParsable, DaySerializable, WeekDays } from '../types';
 import { WeekRangerError } from '../errors';
 import { WEEK_DAYS } from '../utils';
 
-const SEPARATOR = ';';
-
 export class Day {
   private readonly _ranges: RangeSerie;
   private readonly _number: WeekDays;
+
+  get number(): WeekDays {
+    return this._number;
+  }
+
+  get ranges(): RangeSerie {
+    return this._ranges;
+  }
 
   constructor(value: WeekDays);
   constructor(value: string, number?: WeekDays);
@@ -127,12 +133,6 @@ export class Day {
   equals(that: Day): boolean {
     return this.toString() === that.toString();
   }
-
-  get number(): WeekDays {
-    return this._number;
-  }
-
-  get ranges(): RangeSerie {
-    return this._ranges;
-  }
 }
+
+const SEPARATOR = ';';

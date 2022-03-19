@@ -2,23 +2,6 @@ import { WeekRangerError } from '../errors';
 import { TimeSerializable } from '../types';
 import { isDstObserved } from '../utils';
 
-const HOUR_MINUTES = 60;
-const DAY_HOURS = 24;
-const MINUTES_DAY = 60 * 24;
-
-const computeMinutes = (hours: number, minutes: number): number => hours * HOUR_MINUTES + minutes;
-
-export const totalMinutesToTimeHours = (num: number): number => {
-  const hours = Math.floor(num / HOUR_MINUTES);
-  return hours > DAY_HOURS ? hours % DAY_HOURS : hours;
-};
-
-const totalMinutesToTimeMinutes = (num: number): number => {
-  return num % HOUR_MINUTES;
-};
-
-const SEPARATOR = ':';
-
 /**
  * 24 hours based Hours and Minutes time (HH:MM) separated by a `:`
  *
@@ -213,3 +196,20 @@ export class Time {
     return totalMinutesToTimeMinutes(this.globalMinutes);
   }
 }
+
+const HOUR_MINUTES = 60;
+const DAY_HOURS = 24;
+const MINUTES_DAY = 60 * 24;
+
+const computeMinutes = (hours: number, minutes: number): number => hours * HOUR_MINUTES + minutes;
+
+export const totalMinutesToTimeHours = (num: number): number => {
+  const hours = Math.floor(num / HOUR_MINUTES);
+  return hours > DAY_HOURS ? hours % DAY_HOURS : hours;
+};
+
+const totalMinutesToTimeMinutes = (num: number): number => {
+  return num % HOUR_MINUTES;
+};
+
+const SEPARATOR = ':';

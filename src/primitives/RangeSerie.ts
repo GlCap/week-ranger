@@ -3,20 +3,19 @@ import { RangeSerieSlottableOptions, TimeRangeSerializable } from '../types';
 import { Time } from './Time';
 import { TimeRange } from './TimeRange';
 
-const SEPARATOR = ',';
+export class RangeSerie extends Map<string, TimeRange> {
+  get serie(): TimeRange[] {
+    return this.sortRanges();
+  }
 
-const compareRanges = (a: TimeRange, b: TimeRange): number => a.compareTo(b);
+  get first(): TimeRange {
+    return this.serie[0];
+  }
 
-export class RangeSerie {
-  private readonly _ranges: Map<string, TimeRange>;
-
-  constructor();
-  constructor(value: string);
-  constructor(value: string[]);
-  constructor(value: TimeRange[]);
-  constructor(value: Array<string | TimeRange>);
-  constructor(value: TimeRangeSerializable[]);
-  constructor(value: RangeSerie);
+  get last(): TimeRange {
+    const ranges = this.serie;
+    return ranges[ranges.length - 1];
+  }
 
   constructor(
     value?:
@@ -24,43 +23,46 @@ export class RangeSerie {
       | TimeRange[]
       | string[]
       | TimeRangeSerializable[]
-      | Array<string | TimeRange>
+      | Array<string | TimeRange | TimeRangeSerializable>
+      | Map<string, TimeRange>
       | RangeSerie
       | null,
   ) {
     if (value == null) {
-      this._ranges = new Map();
+      super();
       return;
     }
 
     if (value instanceof RangeSerie) {
-      this._ranges = value._ranges;
+      super(value);
+      return;
+    }
+
+    if (value instanceof Map) {
+      super(value);
       return;
     }
 
     if (Array.isArray(value)) {
-      this._ranges = new Map(
-        value.map((r: string | TimeRange | TimeRangeSerializable) => {
-          let range: TimeRange;
-
-          if (r instanceof TimeRange) range = r;
-          else if (typeof r === 'string') range = new TimeRange(r);
-          else range = new TimeRange(r);
-
-          return [range.toString(), range] as const;
-        }),
-      );
+      super(RangeSerie.fromArray(value));
       return;
     }
 
     const parsed = typeof value === 'string' ? RangeSerie.parse(value) : value;
 
-    this._ranges = new Map(
-      parsed.map((r) => {
-        const range = new TimeRange(r);
-        return [range.toString(), range];
-      }) ?? [],
-    );
+    super(new Map(parsed.map(mapToTimeRangeTuple)));
+  }
+
+  static fromArray(value: string[]): RangeSerie;
+  static fromArray(value: TimeRange[]): RangeSerie;
+  static fromArray(value: TimeRangeSerializable[]): RangeSerie;
+  static fromArray(value: Array<string | TimeRange | TimeRangeSerializable>): RangeSerie;
+  static fromArray(
+    value: TimeRange[] | string[] | TimeRangeSerializable[] | Array<string | TimeRange>,
+  ): RangeSerie {
+    const mappedValues = value.map(mapToTimeRangeTuple);
+
+    return new RangeSerie(new Map(mappedValues));
   }
 
   /**
@@ -126,13 +128,61 @@ export class RangeSerie {
   }
 
   private sortRanges(): TimeRange[] {
-    const array = [...this._ranges.values()];
+    const array = [...this.values()];
 
     return array.sort(compareRanges);
   }
 
   private rangeOrString(range: string | TimeRange): string {
     return typeof range === 'string' ? range : range.toString();
+  }
+
+  equals(that: RangeSerie): boolean {
+    return this.toString() === that.toString();
+  }
+
+  set(key: TimeRange | string): this {
+    const range = new TimeRange(key);
+
+    if (typeof key === 'string') {
+      return super.set(key, range);
+    }
+
+    return super.set(key.toString(), range);
+  }
+
+  delete(range: string | TimeRange): boolean {
+    return super.delete(this.rangeOrString(range));
+  }
+
+  replace(replace: string | TimeRange, range: string | TimeRange): this {
+    const replaceString = this.rangeOrString(replace);
+    if (!this.has(replaceString) || this.has(range.toString())) return this;
+    this.delete(replaceString);
+    return this.set(range);
+  }
+
+  has(range: TimeRange | string): boolean {
+    return super.has(this.rangeOrString(range));
+  }
+
+  /**
+   * Checks if provided `Range` or `Time` is contained within any of the `Range`s in this `Day`
+   *
+   * @param value `Range` or `Time`
+   */
+  contains(value: Time | TimeRange): boolean;
+  /**
+   * Checks if provided `Range` or `Time` is contained within any of the `Range`s in this `Day`
+   *
+   * @param value `Range` or `Time`
+   * @param extract if true, return the `Range`
+   */
+  contains(value: Time | TimeRange, extract: true): TimeRange | null;
+  contains(value: Time | TimeRange, extract: false): boolean;
+  contains(value: Time | TimeRange, extract = false): boolean | TimeRange | null {
+    if (extract) return this.serie.find((r) => r.contains(value)) ?? null;
+    return this.serie.some((r) => r.contains(value));
   }
 
   toString(): string {
@@ -158,68 +208,11 @@ export class RangeSerie {
   toJSON(): TimeRangeSerializable[] {
     return this.sortRanges().map((range) => range.toJSON());
   }
-
-  equals(that: RangeSerie): boolean {
-    return this.toString() === that.toString();
-  }
-
-  set(range: TimeRange): this {
-    this._ranges.set(range.toString(), range);
-    return this;
-  }
-
-  delete(range: string | TimeRange): this {
-    this._ranges.delete(this.rangeOrString(range));
-    return this;
-  }
-
-  replace(replace: string | TimeRange, range: TimeRange): this {
-    const replaceString = this.rangeOrString(replace);
-    if (!this._ranges.has(replaceString) || this._ranges.has(range.toString())) return this;
-    this.delete(replaceString);
-    return this.set(range);
-  }
-
-  has(range: TimeRange | string): boolean {
-    return this._ranges.has(this.rangeOrString(range));
-  }
-
-  /**
-   * Checks if provided `Range` or `Time` is contained within any of the `Range`s in this `Day`
-   *
-   * @param value `Range` or `Time`
-   */
-  contains(value: Time | TimeRange): boolean;
-  /**
-   * Checks if provided `Range` or `Time` is contained within any of the `Range`s in this `Day`
-   *
-   * @param value `Range` or `Time`
-   * @param extract if true, return the `Range`
-   */
-  contains(value: Time | TimeRange, extract: true): TimeRange | null;
-  contains(value: Time | TimeRange, extract: false): boolean;
-  contains(value: Time | TimeRange, extract = false): boolean | TimeRange | null {
-    if (extract) return this.serie.find((r) => r.contains(value)) ?? null;
-    return this.serie.some((r) => r.contains(value));
-  }
-
-  get serie(): TimeRange[] {
-    return this.sortRanges();
-  }
-
-  get first(): TimeRange {
-    return this.serie[0];
-  }
-
-  get last(): TimeRange {
-    const ranges = this.serie;
-    return ranges[ranges.length - 1];
-  }
-
-  get size(): number {
-    return this._ranges.size;
-  }
 }
+
+const SEPARATOR = ',';
+
+const compareRanges = (a: TimeRange, b: TimeRange): number => a.compareTo(b);
 
 function isSlotAvailable(
   slot: TimeRange,
@@ -227,4 +220,12 @@ function isSlotAvailable(
   allowedMinutesOverflow: number,
 ): boolean {
   return range.end.add(allowedMinutesOverflow).compareTo(slot.end) >= 0;
+}
+
+function mapToTimeRangeTuple(
+  item: string | TimeRange | TimeRangeSerializable,
+): readonly [string, TimeRange] {
+  const range = new TimeRange(item);
+
+  return [range.toString(), range] as const;
 }

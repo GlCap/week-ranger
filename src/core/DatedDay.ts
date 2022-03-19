@@ -2,11 +2,17 @@ import { TimeRange, RangeSerie } from '../primitives';
 import { DatedDaySerializable } from '../types';
 import { WeekRangerError } from '../errors';
 
-const SEPARATOR = ';';
-
 export class DatedDay {
   private readonly _ranges: RangeSerie;
   private readonly _date: Date;
+
+  get date(): Date {
+    return this._date;
+  }
+
+  get ranges(): RangeSerie {
+    return this._ranges;
+  }
 
   constructor(value: Date);
   constructor(value: string, date?: Date);
@@ -126,12 +132,6 @@ export class DatedDay {
     const end = this._date.setUTCHours(23, 59, 59, 999);
     return new Date(end);
   }
-
-  get date(): Date {
-    return this._date;
-  }
-
-  get ranges(): RangeSerie {
-    return this._ranges;
-  }
 }
+
+const SEPARATOR = ';';

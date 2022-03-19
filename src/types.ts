@@ -1,3 +1,5 @@
+import type { RangeSerie } from './primitives/RangeSerie';
+
 export interface TimeSerializable {
   hours: number;
   minutes: number;
@@ -33,6 +35,15 @@ export type DayParsable = Partial<DaySerializable>;
 
 export type WeekSerializable = Record<keyof typeof WeekDays, TimeRangeSerializable[]>;
 export type WeekParsable = Partial<Record<keyof typeof WeekDays, TimeRangeSerializable[]>>;
+export type WeekTuple = [
+  sunday: RangeSerie | null,
+  monday: RangeSerie | null,
+  tuesday: RangeSerie | null,
+  wednesday: RangeSerie | null,
+  thursday: RangeSerie | null,
+  friday: RangeSerie | null,
+  saturday: RangeSerie | null,
+];
 
 export interface RangeSerieSlottableOptions {
   timeRequired?: number;
