@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/GlCap/week-ranger/compare/v0.8.0...v0.9.0) (2022-03-19)
+
+### Features
+
+- add isDST field to Time to handle Daylight Saving Time ([d59ac29](https://github.com/GlCap/week-ranger/commit/d59ac293d5024d6173f041578a7d32acb12981d4))
+
 ## [0.8.0](https://github.com/GlCap/week-ranger/compare/v0.7.8...v0.8.0) (2022-03-11)
 
 ### Features
