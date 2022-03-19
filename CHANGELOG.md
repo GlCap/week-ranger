@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.9.3](https://github.com/GlCap/week-ranger/compare/v0.9.2...v0.9.3) (2022-03-19)
+
+### Features
+
+- reworked Day and DatedDay using inheritance ([15fc762](https://github.com/GlCap/week-ranger/commit/15fc7628aa7d87da2079474493abc981937788c6))
+
 ### [0.9.2](https://github.com/GlCap/week-ranger/compare/v0.9.1...v0.9.2) (2022-03-19)
 
 ### Bug Fixes
