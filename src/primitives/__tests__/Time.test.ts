@@ -6,9 +6,9 @@ const timeBeforeString = '09:05';
 
 const strings = [timeString, timeAfterString, timeBeforeString];
 const stringsObjects = [
-  [timeString, { hours: 12, minutes: 30 }],
-  [timeAfterString, { hours: 14, minutes: 5 }],
-  [timeBeforeString, { hours: 9, minutes: 5 }],
+  [timeString, { hours: 12, minutes: 30, isDST: false }],
+  [timeAfterString, { hours: 14, minutes: 5, isDST: false }],
+  [timeBeforeString, { hours: 9, minutes: 5, isDST: false }],
 ] as const;
 
 describe('Time class', () => {
@@ -81,8 +81,9 @@ describe('Time class', () => {
 
   describe('toLocaleString', () => {
     it.each(Array.from({ length: 24 }, (_, k) => k))('should serialize to %s', (hours) => {
-      const timeZoneOffset = new Date().getTimezoneOffset();
-      const localTime = new Time({ hours, minutes: 0 });
+      const now = new Date();
+      const timeZoneOffset = now.getTimezoneOffset();
+      const localTime = new Time(now.setUTCHours(hours));
       const utcTime = localTime.add(timeZoneOffset);
 
       expect(localTime.toString()).toBe(utcTime.toLocaleString());
@@ -106,13 +107,23 @@ describe('Time class', () => {
   });
 
   describe('compareTo', () => {
-    it('should be comparable to another time', () => {
+    it('should compare times', () => {
       const time = new Time(timeString);
       const timeAfter = new Time(timeAfterString);
       const timeBefore = new Time(timeBeforeString);
-      expect(time.compareTo(new Time(time))).toBe(0);
+
       expect(time.compareTo(timeAfter)).toBeLessThan(0);
+      expect(timeAfter.compareTo(time)).toBeGreaterThan(0);
+
       expect(time.compareTo(timeBefore)).toBeGreaterThan(0);
+      expect(timeBefore.compareTo(time)).toBeLessThan(0);
+    });
+
+    it('should compare times in Standard Time and Daylight Saving Time', () => {
+      const jan = new Time(new Date(new Date().getFullYear(), 0, 1, 0, 0));
+      const jul = new Time(new Date(new Date().getFullYear(), 6, 1, 0, 0));
+      expect(jan.compareTo(jul)).toBe(0);
+      expect(jul.compareTo(jan)).toBe(0);
     });
   });
 

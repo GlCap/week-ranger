@@ -1,5 +1,6 @@
 import { WeekRangerError } from '../errors';
 import { TimeSerializable } from '../types';
+import { isDstObserved } from '../utils';
 
 const HOUR_MINUTES = 60;
 const DAY_HOURS = 24;
@@ -30,6 +31,7 @@ const SEPARATOR = ':';
  */
 export class Time {
   private readonly globalMinutes: number;
+  readonly isDST: boolean;
 
   constructor();
   constructor(value: string);
@@ -38,19 +40,23 @@ export class Time {
   constructor(value: Time);
   constructor(value: Date);
   constructor(valueOrHours?: string | number | TimeSerializable | Time | Date, minutes?: number) {
+    this.isDST = false;
     if (valueOrHours == null) {
       const now = new Date();
+      this.isDST = isDstObserved(now);
 
       this.globalMinutes = computeMinutes(now.getUTCHours(), now.getUTCMinutes());
       return;
     }
 
     if (valueOrHours instanceof Date) {
+      this.isDST = isDstObserved(valueOrHours);
       this.globalMinutes = computeMinutes(valueOrHours.getUTCHours(), valueOrHours.getUTCMinutes());
       return;
     }
 
     if (valueOrHours instanceof Time) {
+      this.isDST = valueOrHours.isDST;
       this.globalMinutes = valueOrHours.globalMinutes;
       return;
     }
@@ -66,6 +72,7 @@ export class Time {
       return;
     }
 
+    this.isDST = valueOrHours.isDST;
     this.globalMinutes = computeMinutes(valueOrHours.hours, valueOrHours.minutes);
   }
 
@@ -97,7 +104,7 @@ export class Time {
       throw new WeekRangerError(value, 'Time');
     }
 
-    return { hours, minutes };
+    return { hours, minutes, isDST: false };
   }
 
   private formatHoursAndMinutes(
@@ -128,11 +135,19 @@ export class Time {
   }
 
   toDate(from = new Date()): Date {
-    return new Date(from.setUTCHours(this.hours, this.minutes, 0, 0));
+    return new Date(
+      Date.UTC(
+        from.getUTCFullYear(),
+        from.getUTCMonth(),
+        from.getUTCDate(),
+        this.hours,
+        this.minutes,
+      ),
+    );
   }
 
   toJSON(): TimeSerializable {
-    return { hours: this.hours, minutes: this.minutes };
+    return { hours: this.hours, minutes: this.minutes, isDST: this.isDST };
   }
 
   /**
@@ -141,6 +156,9 @@ export class Time {
    * @returns positive if `this` is greater, negative if `this` is lesser, 0 if equals
    */
   compareTo(that: Time): number {
+    if (this.isDST) return this.globalMinutes - that.globalMinutes + 60;
+    if (that.isDST) return this.globalMinutes - that.globalMinutes - 60;
+
     return this.globalMinutes - that.globalMinutes;
   }
 
