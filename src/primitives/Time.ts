@@ -139,8 +139,8 @@ export class Time {
    * @returns positive if `this` is greater, negative if `this` is lesser, 0 if equals
    */
   compareTo(that: Time): number {
-    if (this.isDST) return this.globalMinutes - that.globalMinutes + 60;
-    if (that.isDST) return this.globalMinutes - that.globalMinutes - 60;
+    if (this.isDST && !that.isDST) return this.globalMinutes - that.globalMinutes + 60;
+    if (!this.isDST && that.isDST) return this.globalMinutes - that.globalMinutes - 60;
 
     return this.globalMinutes - that.globalMinutes;
   }

@@ -124,6 +124,8 @@ describe('Time class', () => {
       const jul = new Time(new Date(new Date().getFullYear(), 6, 1, 0, 0));
       expect(jan.compareTo(jul)).toBe(0);
       expect(jul.compareTo(jan)).toBe(0);
+      expect(jan.compareTo(jan)).toBe(0);
+      expect(jul.compareTo(jul)).toBe(0);
     });
   });
 
