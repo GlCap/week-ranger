@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.9.4](https://github.com/GlCap/week-ranger/compare/v0.9.3...v0.9.4) (2022-03-19)
+
+### Features
+
+- handle RangeSerie in Day constructor ([719ae49](https://github.com/GlCap/week-ranger/commit/719ae498f1a37db876a3d49b5a5d68716655f327))
+
 ### [0.9.3](https://github.com/GlCap/week-ranger/compare/v0.9.2...v0.9.3) (2022-03-19)
 
 ### Features
