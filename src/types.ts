@@ -1,4 +1,4 @@
-import type { RangeSerie } from './primitives/RangeSerie';
+import type { Day } from './core';
 
 export interface TimeSerializable {
   hours: number;
@@ -26,7 +26,7 @@ export enum WeekDays {
 }
 
 export interface DaySerializable extends RangeSerieSerializable {
-  number: WeekDays;
+  dayOfWeek: WeekDays;
 }
 
 export interface DatedDaySerializable extends RangeSerieSerializable {
@@ -38,13 +38,13 @@ export type DayParsable = Partial<DaySerializable>;
 export type WeekSerializable = Record<keyof typeof WeekDays, TimeRangeSerializable[]>;
 export type WeekParsable = Partial<Record<keyof typeof WeekDays, TimeRangeSerializable[]>>;
 export type WeekTuple = [
-  sunday: RangeSerie | null,
-  monday: RangeSerie | null,
-  tuesday: RangeSerie | null,
-  wednesday: RangeSerie | null,
-  thursday: RangeSerie | null,
-  friday: RangeSerie | null,
-  saturday: RangeSerie | null,
+  sunday: Day,
+  monday: Day,
+  tuesday: Day,
+  wednesday: Day,
+  thursday: Day,
+  friday: Day,
+  saturday: Day,
 ];
 
 export interface RangeSerieSlottableOptions {
@@ -57,5 +57,5 @@ export interface DatedDaySlottableOptions extends RangeSerieSlottableOptions {
 }
 
 export interface DaySlottableOptions extends RangeSerieSlottableOptions {
-  number?: WeekDays;
+  dayOfWeek?: WeekDays;
 }

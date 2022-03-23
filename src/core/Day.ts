@@ -1,71 +1,49 @@
 import { TimeRange, RangeSerie } from '../primitives';
-import { DayParsable, DaySerializable, DaySlottableOptions, WeekDays } from '../types';
+import {
+  DayParsable,
+  DaySerializable,
+  DaySlottableOptions,
+  RangeSerieSerializable,
+  TimeRangeSerializable,
+  WeekDays,
+} from '../types';
 import { WeekRangerError } from '../errors';
 import { WEEK_DAYS } from '../utils';
 
 export class Day extends RangeSerie {
-  private readonly _number: WeekDays;
+  private readonly _dayOfWeek: WeekDays;
 
-  get number(): WeekDays {
-    return this._number;
+  get dayOfWeek(): WeekDays {
+    return this._dayOfWeek;
   }
 
-  constructor(value: WeekDays);
-  constructor(value: string, number?: WeekDays);
-  constructor(value: RangeSerie, number?: WeekDays);
-  constructor(value: TimeRange[], number?: WeekDays);
-  constructor(value: string[], number?: WeekDays);
-  constructor(value: Array<string | TimeRange>, number: WeekDays);
-  constructor(value: DayParsable, number?: WeekDays);
-  constructor(value: Day, number?: WeekDays);
-  constructor(
-    value:
-      | string
-      | DayParsable
-      | Day
-      | RangeSerie
-      | TimeRange[]
-      | string[]
-      | Array<string | TimeRange>
-      | WeekDays,
-    number?: WeekDays,
-  ) {
-    if (typeof value === 'number') {
-      super(new RangeSerie());
-      this._number = value;
+  constructor(dayOfWeek?: WeekDays);
+  constructor(value: Day, dayOfWeek?: WeekDays);
+  constructor(value: DayParsable, dayOfWeek?: WeekDays);
+  constructor(value?: Day | DayParsable | WeekDays | null, dayOfWeek?: WeekDays) {
+    if (value == null) {
+      super();
+      this._dayOfWeek = 0;
       return;
     }
 
-    if (value instanceof RangeSerie) {
-      super(value);
-      this._number = number ?? 0;
-
+    if (typeof value === 'number') {
+      super();
+      this._dayOfWeek = value;
       return;
     }
 
     if (value instanceof Day) {
       super(value);
-      this._number = number ?? value._number;
-
+      this._dayOfWeek = dayOfWeek ?? value._dayOfWeek;
       return;
     }
-
-    if (Array.isArray(value)) {
-      super(new RangeSerie(value));
-      this._number = number ?? 0;
-
-      return;
-    }
-
-    const parsed = typeof value === 'string' ? Day.parse(value, number ?? undefined) : value;
 
     const ranges =
-      parsed.ranges != null
-        ? new RangeSerie(parsed.ranges.map((r) => new TimeRange(r)))
-        : new RangeSerie();
+      value.ranges != null ? RangeSerie.fromArray(value.ranges.map((r) => new TimeRange(r))) : null;
 
     super(ranges);
-    this._number = number ?? parsed.number ?? 0;
+    this._dayOfWeek = value.dayOfWeek ?? dayOfWeek ?? 0;
   }
 
   /**
@@ -79,12 +57,30 @@ export class Day extends RangeSerie {
     range: string | TimeRange,
     options: DaySlottableOptions = {},
   ): Day {
-    const { number = WeekDays.monday } = options;
-    const timeRangeChain = new RangeSerie(RangeSerie.slottable(timeSlot, range, options));
-    return new Day(timeRangeChain.serie, number);
+    const { dayOfWeek = WeekDays.monday } = options;
+    const rangeSerie = new RangeSerie(RangeSerie.slottable(timeSlot, range, options));
+    return Day.fromRange(rangeSerie, dayOfWeek);
   }
 
-  static parse(value: string, number?: WeekDays | null): DaySerializable {
+  static fromArray(
+    value:
+      | string[]
+      | TimeRange[]
+      | TimeRangeSerializable[]
+      | RangeSerieSerializable
+      | Array<string | TimeRange | TimeRangeSerializable>,
+  ): Day {
+    return Day.fromRange(RangeSerie.fromArray(value), 0);
+  }
+
+  static fromRange(value: RangeSerie, dayOfWeek: WeekDays): Day {
+    return new Day({
+      ranges: value.toJSON().ranges,
+      dayOfWeek,
+    });
+  }
+
+  static fromString(value: string, number?: WeekDays | null): Day {
     if (
       (!value.includes(SEPARATOR) && value.length === 0) ||
       (number != null && !WEEK_DAYS.includes(number))
@@ -101,36 +97,39 @@ export class Day extends RangeSerie {
 
     if (!WEEK_DAYS.includes(dayNumber)) throw new WeekRangerError(value, 'Day');
 
-    const rangeSerie = new RangeSerie(rawRanges).toJSON();
+    const rangeSerie = RangeSerie.fromString(rawRanges).toJSON();
 
-    return { ...rangeSerie, number: dayNumber };
+    return new Day({ ...rangeSerie, dayOfWeek: dayNumber });
   }
 
   private formatString(day: string | number, ranges: string): string {
     return `${day}${SEPARATOR}${ranges}`;
   }
 
-  toString(): string {
-    return this.formatString(this._number, super.toString());
+  toString(includeDay: boolean = true): string {
+    if (!includeDay) return super.toString();
+    return this.formatString(this._dayOfWeek, super.toString());
   }
 
-  toLocaleString(): string {
-    return this.formatString(this._number, super.toLocaleString());
+  toLocaleString(includeDay: boolean = true): string {
+    if (!includeDay) return super.toString();
+    return this.formatString(this._dayOfWeek, super.toLocaleString());
   }
 
   toDate(date?: Date): Array<[Date, Date]> {
-    return this.serie.map((r) => r.toDate(date));
+    return this.toArray().map((r) => r.toDate(date));
   }
 
   toJSON(): DaySerializable {
     return {
       ...super.toJSON(),
-      number: this._number,
+      dayOfWeek: this._dayOfWeek,
     };
   }
 
   compareTo(that: Day): number {
-    if (this._number != null && that._number != null) return this._number - that._number;
+    if (this._dayOfWeek != null && that._dayOfWeek != null)
+      return this._dayOfWeek - that._dayOfWeek;
     return this.size - this.size;
   }
 

@@ -8,65 +8,33 @@ import { Time } from './Time';
 import { TimeRange } from './TimeRange';
 
 export class RangeSerie extends Map<string, TimeRange> {
-  get serie(): TimeRange[] {
-    return this.sortRanges();
-  }
-
   get first(): TimeRange {
-    return this.serie[0];
+    return this.toArray()[0];
   }
 
   get last(): TimeRange {
-    const ranges = this.serie;
+    const ranges = this.toArray();
     return ranges[ranges.length - 1];
   }
 
-  constructor(
-    value?:
-      | string
-      | TimeRange[]
-      | string[]
-      | TimeRangeSerializable[]
-      | RangeSerieSerializable
-      | Array<string | TimeRange | TimeRangeSerializable>
-      | Map<string, TimeRange>
-      | RangeSerie
-      | null,
-  ) {
+  constructor(value?: RangeSerieSerializable | Map<string, TimeRange> | RangeSerie | null) {
     if (value == null) {
       super();
       return;
     }
 
-    if (value instanceof RangeSerie) {
-      super(value);
+    if (value instanceof RangeSerie || value instanceof Map) {
+      super(value.entries());
       return;
     }
 
-    if (value instanceof Map) {
-      super(value);
-      return;
-    }
-
-    if (Array.isArray(value)) {
-      super(RangeSerie.fromArray(value));
-      return;
-    }
-
-    const parsed = typeof value === 'string' ? RangeSerie.parse(value) : value;
-
-    super(new Map(parsed.ranges.map(mapToTimeRangeTuple)));
+    super(new Map(value.ranges.map(mapToTimeRangeTuple)));
   }
 
-  static fromArray(value: string[]): RangeSerie;
-  static fromArray(value: TimeRange[]): RangeSerie;
-  static fromArray(value: TimeRangeSerializable[]): RangeSerie;
-  static fromArray(value: RangeSerieSerializable): RangeSerie;
-  static fromArray(value: Array<string | TimeRange | TimeRangeSerializable>): RangeSerie;
   static fromArray(
     value:
-      | TimeRange[]
       | string[]
+      | TimeRange[]
       | RangeSerieSerializable
       | TimeRangeSerializable[]
       | Array<string | TimeRange | TimeRangeSerializable>,
@@ -76,6 +44,21 @@ export class RangeSerie extends Map<string, TimeRange> {
       : value.ranges.map(mapToTimeRangeTuple);
 
     return new RangeSerie(new Map(mappedValues));
+  }
+
+  static fromString(value: string): RangeSerie {
+    if (value.length === 0) {
+      throw new WeekRangerError(value, 'Day');
+    }
+
+    const dayRangesRaw = value.split(SEPARATOR);
+
+    const ranges = dayRangesRaw
+      .map((rangeRaw) => TimeRange.fromString(rangeRaw))
+      .sort(compareRanges)
+      .map((r) => r.toJSON());
+
+    return new RangeSerie({ ranges });
   }
 
   /**
@@ -91,7 +74,7 @@ export class RangeSerie extends Map<string, TimeRange> {
     range: string | TimeRange,
     options: RangeSerieSlottableOptions = {},
   ): RangeSerie {
-    const timeRange = typeof range === 'string' ? new TimeRange(range) : range;
+    const timeRange = typeof range === 'string' ? TimeRange.fromString(range) : range;
     const { timeRequired = timeSlot, allowedMinutesOverflow = 0 } = options;
 
     const maxSlots = TimeRange.numberOfSlotsInRange(timeRange, timeSlot);
@@ -122,28 +105,7 @@ export class RangeSerie extends Map<string, TimeRange> {
       currentStart = currentStart.add(timeSlot);
     }
 
-    return new RangeSerie(ranges);
-  }
-
-  static parse(value: string): RangeSerieSerializable {
-    if (value.length === 0) {
-      throw new WeekRangerError(value, 'Day');
-    }
-
-    const dayRangesRaw = value.split(SEPARATOR);
-
-    const ranges = dayRangesRaw
-      .map((rangeRaw) => new TimeRange(rangeRaw))
-      .sort(compareRanges)
-      .map((r) => r.toJSON());
-
-    return { ranges };
-  }
-
-  private sortRanges(): TimeRange[] {
-    const array = [...this.values()];
-
-    return array.sort(compareRanges);
+    return RangeSerie.fromArray(ranges);
   }
 
   private rangeOrString(range: string | TimeRange): string {
@@ -155,7 +117,7 @@ export class RangeSerie extends Map<string, TimeRange> {
   }
 
   set(key: TimeRange | string): this {
-    const range = new TimeRange(key);
+    const range = typeof key === 'string' ? TimeRange.fromString(key) : key;
 
     if (typeof key === 'string') {
       return super.set(key, range);
@@ -194,12 +156,12 @@ export class RangeSerie extends Map<string, TimeRange> {
   contains(value: Time | TimeRange, extract: true): TimeRange | null;
   contains(value: Time | TimeRange, extract: false): boolean;
   contains(value: Time | TimeRange, extract = false): boolean | TimeRange | null {
-    if (extract) return this.serie.find((r) => r.contains(value)) ?? null;
-    return this.serie.some((r) => r.contains(value));
+    if (extract) return this.toArray().find((r) => r.contains(value)) ?? null;
+    return this.toArray().some((r) => r.contains(value));
   }
 
   toString(): string {
-    const rangesString = this.sortRanges()
+    const rangesString = this.toArray()
       .map((range) => range.toString())
       .join(SEPARATOR);
 
@@ -207,7 +169,7 @@ export class RangeSerie extends Map<string, TimeRange> {
   }
 
   toLocaleString(): string {
-    const rangesString = this.sortRanges()
+    const rangesString = this.toArray()
       .map((range) => range.toLocaleString())
       .join(SEPARATOR);
 
@@ -215,11 +177,17 @@ export class RangeSerie extends Map<string, TimeRange> {
   }
 
   toDate(): Array<[Date, Date]> {
-    return this.sortRanges().map((r) => r.toDate());
+    return this.toArray().map((r) => r.toDate());
   }
 
   toJSON(): RangeSerieSerializable {
-    return { ranges: this.sortRanges().map((range) => range.toJSON()) };
+    return { ranges: this.toArray().map((range) => range.toJSON()) };
+  }
+
+  toArray(): TimeRange[] {
+    const array = [...this.values()];
+
+    return array.sort(compareRanges);
   }
 }
 
@@ -238,7 +206,7 @@ function isSlotAvailable(
 function mapToTimeRangeTuple(
   item: string | TimeRange | TimeRangeSerializable,
 ): readonly [string, TimeRange] {
-  const range = new TimeRange(item);
+  const range = typeof item === 'string' ? TimeRange.fromString(item) : new TimeRange(item);
 
   return [range.toString(), range] as const;
 }

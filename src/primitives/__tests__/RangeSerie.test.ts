@@ -3,20 +3,20 @@ import { RangeSerie } from '../RangeSerie';
 import { Time } from '../Time';
 
 describe('RangeSerie class', () => {
-  const timeRangeChain = new RangeSerie('08:30-10:30,06:30-07:30,07:30-10:30');
+  const timeRangeChain = RangeSerie.fromString('08:30-10:30,06:30-07:30,07:30-10:30');
 
   describe('has', () => {
     it('should return true if a Range is in a Day', () => {
-      expect(timeRangeChain.has(new TimeRange('08:30-10:30'))).toBe(true);
+      expect(timeRangeChain.has(TimeRange.fromString('08:30-10:30'))).toBe(true);
     });
     it('should return false if a Range is not in a Day', () => {
-      expect(timeRangeChain.has(new TimeRange('08:30-11:30'))).toBe(false);
+      expect(timeRangeChain.has(TimeRange.fromString('08:30-11:30'))).toBe(false);
     });
   });
 
   describe('set', () => {
     test('can set ranges', () => {
-      const rangeSet = new TimeRange('14:30-15:30');
+      const rangeSet = TimeRange.fromString('14:30-15:30');
       const serieSet = new RangeSerie(timeRangeChain).set(rangeSet);
       expect(serieSet.has(rangeSet)).toBeTruthy();
     });
@@ -24,7 +24,7 @@ describe('RangeSerie class', () => {
 
   describe('delete', () => {
     it('can delete ranges', () => {
-      const rangeSet = new TimeRange('14:30-15:30');
+      const rangeSet = TimeRange.fromString('14:30-15:30');
       const serieSet = new RangeSerie(timeRangeChain).set(rangeSet);
       serieSet.delete(rangeSet.toString());
       expect(serieSet.has(rangeSet)).toBeFalsy();
@@ -33,9 +33,9 @@ describe('RangeSerie class', () => {
 
   describe('replace', () => {
     it('should replace a Range with another Range', () => {
-      const rangeSet = new TimeRange('14:30-15:30');
-      const rangeReplace = new TimeRange('15:30-16:30');
-      const rangeReplaceSame = new TimeRange('15:30-16:30');
+      const rangeSet = TimeRange.fromString('14:30-15:30');
+      const rangeReplace = TimeRange.fromString('15:30-16:30');
+      const rangeReplaceSame = TimeRange.fromString('15:30-16:30');
       const serieSet = new RangeSerie(timeRangeChain).set(rangeSet);
 
       expect(serieSet.has(rangeSet)).toBeTruthy();
@@ -47,18 +47,18 @@ describe('RangeSerie class', () => {
   });
 
   describe('contains', () => {
-    const testChain = new RangeSerie('08:30-10:30,13:00-18:30');
-    const testErrorChain = new RangeSerie('13:00-18:30,19:00-20:00');
+    const testChain = RangeSerie.fromString('08:30-10:30,13:00-18:30');
+    const testErrorChain = RangeSerie.fromString('13:00-18:30,19:00-20:00');
 
     const data = [
-      new Time('08:30'),
-      new Time('09:00'),
-      new Time('09:30'),
-      new Time('10:30'),
-      new TimeRange('08:30-10:30'),
-      new TimeRange('09:00-10:00'),
-      new TimeRange('09:15-10:00'),
-      new TimeRange('08:45-10:00'),
+      Time.fromString('08:30'),
+      Time.fromString('09:00'),
+      Time.fromString('09:30'),
+      Time.fromString('10:30'),
+      TimeRange.fromString('08:30-10:30'),
+      TimeRange.fromString('09:00-10:00'),
+      TimeRange.fromString('09:15-10:00'),
+      TimeRange.fromString('08:45-10:00'),
     ];
 
     it.each(data)(
@@ -82,23 +82,33 @@ describe('RangeSerie class', () => {
     );
   });
 
+  describe('fromArray', () => {
+    it('should create an instance from an array', () => {
+      expect(
+        RangeSerie.fromArray([TimeRange.fromString('07:30-08:30'), '08:30-10:30']),
+      ).toBeDefined();
+
+      expect(RangeSerie.fromArray(['07:30-08:30', '08:30-10:30'])).toBeDefined();
+    });
+  });
+
   describe('slottable', () => {
     it('should return a splitted TimeRange', () => {
       expect(
         RangeSerie.slottable(30, '10:00-12:00').equals(
-          new RangeSerie('10:00-10:30,10:30-11:00,11:00-11:30,11:30-12:00'),
+          RangeSerie.fromString('10:00-10:30,10:30-11:00,11:00-11:30,11:30-12:00'),
         ),
       ).toBeTruthy();
 
       expect(
         RangeSerie.slottable(30, '10:00-12:00', { allowedMinutesOverflow: 30 }).equals(
-          new RangeSerie('10:00-10:30,10:30-11:00,11:00-11:30,11:30-12:00,12:00-12:30'),
+          RangeSerie.fromString('10:00-10:30,10:30-11:00,11:00-11:30,11:30-12:00,12:00-12:30'),
         ),
       ).toBeTruthy();
 
       expect(
         RangeSerie.slottable(30, '10:00-12:00', { timeRequired: 60 }).equals(
-          new RangeSerie('10:00-11:00,10:30-11:30,11:00-12:00'),
+          RangeSerie.fromString('10:00-11:00,10:30-11:30,11:00-12:00'),
         ),
       ).toBeTruthy();
 
@@ -106,7 +116,7 @@ describe('RangeSerie class', () => {
         RangeSerie.slottable(30, '10:00-12:00', {
           timeRequired: 60,
           allowedMinutesOverflow: 30,
-        }).equals(new RangeSerie('10:00-11:00,10:30-11:30,11:00-12:00,11:30-12:30')),
+        }).equals(RangeSerie.fromString('10:00-11:00,10:30-11:30,11:00-12:00,11:30-12:30')),
       ).toBeTruthy();
     });
   });

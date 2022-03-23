@@ -13,7 +13,7 @@ const stringsObjects = [
 
 describe('Time class', () => {
   describe('constructor', () => {
-    const time = new Time(timeString);
+    const time = Time.fromString(timeString);
 
     it('can be created without params', () => {
       expect(new Time()).toBeInstanceOf(Time);
@@ -34,7 +34,7 @@ describe('Time class', () => {
   });
 
   describe('getters', () => {
-    const time = new Time(timeString);
+    const time = Time.fromString(timeString);
     it('hours should be 12', () => {
       expect(time.hours).toBe(12);
     });
@@ -47,35 +47,34 @@ describe('Time class', () => {
   describe('now', () => {
     const dateNow = new Date();
     const timeNow = Time.now();
-    const testTime = new Time(timeNow);
+    const testTime = Time.fromString(timeNow);
 
     expect(testTime.hours).toStrictEqual(dateNow.getUTCHours());
     expect(testTime.minutes).toStrictEqual(dateNow.getUTCMinutes());
   });
 
-  describe('parse', () => {
+  describe('fromString', () => {
     it.each(stringsObjects)('it should parse %s to %o', (time, json) => {
-      expect(Time.parse(time)).toStrictEqual(json);
-      expect(new Time(time).toJSON()).toStrictEqual(json);
+      expect(Time.fromString(time).toJSON()).toStrictEqual(json);
     });
     it.each(['12:000', '12', ':00', '24:00', '23:60'])(
       'should throw an error on invalid value %s',
       (time) => {
-        expect(() => Time.parse(time)).toThrow();
+        expect(() => Time.fromString(time)).toThrow();
       },
     );
   });
 
   describe('equals', () => {
     it('should be equals to self', () => {
-      const time = new Time(timeString);
+      const time = Time.fromString(timeString);
       expect(time.equals(time)).toBeTruthy();
     });
   });
 
   describe('toString', () => {
     it.each(strings)('should serialize to %s', (time) => {
-      expect(new Time(time).toString()).toBe(time);
+      expect(Time.fromString(time).toString()).toBe(time);
     });
   });
 
@@ -92,7 +91,7 @@ describe('Time class', () => {
 
   describe('toJSON', () => {
     it('should be serializable and de-serializable', () => {
-      const time = new Time(timeString);
+      const time = Time.fromString(timeString);
       const serialized = time.toJSON();
       expect(time).toStrictEqual(new Time(serialized));
     });
@@ -100,7 +99,7 @@ describe('Time class', () => {
 
   describe('toDate', () => {
     it('should be convertible to date', () => {
-      const time = new Time(timeString);
+      const time = Time.fromString(timeString);
       expect(time.toDate() instanceof Date).toBeTruthy();
       expect(time.toDate()).toStrictEqual(time.toDate());
     });
@@ -108,9 +107,9 @@ describe('Time class', () => {
 
   describe('compareTo', () => {
     it('should compare times', () => {
-      const time = new Time(timeString);
-      const timeAfter = new Time(timeAfterString);
-      const timeBefore = new Time(timeBeforeString);
+      const time = Time.fromString(timeString);
+      const timeAfter = Time.fromString(timeAfterString);
+      const timeBefore = Time.fromString(timeBeforeString);
 
       expect(time.compareTo(timeAfter)).toBeLessThan(0);
       expect(timeAfter.compareTo(time)).toBeGreaterThan(0);
@@ -131,16 +130,16 @@ describe('Time class', () => {
 
   describe('isAfter', () => {
     it(`${timeString} should be after ${timeBeforeString}`, () => {
-      const time = new Time(timeString);
-      const timeBefore = new Time(timeBeforeString);
+      const time = Time.fromString(timeString);
+      const timeBefore = Time.fromString(timeBeforeString);
 
       expect(time.isAfter(timeBefore)).toBeTruthy();
       expect(timeBefore.isAfter(time)).toBeFalsy();
     });
 
     it(`${timeString} should not be after ${timeAfterString}`, () => {
-      const time = new Time(timeString);
-      const timeAfter = new Time(timeAfterString);
+      const time = Time.fromString(timeString);
+      const timeAfter = Time.fromString(timeAfterString);
 
       expect(timeAfter.isAfter(time)).toBeTruthy();
       expect(time.isAfter(timeAfter)).toBeFalsy();
@@ -155,7 +154,7 @@ describe('Time class', () => {
       [60 * 24, '09:15', '09:15'],
       [60 * 23, '09:15', '08:15'],
     ])('should add %i minutes to %s', (minutes, time, sum) => {
-      expect(new Time(time).add(minutes).equals(new Time(sum))).toBe(true);
+      expect(Time.fromString(time).add(minutes).equals(Time.fromString(sum))).toBe(true);
     });
   });
   describe('sub', () => {
@@ -166,7 +165,7 @@ describe('Time class', () => {
       [60 * 24, '09:15', '09:15'],
       [60 * 23, '09:15', '10:15'],
     ])('should subtract %i minutes from %s', (minutes, time, diff) => {
-      expect(new Time(time).sub(minutes).equals(new Time(diff))).toBe(true);
+      expect(Time.fromString(time).sub(minutes).equals(Time.fromString(diff))).toBe(true);
     });
   });
 });

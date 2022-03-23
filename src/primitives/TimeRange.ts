@@ -23,14 +23,13 @@ export class TimeRange {
     return total;
   }
 
-  constructor(value: string);
   constructor(value: [Time, Time]);
   constructor(start: Time, end: Time);
   constructor(value: TimeRangeSerializable);
   constructor(value: TimeRange);
-  constructor(value: string | TimeRange | TimeRangeSerializable);
+  constructor(value: TimeRange | TimeRangeSerializable);
   constructor(
-    valueOrStart: string | [Time, Time] | TimeRangeSerializable | TimeRange | Time,
+    valueOrStart: [Time, Time] | TimeRangeSerializable | TimeRange | Time,
     valueEnd?: Time,
   ) {
     const rangeError = new WeekRangerError(
@@ -64,26 +63,25 @@ export class TimeRange {
       return;
     }
 
-    const { start, end } =
-      typeof valueOrStart === 'string' ? TimeRange.parse(valueOrStart) : valueOrStart;
+    const { start, end } = valueOrStart;
 
-    this._start = new Time(start.hours, start.minutes);
-    this._end = new Time(end.hours, end.minutes);
+    this._start = new Time(start);
+    this._end = new Time(end);
   }
 
-  static parse(value: string): TimeRangeSerializable {
+  static fromString(value: string): TimeRange {
     const rawTime = value.split(SEPARATOR);
     if (rawTime.length !== 2) {
       throw new WeekRangerError(value, 'TimeRange');
     }
     const [startRaw, endRaw] = rawTime;
 
-    const start = new Time(startRaw);
-    const end = new Time(endRaw);
+    const start = Time.fromString(startRaw);
+    const end = Time.fromString(endRaw);
 
     if (start.isAfter(end)) throw new WeekRangerError(value, 'TimeRange');
 
-    return { start: start.toJSON(), end: end.toJSON() };
+    return new TimeRange({ start: start.toJSON(), end: end.toJSON() });
   }
 
   /**

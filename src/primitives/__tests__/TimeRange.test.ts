@@ -8,10 +8,10 @@ describe('TimeRange class', () => {
   const rangeBeforeString = '05:00-08:30';
   const rangeSameStartString = '08:30-10:00';
 
-  const range = new TimeRange(rangeString);
-  const rangeAfter = new TimeRange(rangeAfterString);
-  const rangeBefore = new TimeRange(rangeBeforeString);
-  const rangeSameStart = new TimeRange(rangeSameStartString);
+  const range = TimeRange.fromString(rangeString);
+  const rangeAfter = TimeRange.fromString(rangeAfterString);
+  const rangeBefore = TimeRange.fromString(rangeBeforeString);
+  const rangeSameStart = TimeRange.fromString(rangeSameStartString);
 
   describe('getters', () => {
     test('start should be before end', () => {
@@ -31,7 +31,7 @@ describe('TimeRange class', () => {
     it.each([rangeString, rangeAfterString, rangeBeforeString, rangeSameStartString])(
       'should parse a formatted string',
       (range) => {
-        expect(TimeRange.parse(range)).toBeDefined();
+        expect(TimeRange.fromString(range)).toBeDefined();
       },
     );
 
@@ -39,25 +39,25 @@ describe('TimeRange class', () => {
       const rangeError = '08:30-07:30';
       const rangeErrorShort = '08:3007:30';
 
-      expect(() => TimeRange.parse(rangeErrorShort)).toThrow();
-      expect(() => TimeRange.parse(rangeError)).toThrow();
+      expect(() => TimeRange.fromString(rangeErrorShort)).toThrow();
+      expect(() => TimeRange.fromString(rangeError)).toThrow();
     });
   });
 
   describe('numberOfSlotsInRange', () => {
     it('should return the max number of slots in a time range', () => {
-      expect(TimeRange.numberOfSlotsInRange(new TimeRange('09:00-12:00'), 30)).toBe(6);
-      expect(TimeRange.numberOfSlotsInRange(new TimeRange('09:00-09:00'), 30)).toBe(0);
-      expect(TimeRange.numberOfSlotsInRange(new TimeRange('09:00-09:30'), 50)).toBe(0);
-      expect(TimeRange.numberOfSlotsInRange(new TimeRange('09:00-09:33'), 30)).toBe(0);
-      expect(TimeRange.numberOfSlotsInRange(new TimeRange('09:00-09:30'), 27)).toBe(0);
+      expect(TimeRange.numberOfSlotsInRange(TimeRange.fromString('09:00-12:00'), 30)).toBe(6);
+      expect(TimeRange.numberOfSlotsInRange(TimeRange.fromString('09:00-09:00'), 30)).toBe(0);
+      expect(TimeRange.numberOfSlotsInRange(TimeRange.fromString('09:00-09:30'), 50)).toBe(0);
+      expect(TimeRange.numberOfSlotsInRange(TimeRange.fromString('09:00-09:33'), 30)).toBe(0);
+      expect(TimeRange.numberOfSlotsInRange(TimeRange.fromString('09:00-09:30'), 27)).toBe(0);
     });
   });
 
   describe('toString', () => {
     it('should serialize to a parsable string', () => {
       expect(range.toString()).toStrictEqual(rangeString);
-      expect(new TimeRange(range.toString())).toStrictEqual(range);
+      expect(TimeRange.fromString(range.toString())).toStrictEqual(range);
     });
   });
 
@@ -121,28 +121,48 @@ describe('TimeRange class', () => {
 
   describe('contains', () => {
     it('should check if another Range or Time is contained', () => {
-      expect(new TimeRange('09:00-11:00').contains(new Time('09:00'))).toBe(true);
-      expect(new TimeRange('09:00-11:00').contains(new Time('11:00'))).toBe(true);
-      expect(new TimeRange('09:00-11:00').contains(new Time('10:00'))).toBe(true);
-      expect(new TimeRange('08:30-18:30').contains(new Time('09:00'))).toBe(true);
-      expect(new TimeRange('09:00-11:00').contains(new Time('08:00'))).toBe(false);
+      expect(TimeRange.fromString('09:00-11:00').contains(Time.fromString('09:00'))).toBe(true);
+      expect(TimeRange.fromString('09:00-11:00').contains(Time.fromString('11:00'))).toBe(true);
+      expect(TimeRange.fromString('09:00-11:00').contains(Time.fromString('10:00'))).toBe(true);
+      expect(TimeRange.fromString('08:30-18:30').contains(Time.fromString('09:00'))).toBe(true);
+      expect(TimeRange.fromString('09:00-11:00').contains(Time.fromString('08:00'))).toBe(false);
 
-      expect(new TimeRange('09:00-11:00').contains(new TimeRange('09:00-11:00'))).toBe(true);
-      expect(new TimeRange('09:00-11:00').contains(new TimeRange('08:00-10:00'))).toBe(false);
-      expect(new TimeRange('09:00-11:00').contains(new TimeRange('10:00-12:00'))).toBe(false);
-      expect(new TimeRange('09:00-11:00').contains(new TimeRange('09:00-13:00'))).toBe(false);
+      expect(
+        TimeRange.fromString('09:00-11:00').contains(TimeRange.fromString('09:00-11:00')),
+      ).toBe(true);
+      expect(
+        TimeRange.fromString('09:00-11:00').contains(TimeRange.fromString('08:00-10:00')),
+      ).toBe(false);
+      expect(
+        TimeRange.fromString('09:00-11:00').contains(TimeRange.fromString('10:00-12:00')),
+      ).toBe(false);
+      expect(
+        TimeRange.fromString('09:00-11:00').contains(TimeRange.fromString('09:00-13:00')),
+      ).toBe(false);
     });
   });
 
   describe('overlaps', () => {
     it('should check if another TimeRange overlaps', () => {
-      expect(new TimeRange('09:00-11:00').overlaps(new TimeRange('09:00-11:00'))).toBe(true);
-      expect(new TimeRange('09:00-11:00').overlaps(new TimeRange('09:00-12:00'))).toBe(true);
-      expect(new TimeRange('09:00-11:00').overlaps(new TimeRange('08:00-12:00'))).toBe(true);
-      expect(new TimeRange('09:00-11:00').overlaps(new TimeRange('08:00-10:00'))).toBe(true);
+      expect(
+        TimeRange.fromString('09:00-11:00').overlaps(TimeRange.fromString('09:00-11:00')),
+      ).toBe(true);
+      expect(
+        TimeRange.fromString('09:00-11:00').overlaps(TimeRange.fromString('09:00-12:00')),
+      ).toBe(true);
+      expect(
+        TimeRange.fromString('09:00-11:00').overlaps(TimeRange.fromString('08:00-12:00')),
+      ).toBe(true);
+      expect(
+        TimeRange.fromString('09:00-11:00').overlaps(TimeRange.fromString('08:00-10:00')),
+      ).toBe(true);
 
-      expect(new TimeRange('09:00-11:00').overlaps(new TimeRange('08:00-09:00'))).toBe(false);
-      expect(new TimeRange('09:00-11:00').overlaps(new TimeRange('11:00-12:00'))).toBe(false);
+      expect(
+        TimeRange.fromString('09:00-11:00').overlaps(TimeRange.fromString('08:00-09:00')),
+      ).toBe(false);
+      expect(
+        TimeRange.fromString('09:00-11:00').overlaps(TimeRange.fromString('11:00-12:00')),
+      ).toBe(false);
     });
   });
 });
