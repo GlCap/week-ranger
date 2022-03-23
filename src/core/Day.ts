@@ -9,6 +9,7 @@ import {
 } from '../types';
 import { WeekRangerError } from '../errors';
 import { WEEK_DAYS } from '../utils';
+import { DateTime } from 'luxon';
 
 export class Day extends RangeSerie {
   private readonly _dayOfWeek: WeekDays;
@@ -116,8 +117,12 @@ export class Day extends RangeSerie {
     return this.formatString(this._dayOfWeek, super.toLocaleString());
   }
 
-  toDate(date?: Date): Array<[Date, Date]> {
+  toDate(date = new Date()): Array<[Date, Date]> {
     return this.toArray().map((r) => r.toDate(date));
+  }
+
+  toDateTime(from = DateTime.now()): Array<[DateTime, DateTime]> {
+    return this.toArray().map((r) => r.toDateTime(from));
   }
 
   toJSON(): DaySerializable {

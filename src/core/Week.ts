@@ -6,10 +6,12 @@ import {
   WeekSerializable,
   WeekTuple,
   WeekTupleDate,
+  WeekTupleDateTime,
 } from '../types';
 import { WeekRangerError } from '../errors';
 import { WEEK_DAYS_LABEL } from '../utils';
 import { RangeSerie } from '../primitives/RangeSerie';
+import { DateTime } from 'luxon';
 
 export class Week extends Map<WeekDays, Day> {
   get today(): Day {
@@ -130,15 +132,27 @@ export class Week extends Map<WeekDays, Day> {
     ];
   }
 
-  toDateTuple(date = new Date()): WeekTupleDate {
+  toDateTuple(from = new Date()): WeekTupleDate {
     return [
-      this.get(WeekDays.sunday).toDate(date),
-      this.get(WeekDays.monday).toDate(date),
-      this.get(WeekDays.tuesday).toDate(date),
-      this.get(WeekDays.wednesday).toDate(date),
-      this.get(WeekDays.thursday).toDate(date),
-      this.get(WeekDays.friday).toDate(date),
-      this.get(WeekDays.saturday).toDate(date),
+      this.get(WeekDays.sunday).toDate(from),
+      this.get(WeekDays.monday).toDate(from),
+      this.get(WeekDays.tuesday).toDate(from),
+      this.get(WeekDays.wednesday).toDate(from),
+      this.get(WeekDays.thursday).toDate(from),
+      this.get(WeekDays.friday).toDate(from),
+      this.get(WeekDays.saturday).toDate(from),
+    ];
+  }
+
+  toDateTimeTuple(from = DateTime.now()): WeekTupleDateTime {
+    return [
+      this.get(WeekDays.sunday).toDateTime(from),
+      this.get(WeekDays.monday).toDateTime(from),
+      this.get(WeekDays.tuesday).toDateTime(from),
+      this.get(WeekDays.wednesday).toDateTime(from),
+      this.get(WeekDays.thursday).toDateTime(from),
+      this.get(WeekDays.friday).toDateTime(from),
+      this.get(WeekDays.saturday).toDateTime(from),
     ];
   }
 

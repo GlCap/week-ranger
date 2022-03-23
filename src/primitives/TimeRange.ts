@@ -1,6 +1,7 @@
 import { Time } from './Time';
 import { TimeRangeSerializable } from '../types';
 import { WeekRangerError } from '../errors';
+import { DateTime } from 'luxon';
 
 export class TimeRange {
   private readonly _start: Time;
@@ -110,6 +111,10 @@ export class TimeRange {
 
   toDate(from: Date = new Date()): [Date, Date] {
     return [this._start.toDate(from), this._end.toDate(from)];
+  }
+
+  toDateTime(from: DateTime = DateTime.now()): [DateTime, DateTime] {
+    return [this._start.toDateTime(from), this._end.toDateTime(from)];
   }
 
   toJSON(): TimeRangeSerializable {

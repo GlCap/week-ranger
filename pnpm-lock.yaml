@@ -5,6 +5,7 @@ specifiers:
   '@commitlint/config-conventional': ^12.0.1
   '@tsconfig/node14': ^1.0.0
   '@types/jest': ^26.0.22
+  '@types/luxon': ^2.3.1
   '@types/node': ^14.14.37
   '@typescript-eslint/eslint-plugin': ^4.20.0
   '@typescript-eslint/parser': ^4.20.0
@@ -19,6 +20,7 @@ specifiers:
   husky: ^4.3.8
   jest: ^26.6.3
   lint-staged: ^10.5.4
+  luxon: ^2.3.1
   prettier: ^2.2.1
   pretty-quick: ^3.1.0
   rimraf: ^3.0.2
@@ -27,6 +29,7 @@ specifiers:
   typescript: ^4.2.3
 
 dependencies:
+  luxon: 2.3.1
   tslib: 2.3.1
 
 devDependencies:
@@ -34,6 +37,7 @@ devDependencies:
   '@commitlint/config-conventional': 12.1.4
   '@tsconfig/node14': 1.0.1
   '@types/jest': 26.0.24
+  '@types/luxon': 2.3.1
   '@types/node': 14.18.12
   '@typescript-eslint/eslint-plugin': 4.33.0_65e88d2733f36d3624b406e590cf0b3b
   '@typescript-eslint/parser': 4.33.0_eslint@7.32.0+typescript@4.6.2
@@ -1155,6 +1159,13 @@ packages:
 
   /@types/json5/0.0.29:
     resolution: { integrity: sha1-7ihweulOEdK4J7y+UnC86n8+ce4= }
+    dev: true
+
+  /@types/luxon/2.3.1:
+    resolution:
+      {
+        integrity: sha512-nAPUltOT28fal2eDZz8yyzNhBjHw1NEymFBP7Q9iCShqpflWPybxHbD7pw/46jQmT+HXOy1QN5hNTms8MOTlOQ==,
+      }
     dev: true
 
   /@types/minimatch/3.0.5:
@@ -4995,6 +5006,14 @@ packages:
     dependencies:
       yallist: 4.0.0
     dev: true
+
+  /luxon/2.3.1:
+    resolution:
+      {
+        integrity: sha512-I8vnjOmhXsMSlNMZlMkSOvgrxKJl0uOsEzdGgGNZuZPaS9KlefpE9KV95QFftlJSC+1UyCC9/I69R02cz/zcCA==,
+      }
+    engines: { node: '>=12' }
+    dev: false
 
   /make-dir/3.1.0:
     resolution:

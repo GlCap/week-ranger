@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import { WeekRangerError } from '../errors';
 import type {
   RangeSerieSerializable,
@@ -176,8 +177,12 @@ export class RangeSerie extends Map<string, TimeRange> {
     return rangesString;
   }
 
-  toDate(): Array<[Date, Date]> {
-    return this.toArray().map((r) => r.toDate());
+  toDate(from = new Date()): Array<[Date, Date]> {
+    return this.toArray().map((r) => r.toDate(from));
+  }
+
+  toDateTime(from = DateTime.now()): Array<[DateTime, DateTime]> {
+    return this.toArray().map((r) => r.toDateTime(from));
   }
 
   toJSON(): RangeSerieSerializable {

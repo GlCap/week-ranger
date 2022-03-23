@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import type { Day } from './core';
 
 export interface TimeSerializable {
@@ -55,6 +56,16 @@ export type WeekTupleDate = [
   thursday: Array<[Date, Date]>,
   friday: Array<[Date, Date]>,
   saturday: Array<[Date, Date]>,
+];
+
+export type WeekTupleDateTime = [
+  sunday: Array<[DateTime, DateTime]>,
+  monday: Array<[DateTime, DateTime]>,
+  tuesday: Array<[DateTime, DateTime]>,
+  wednesday: Array<[DateTime, DateTime]>,
+  thursday: Array<[DateTime, DateTime]>,
+  friday: Array<[DateTime, DateTime]>,
+  saturday: Array<[DateTime, DateTime]>,
 ];
 
 export interface RangeSerieSlottableOptions {

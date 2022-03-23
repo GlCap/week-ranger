@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import { WeekRangerError } from '../errors';
 import { TimeSerializable } from '../types';
 import { isDstObserved } from '../utils';
@@ -120,6 +121,10 @@ export class Time {
         this.minutes,
       ),
     );
+  }
+
+  toDateTime(from = DateTime.now()): DateTime {
+    return from.set({ minute: this.minutes, hour: this.hours });
   }
 
   toJSON(): TimeSerializable {
