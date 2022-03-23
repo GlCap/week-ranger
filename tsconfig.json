@@ -1,12 +1,11 @@
 {
   "extends": "@tsconfig/node14/tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist",
-
     "removeComments": false,
     "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
-    "importHelpers": true
+    "importHelpers": true,
+    "noEmit": true
   },
   "exclude": ["dist"]
 }
