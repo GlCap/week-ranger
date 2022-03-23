@@ -5,6 +5,7 @@ import {
   WeekParsable,
   WeekSerializable,
   WeekTuple,
+  WeekTupleDate,
 } from '../types';
 import { WeekRangerError } from '../errors';
 import { WEEK_DAYS_LABEL } from '../utils';
@@ -126,6 +127,18 @@ export class Week extends Map<WeekDays, Day> {
       this.get(WeekDays.thursday),
       this.get(WeekDays.friday),
       this.get(WeekDays.saturday),
+    ];
+  }
+
+  toDateTuple(date = new Date()): WeekTupleDate {
+    return [
+      this.get(WeekDays.sunday).toDate(date),
+      this.get(WeekDays.monday).toDate(date),
+      this.get(WeekDays.tuesday).toDate(date),
+      this.get(WeekDays.wednesday).toDate(date),
+      this.get(WeekDays.thursday).toDate(date),
+      this.get(WeekDays.friday).toDate(date),
+      this.get(WeekDays.saturday).toDate(date),
     ];
   }
 

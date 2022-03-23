@@ -47,6 +47,16 @@ export type WeekTuple = [
   saturday: Day,
 ];
 
+export type WeekTupleDate = [
+  sunday: Array<[Date, Date]>,
+  monday: Array<[Date, Date]>,
+  tuesday: Array<[Date, Date]>,
+  wednesday: Array<[Date, Date]>,
+  thursday: Array<[Date, Date]>,
+  friday: Array<[Date, Date]>,
+  saturday: Array<[Date, Date]>,
+];
+
 export interface RangeSerieSlottableOptions {
   timeRequired?: number;
   allowedMinutesOverflow?: number;
