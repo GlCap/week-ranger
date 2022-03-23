@@ -19,5 +19,5 @@ export const stdTimezoneOffset = (value: Date): number => {
 };
 
 export const isDstObserved = (value: Date): boolean => {
-  return value.getTimezoneOffset() < stdTimezoneOffset(value);
+  return value.getTimezoneOffset() !== stdTimezoneOffset(value);
 };

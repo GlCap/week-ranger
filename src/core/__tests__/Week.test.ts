@@ -15,7 +15,7 @@ const invalidWeek =
 
 describe('Week class', () => {
   describe('constructor', () => {
-    const week = new Week(stringFullWeek);
+    const week = Week.fromString(stringFullWeek);
     it('should instance from an object', () => {
       expect(new Week(week.toJSON())).toBeDefined();
     });
@@ -25,15 +25,15 @@ describe('Week class', () => {
     });
 
     it('should instance from a Day', () => {
-      const serie = new RangeSerie('08:30-10:30,06:30-07:30,07:30-10:30');
-      expect(new Week(serie)).toBeInstanceOf(Week);
-      expect(new Week(serie).equals(new Week(stringFullWeek))).toBeTruthy();
+      const serie = RangeSerie.fromString('08:30-10:30,06:30-07:30,07:30-10:30');
+      expect(Week.fromRange(serie)).toBeInstanceOf(Week);
+      expect(Week.fromRange(serie).equals(Week.fromString(stringFullWeek))).toBeTruthy();
     });
   });
 
-  describe('parse', () => {
+  describe('fromString', () => {
     it('should parse a correctly formatted string', () => {
-      const week = new Week(stringFullWeek);
+      const week = Week.fromString(stringFullWeek);
       expect(week).toBeInstanceOf(Week);
       expect(week.monday).toBeInstanceOf(Day);
       expect(week.tuesday).toBeInstanceOf(Day);
@@ -43,7 +43,7 @@ describe('Week class', () => {
       expect(week.saturday).toBeInstanceOf(Day);
       expect(week.sunday).toBeInstanceOf(Day);
 
-      const workWeek = new Week(stringWorkDays);
+      const workWeek = Week.fromString(stringWorkDays);
       expect(workWeek).toBeInstanceOf(Week);
       expect(workWeek.monday).toBeInstanceOf(Day);
       expect(workWeek.tuesday).toBeInstanceOf(Day);
@@ -53,7 +53,7 @@ describe('Week class', () => {
       expect(workWeek.saturday).toBeInstanceOf(Day);
       expect(workWeek.sunday).toBeInstanceOf(Day);
 
-      const weekMissing = new Week(stringMissingTuesdaySundaySaturday);
+      const weekMissing = Week.fromString(stringMissingTuesdaySundaySaturday);
       expect(weekMissing).toBeInstanceOf(Week);
       expect(weekMissing.sunday).toBeInstanceOf(Day);
       expect(weekMissing.monday).toBeInstanceOf(Day);
@@ -65,31 +65,32 @@ describe('Week class', () => {
     });
 
     it('should throw on invalid string format', () => {
-      expect(() => new Week('')).toThrow();
-      expect(() => Week.parse('')).toThrow();
-      expect(() => Week.parse(invalidWeek)).toThrow();
+      expect(() => Week.fromString('')).toThrow();
+      expect(() => Week.fromString('')).toThrow();
+      expect(() => Week.fromString(invalidWeek)).toThrow();
     });
   });
 
   describe('toString', () => {
     it('can be serialized to a formatted string', () => {
-      const week = new Week(stringFullWeek);
-      expect(week.toString()).toStrictEqual(new Week(stringFullWeek).toString());
-      expect(week.equals(new Week(week.toString()))).toBeTruthy();
+      const week = Week.fromString(stringFullWeek);
+      expect(week.toString()).toStrictEqual(Week.fromString(stringFullWeek).toString());
+
+      expect(week.equals(Week.fromString(week.toString()))).toBeTruthy();
     });
   });
 
   describe('toJSON', () => {
     it('can be serialized to JSON', () => {
-      expect(new Week(stringFullWeek).toJSON()).toStrictEqual(
-        JSON.parse(JSON.stringify(new Week(stringFullWeek))),
+      expect(Week.fromString(stringFullWeek).toJSON()).toStrictEqual(
+        JSON.parse(JSON.stringify(Week.fromString(stringFullWeek))),
       );
     });
   });
 
   describe('equals', () => {
     it('can be compared to another instance', () => {
-      expect(new Week(stringFullWeek).equals(new Week(stringFullWeek))).toBeTruthy();
+      expect(Week.fromString(stringFullWeek).equals(Week.fromString(stringFullWeek))).toBeTruthy();
     });
   });
 });

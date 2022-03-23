@@ -17,12 +17,11 @@ export class Time {
   readonly isDST: boolean;
 
   constructor();
-  constructor(value: string);
   constructor(hours: number, minutes?: number);
   constructor(value: TimeSerializable);
   constructor(value: Time);
   constructor(value: Date);
-  constructor(valueOrHours?: string | number | TimeSerializable | Time | Date, minutes?: number) {
+  constructor(valueOrHours?: number | TimeSerializable | Time | Date, minutes?: number) {
     this.isDST = false;
     if (valueOrHours == null) {
       const now = new Date();
@@ -41,12 +40,6 @@ export class Time {
     if (valueOrHours instanceof Time) {
       this.isDST = valueOrHours.isDST;
       this.globalMinutes = valueOrHours.globalMinutes;
-      return;
-    }
-
-    if (typeof valueOrHours === 'string') {
-      const parsed = Time.parse(valueOrHours);
-      this.globalMinutes = computeMinutes(parsed.hours, parsed.minutes);
       return;
     }
 
@@ -70,7 +63,7 @@ export class Time {
     return new Time(hours, minutes);
   }
 
-  static parse(value: string): TimeSerializable {
+  static fromString(value: string): Time {
     const splitRawTime = value.split(SEPARATOR);
     if (splitRawTime.length !== 2) throw new WeekRangerError(value, 'Time');
 
@@ -87,7 +80,7 @@ export class Time {
       throw new WeekRangerError(value, 'Time');
     }
 
-    return { hours, minutes, isDST: false };
+    return new Time({ hours, minutes, isDST: false });
   }
 
   private formatHoursAndMinutes(
