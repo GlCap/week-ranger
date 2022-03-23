@@ -1,7 +1,8 @@
-import { Time } from './Time';
-import { TimeRangeSerializable } from '../types';
-import { WeekRangerError } from '../errors';
 import { DateTime } from 'luxon';
+
+import { Time } from './Time';
+import { WeekRangerError } from './errors';
+import { TimeRangeSerializable } from './types';
 
 export class TimeRange {
   private readonly _start: Time;

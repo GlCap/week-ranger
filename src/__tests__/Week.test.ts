@@ -1,4 +1,4 @@
-import { RangeSerie } from '../../primitives';
+import { RangeSerie } from '../RangeSerie';
 import { Day } from '../Day';
 import { Week } from '../Week';
 

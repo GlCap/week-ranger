@@ -1,4 +1,4 @@
-import { DaySerializable } from '../../types';
+import { DaySerializable } from '../types';
 import { Day } from '../Day';
 
 const dayString = '0;08:30-10:30,06:30-07:30,07:30-10:30';

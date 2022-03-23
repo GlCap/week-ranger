@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon';
-import { WeekRangerError } from '../errors';
+import { WeekRangerError } from './errors';
 import type {
   RangeSerieSerializable,
   RangeSerieSlottableOptions,
   TimeRangeSerializable,
-} from '../types';
+} from './types';
 import { Time } from './Time';
 import { TimeRange } from './TimeRange';
 

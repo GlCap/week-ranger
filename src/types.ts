@@ -1,5 +1,6 @@
-import { DateTime } from 'luxon';
-import type { Day } from './core';
+import type { DateTime } from 'luxon';
+
+import type { Day } from './Day';
 
 export interface TimeSerializable {
   hours: number;

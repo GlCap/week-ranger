@@ -1,7 +1,8 @@
 import { DateTime } from 'luxon';
-import { WeekRangerError } from '../errors';
-import { TimeSerializable } from '../types';
-import { isDstObserved } from '../utils';
+
+import { WeekRangerError } from './errors';
+import { TimeSerializable } from './types';
+import { isDstObserved } from './utils';
 
 /**
  * 24 hours based Hours and Minutes time (HH:MM) separated by a `:`

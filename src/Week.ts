@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 import { Day } from './Day';
 import {
   TimeRangeSerializable,
@@ -7,11 +9,10 @@ import {
   WeekTuple,
   WeekTupleDate,
   WeekTupleDateTime,
-} from '../types';
-import { WeekRangerError } from '../errors';
-import { WEEK_DAYS_LABEL } from '../utils';
-import { RangeSerie } from '../primitives/RangeSerie';
-import { DateTime } from 'luxon';
+} from './types';
+import { WeekRangerError } from './errors';
+import { WEEK_DAYS_LABEL } from './utils';
+import { RangeSerie } from './RangeSerie';
 
 export class Week extends Map<WeekDays, Day> {
   get today(): Day {

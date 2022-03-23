@@ -1,4 +1,3 @@
-import { TimeRange, RangeSerie } from '../primitives';
 import {
   DayParsable,
   DaySerializable,
@@ -6,10 +5,12 @@ import {
   RangeSerieSerializable,
   TimeRangeSerializable,
   WeekDays,
-} from '../types';
-import { WeekRangerError } from '../errors';
-import { WEEK_DAYS } from '../utils';
+} from './types';
+import { WeekRangerError } from './errors';
+import { WEEK_DAYS } from './utils';
 import { DateTime } from 'luxon';
+import { RangeSerie } from './RangeSerie';
+import { TimeRange } from './TimeRange';
 
 export class Day extends RangeSerie {
   private readonly _dayOfWeek: WeekDays;
