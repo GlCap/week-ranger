@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/GlCap/week-ranger/compare/v0.9.4...v0.10.0) (2022-03-23)
+
+### Features
+
+- add luxon integration ([91669b6](https://github.com/GlCap/week-ranger/commit/91669b6ba1547620c8ed8d8f6623d94b3f5bd228))
+- add toTupleDate to Week class ([1f0a142](https://github.com/GlCap/week-ranger/commit/1f0a142502a4dcdc0bac84d1ca8d1bcb8741d4e1))
+- reworked and improved APIs ([358cef4](https://github.com/GlCap/week-ranger/commit/358cef417fbe444bf1dd27a0613293b7c30b83a9))
+
 ### [0.9.4](https://github.com/GlCap/week-ranger/compare/v0.9.3...v0.9.4) (2022-03-19)
 
 ### Features
