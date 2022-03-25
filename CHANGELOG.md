@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.11.0](https://github.com/GlCap/week-ranger/compare/v0.10.0...v0.11.0) (2022-03-25)
+
+### Features
+
+- removed isDST flag, adjusted Time to only store and return UTC dates ([51d2328](https://github.com/GlCap/week-ranger/commit/51d2328260be05cb2462ff99b0fe7a43ff18aa2d))
+
 ## [0.10.0](https://github.com/GlCap/week-ranger/compare/v0.9.4...v0.10.0) (2022-03-23)
 
 ### Features
