@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import { Time } from '../Time';
 
 const timeString = '12:30';
@@ -6,9 +7,9 @@ const timeBeforeString = '09:05';
 
 const strings = [timeString, timeAfterString, timeBeforeString];
 const stringsObjects = [
-  [timeString, { hours: 12, minutes: 30, isDST: false }],
-  [timeAfterString, { hours: 14, minutes: 5, isDST: false }],
-  [timeBeforeString, { hours: 9, minutes: 5, isDST: false }],
+  [timeString, { hours: 12, minutes: 30 }],
+  [timeAfterString, { hours: 14, minutes: 5 }],
+  [timeBeforeString, { hours: 9, minutes: 5 }],
 ] as const;
 
 describe('Time class', () => {
@@ -98,10 +99,20 @@ describe('Time class', () => {
   });
 
   describe('toDate', () => {
-    it('should be convertible to date', () => {
+    it('should be convertible to Date', () => {
       const time = Time.fromString(timeString);
       expect(time.toDate() instanceof Date).toBeTruthy();
-      expect(time.toDate()).toStrictEqual(time.toDate());
+      expect(time.hours).toBe(time.toDate().getUTCHours());
+      expect(time.minutes).toBe(time.toDate().getUTCMinutes());
+    });
+  });
+
+  describe('toDate', () => {
+    it('should be convertible to DateTime', () => {
+      const time = Time.fromString(timeString);
+      expect(time.toDateTime() instanceof DateTime).toBeTruthy();
+      expect(time.hours).toBe(time.toDateTime().hour);
+      expect(time.minutes).toBe(time.toDateTime().minute);
     });
   });
 
@@ -119,8 +130,9 @@ describe('Time class', () => {
     });
 
     it('should compare times in Standard Time and Daylight Saving Time', () => {
-      const jan = new Time(new Date(new Date().getFullYear(), 0, 1, 0, 0));
-      const jul = new Time(new Date(new Date().getFullYear(), 6, 1, 0, 0));
+      const jan = new Time(new Date(Date.UTC(new Date().getFullYear(), 0, 1)));
+      const jul = new Time(new Date(Date.UTC(new Date().getFullYear(), 6, 1)));
+
       expect(jan.compareTo(jul)).toBe(0);
       expect(jul.compareTo(jan)).toBe(0);
       expect(jan.compareTo(jan)).toBe(0);

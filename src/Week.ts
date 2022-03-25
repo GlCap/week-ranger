@@ -145,7 +145,7 @@ export class Week extends Map<WeekDays, Day> {
     ];
   }
 
-  toDateTimeTuple(from = DateTime.now()): WeekTupleDateTime {
+  toDateTimeTuple(from = DateTime.utc()): WeekTupleDateTime {
     return [
       this.get(WeekDays.sunday).toDateTime(from),
       this.get(WeekDays.monday).toDateTime(from),

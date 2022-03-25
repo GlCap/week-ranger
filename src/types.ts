@@ -5,7 +5,6 @@ import type { Day } from './Day';
 export interface TimeSerializable {
   hours: number;
   minutes: number;
-  isDST: boolean;
 }
 
 export interface TimeRangeSerializable {

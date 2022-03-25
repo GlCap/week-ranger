@@ -114,7 +114,7 @@ export class TimeRange {
     return [this._start.toDate(from), this._end.toDate(from)];
   }
 
-  toDateTime(from: DateTime = DateTime.now()): [DateTime, DateTime] {
+  toDateTime(from: DateTime = DateTime.utc()): [DateTime, DateTime] {
     return [this._start.toDateTime(from), this._end.toDateTime(from)];
   }
 

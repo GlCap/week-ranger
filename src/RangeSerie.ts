@@ -181,7 +181,7 @@ export class RangeSerie extends Map<string, TimeRange> {
     return this.toArray().map((r) => r.toDate(from));
   }
 
-  toDateTime(from = DateTime.now()): Array<[DateTime, DateTime]> {
+  toDateTime(from = DateTime.utc()): Array<[DateTime, DateTime]> {
     return this.toArray().map((r) => r.toDateTime(from));
   }
 

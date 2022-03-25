@@ -122,7 +122,7 @@ export class Day extends RangeSerie {
     return this.toArray().map((r) => r.toDate(date));
   }
 
-  toDateTime(from = DateTime.now()): Array<[DateTime, DateTime]> {
+  toDateTime(from = DateTime.utc()): Array<[DateTime, DateTime]> {
     return this.toArray().map((r) => r.toDateTime(from));
   }
 
