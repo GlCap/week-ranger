@@ -1,7 +1,8 @@
 import { DateTime } from 'luxon';
 
 import { WeekRangerError } from './errors';
-import { TimeSerializable } from './types';
+import type { FromStringOptions, TimeSerializable, ToStringOptions } from './types';
+import { isDstObserved } from './utils';
 
 /**
  * 24 hours based Hours and Minutes time (HH:MM) separated by a `:`
@@ -58,7 +59,7 @@ export class Time {
     return new Time(hours, minutes);
   }
 
-  static fromString(value: string): Time {
+  static fromString(value: string, options?: FromStringOptions): Time {
     const splitRawTime = value.split(SEPARATOR);
     if (splitRawTime.length !== 2) throw new WeekRangerError(value, 'Time');
 
@@ -68,7 +69,7 @@ export class Time {
       throw new WeekRangerError(value, 'Time');
     }
 
-    const hours = Number.parseInt(rawHours);
+    const hours = Time.parseHoursDST(rawHours, options);
     const minutes = Number.parseInt(rawMinutes);
 
     if (hours >= 24 || minutes >= 60) {
@@ -78,29 +79,52 @@ export class Time {
     return new Time({ hours, minutes });
   }
 
+  private static parseHoursDST(rawHours: string, options: FromStringOptions = {}): number {
+    const { dateOfFormatting = new Date() } = options;
+
+    const isDST = isDstObserved(dateOfFormatting);
+
+    let hours = Number.parseInt(rawHours);
+    hours = isDST ? hours + 1 : hours;
+    hours = isDST && hours >= 24 ? 0 : hours;
+
+    return hours;
+  }
+
   private formatHoursAndMinutes(
     hours: number,
     minutes: number,
+    options: ToStringOptions = {},
   ): { hours: string; minutes: string } {
-    let hoursString = `${hours}`;
+    const { dateOfParsing = new Date() } = options;
+
+    const isDST = isDstObserved(dateOfParsing);
+
+    const hoursDST = isDST ? hours - 1 : hours;
+
+    let hoursString = `${hoursDST}`;
     let minutesString = `${minutes}`;
 
-    if (hours < 10) hoursString = `0${hours}`;
+    if (hoursDST < 10) hoursString = `0${hoursDST}`;
     if (minutes < 10) minutesString = `0${minutes}`;
 
     return { hours: hoursString, minutes: minutesString };
   }
 
-  toLocaleString(): string {
+  toLocaleString(options?: ToStringOptions): string {
     const date = new Date(new Date().setUTCHours(this.hours, this.minutes));
 
-    const { hours, minutes } = this.formatHoursAndMinutes(date.getHours(), date.getMinutes());
+    const { hours, minutes } = this.formatHoursAndMinutes(
+      date.getHours(),
+      date.getMinutes(),
+      options,
+    );
 
     return `${hours}${SEPARATOR}${minutes}`;
   }
 
-  toString(): string {
-    const { hours, minutes } = this.formatHoursAndMinutes(this.hours, this.minutes);
+  toString(options?: ToStringOptions): string {
+    const { hours, minutes } = this.formatHoursAndMinutes(this.hours, this.minutes, options);
 
     return `${hours}${SEPARATOR}${minutes}`;
   }
@@ -122,8 +146,12 @@ export class Time {
     return from.set({ minute: this.minutes, hour: this.hours + offset });
   }
 
-  toJSON(): TimeSerializable {
-    return { hours: this.hours, minutes: this.minutes };
+  toJSON(from = new Date()): TimeSerializable {
+    const isDST = isDstObserved(from);
+
+    const hoursDST = isDST ? this.hours - 1 : this.hours;
+
+    return { hours: hoursDST, minutes: this.minutes };
   }
 
   /**

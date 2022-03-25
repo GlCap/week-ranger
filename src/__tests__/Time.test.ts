@@ -56,7 +56,21 @@ describe('Time class', () => {
 
   describe('fromString', () => {
     it.each(stringsObjects)('it should parse %s to %o', (time, json) => {
+      const jan = new Date(new Date().getFullYear(), 0, 1);
+      const jul = new Date(new Date().getFullYear(), 6, 1);
+
       expect(Time.fromString(time).toJSON()).toStrictEqual(json);
+      expect(
+        Time.fromString(time, {
+          dateOfFormatting: jan,
+        }).toJSON(jan),
+      ).toStrictEqual(json);
+
+      expect(
+        Time.fromString(time, {
+          dateOfFormatting: jul,
+        }).toJSON(jul),
+      ).toStrictEqual(json);
     });
     it.each(['12:000', '12', ':00', '24:00', '23:60'])(
       'should throw an error on invalid value %s',

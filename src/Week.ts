@@ -1,18 +1,20 @@
 import { DateTime } from 'luxon';
 
 import { Day } from './Day';
-import {
+import { WeekRangerError } from './errors';
+import { WEEK_DAYS_LABEL } from './utils';
+import { RangeSerie } from './RangeSerie';
+import { WeekDays } from './enums';
+import type {
   TimeRangeSerializable,
-  WeekDays,
+  WeekFromStringOptions,
   WeekParsable,
   WeekSerializable,
+  WeekToStringOptions,
   WeekTuple,
   WeekTupleDate,
   WeekTupleDateTime,
 } from './types';
-import { WeekRangerError } from './errors';
-import { WEEK_DAYS_LABEL } from './utils';
-import { RangeSerie } from './RangeSerie';
 
 export class Week extends Map<WeekDays, Day> {
   get today(): Day {
@@ -91,7 +93,7 @@ export class Week extends Map<WeekDays, Day> {
     });
   }
 
-  static fromString(value: string): Week {
+  static fromString(value: string, options?: WeekFromStringOptions): Week {
     if (value.length === 0) {
       throw new WeekRangerError(value, 'Week');
     }
@@ -102,15 +104,27 @@ export class Week extends Map<WeekDays, Day> {
       throw new WeekRangerError(value, 'Week');
     }
 
+    return new Week(this.createWeekFromString(rawWeek, options));
+  }
+
+  private static createWeekFromString(
+    rawWeek: string[],
+    options?: WeekFromStringOptions,
+  ): WeekSerializable {
     const weekDaysKeys = Object.keys(WeekDays) as Array<keyof typeof WeekDays>;
+
     const raw = rawWeek.reduce(
       (acc, curr, index) => {
-        const day = weekDaysKeys.find((item) => index === WeekDays[item]);
+        const weekDay = weekDaysKeys.find((item) => index === WeekDays[item]);
 
-        if (curr.length > 0 && day != null) {
-          const rangeSerie = RangeSerie.fromString(curr);
+        if (curr.length > 0 && weekDay != null) {
+          const day = Day.fromString(curr, {
+            ...options,
+            dayOfWeek: index,
+            requireDayOfWeekPrefix: false,
+          });
 
-          acc[day] = rangeSerie.toArray();
+          acc[weekDay] = day.toArray();
         }
 
         return acc;
@@ -118,7 +132,7 @@ export class Week extends Map<WeekDays, Day> {
       { ...initialWeek },
     );
 
-    return new Week(raw);
+    return raw;
   }
 
   toTuple(): WeekTuple {
@@ -157,15 +171,15 @@ export class Week extends Map<WeekDays, Day> {
     ];
   }
 
-  toString(): string {
+  toString(options?: WeekToStringOptions): string {
     return this.toTuple()
-      .map((day) => day.toString(false))
+      .map((day) => day.toString({ ...options, includeDay: false }))
       .join(SEPARATOR);
   }
 
-  toLocaleString(): string {
+  toLocaleString(options?: WeekToStringOptions): string {
     return this.toTuple()
-      .map((day) => day.toLocaleString(false))
+      .map((day) => day.toLocaleString({ ...options, includeDay: false }))
       .join(SEPARATOR);
   }
 
@@ -191,12 +205,18 @@ export class Week extends Map<WeekDays, Day> {
     if (value == null) {
       const day = Day.fromRange(new RangeSerie(), key);
 
-      this.set(key, day);
+      super.set(key, day);
 
       return day;
     }
 
     return value;
+  }
+
+  set(key: WeekDays, day: Day): this {
+    const d = new Day({ ranges: day.toArray(), dayOfWeek: key });
+
+    return super.set(key, d);
   }
 }
 

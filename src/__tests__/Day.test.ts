@@ -1,11 +1,11 @@
 import { DaySerializable } from '../types';
 import { Day } from '../Day';
+import { WeekDays } from '../enums';
 
-const dayString = '0;08:30-10:30,06:30-07:30,07:30-10:30';
-const dayDateString = `${0};08:30-10:30,06:30-07:30,07:30-10:30`;
-const day = Day.fromString(dayString, 0);
-const monday = Day.fromString(dayString, 0);
-const tuesday = Day.fromString(dayString, 1);
+const sundayString = '0;08:30-10:30,06:30-07:30,07:30-10:30';
+const sunday = Day.fromString(sundayString);
+const monday = Day.fromString(sundayString, { dayOfWeek: WeekDays.monday });
+const tuesday = Day.fromString(sundayString, { dayOfWeek: WeekDays.tuesday });
 
 describe('Day class', () => {
   describe('constructor', () => {
@@ -15,39 +15,38 @@ describe('Day class', () => {
     });
 
     it('should instance from another Day instance', () => {
-      expect(new Day(day).equals(day)).toBeTruthy();
-      expect(new Day(Day.fromString(dayString)).equals(day)).toBeTruthy();
+      expect(new Day(sunday).equals(sunday)).toBeTruthy();
+      expect(new Day(Day.fromString(sundayString)).equals(sunday)).toBeTruthy();
     });
   });
 
   describe('fromString', () => {
     it('can parse a formatted string', () => {
-      expect(Day.fromString(dayDateString)).toBeDefined();
-      expect(Day.fromString(dayString)).toBeDefined();
-      expect(Day.fromString(dayString, 0)).toBeDefined();
-      expect(() => Day.fromString('', -1)).toThrow();
+      expect(Day.fromString(sundayString)).toBeDefined();
+      expect(Day.fromString(sundayString, { dayOfWeek: WeekDays.sunday })).toBeDefined();
+      expect(() => Day.fromString('', { dayOfWeek: -1 })).toThrow();
       expect(() => Day.fromString('')).toThrow();
     });
   });
 
   describe('toString', () => {
     it('should serialize to a formatted string', () => {
-      expect(day.toString()).toBeDefined();
-      expect(day.equals(Day.fromString(day.toString()))).toBeTruthy();
+      expect(sunday.toString()).toBeDefined();
+      expect(sunday.equals(Day.fromString(sunday.toString()))).toBeTruthy();
     });
   });
 
   describe('toJSON', () => {
     it('should serialize to JSON', () => {
       const json: DaySerializable = { dayOfWeek: 0, ranges: [] };
-      expect(day.toJSON()).toStrictEqual(JSON.parse(JSON.stringify(day)));
+      expect(sunday.toJSON()).toStrictEqual(JSON.parse(JSON.stringify(sunday)));
       expect(new Day(0).toJSON()).toStrictEqual(json);
     });
   });
 
   describe('compareTo', () => {
     it('can be compared', () => {
-      expect(new Day(0).compareTo(new Day(0))).toBe(0);
+      expect(new Day(WeekDays.sunday).compareTo(new Day(WeekDays.sunday))).toBe(0);
       expect(monday.compareTo(monday)).toBe(0);
       expect(monday.compareTo(tuesday)).toBeLessThan(0);
       expect(tuesday.compareTo(monday)).toBeGreaterThan(0);
@@ -61,8 +60,8 @@ describe('Day class', () => {
 
   describe('getters', () => {
     it('should track the day of the week as a number', () => {
-      expect(day.dayOfWeek).toBeGreaterThanOrEqual(0);
-      expect(day.dayOfWeek).toBeLessThanOrEqual(6);
+      expect(sunday.dayOfWeek).toBeGreaterThanOrEqual(0);
+      expect(sunday.dayOfWeek).toBeLessThanOrEqual(6);
     });
   });
 });

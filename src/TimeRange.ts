@@ -2,7 +2,7 @@ import { DateTime } from 'luxon';
 
 import { Time } from './Time';
 import { WeekRangerError } from './errors';
-import { TimeRangeSerializable } from './types';
+import type { FromStringOptions, TimeRangeSerializable, ToStringOptions } from './types';
 
 export class TimeRange {
   private readonly _start: Time;
@@ -71,15 +71,15 @@ export class TimeRange {
     this._end = new Time(end);
   }
 
-  static fromString(value: string): TimeRange {
+  static fromString(value: string, options?: FromStringOptions): TimeRange {
     const rawTime = value.split(SEPARATOR);
     if (rawTime.length !== 2) {
       throw new WeekRangerError(value, 'TimeRange');
     }
     const [startRaw, endRaw] = rawTime;
 
-    const start = Time.fromString(startRaw);
-    const end = Time.fromString(endRaw);
+    const start = Time.fromString(startRaw, options);
+    const end = Time.fromString(endRaw, options);
 
     if (start.isAfter(end)) throw new WeekRangerError(value, 'TimeRange');
 
@@ -102,12 +102,15 @@ export class TimeRange {
     return `${start}${SEPARATOR}${end}`;
   }
 
-  toString(): string {
-    return this.formatString(this._start.toString(), this._end.toString());
+  toString(options?: ToStringOptions): string {
+    return this.formatString(this._start.toString(options), this._end.toString(options));
   }
 
-  toLocaleString(): string {
-    return this.formatString(this._start.toLocaleString(), this._end.toLocaleString());
+  toLocaleString(options?: ToStringOptions): string {
+    return this.formatString(
+      this._start.toLocaleString(options),
+      this._end.toLocaleString(options),
+    );
   }
 
   toDate(from: Date = new Date()): [Date, Date] {

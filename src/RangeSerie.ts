@@ -1,9 +1,12 @@
 import { DateTime } from 'luxon';
+
 import { WeekRangerError } from './errors';
 import type {
+  FromStringOptions,
   RangeSerieSerializable,
   RangeSerieSlottableOptions,
   TimeRangeSerializable,
+  ToStringOptions,
 } from './types';
 import { Time } from './Time';
 import { TimeRange } from './TimeRange';
@@ -47,7 +50,7 @@ export class RangeSerie extends Map<string, TimeRange> {
     return new RangeSerie(new Map(mappedValues));
   }
 
-  static fromString(value: string): RangeSerie {
+  static fromString(value: string, options?: FromStringOptions): RangeSerie {
     if (value.length === 0) {
       throw new WeekRangerError(value, 'Day');
     }
@@ -55,7 +58,7 @@ export class RangeSerie extends Map<string, TimeRange> {
     const dayRangesRaw = value.split(SEPARATOR);
 
     const ranges = dayRangesRaw
-      .map((rangeRaw) => TimeRange.fromString(rangeRaw))
+      .map((rangeRaw) => TimeRange.fromString(rangeRaw, options))
       .sort(compareRanges)
       .map((r) => r.toJSON());
 
@@ -161,17 +164,17 @@ export class RangeSerie extends Map<string, TimeRange> {
     return this.toArray().some((r) => r.contains(value));
   }
 
-  toString(): string {
+  toString(options: ToStringOptions = {}): string {
     const rangesString = this.toArray()
-      .map((range) => range.toString())
+      .map((range) => range.toString(options))
       .join(SEPARATOR);
 
     return rangesString;
   }
 
-  toLocaleString(): string {
+  toLocaleString(options: ToStringOptions = {}): string {
     const rangesString = this.toArray()
-      .map((range) => range.toLocaleString())
+      .map((range) => range.toLocaleString(options))
       .join(SEPARATOR);
 
     return rangesString;

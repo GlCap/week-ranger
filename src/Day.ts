@@ -1,16 +1,19 @@
-import {
+import { DateTime } from 'luxon';
+
+import { WeekRangerError } from './errors';
+import { WEEK_DAYS } from './utils';
+import { RangeSerie } from './RangeSerie';
+import { TimeRange } from './TimeRange';
+import { WeekDays } from './enums';
+import type {
+  DayFromStringOptions,
   DayParsable,
   DaySerializable,
   DaySlottableOptions,
+  DayToStringOptions,
   RangeSerieSerializable,
   TimeRangeSerializable,
-  WeekDays,
 } from './types';
-import { WeekRangerError } from './errors';
-import { WEEK_DAYS } from './utils';
-import { DateTime } from 'luxon';
-import { RangeSerie } from './RangeSerie';
-import { TimeRange } from './TimeRange';
 
 export class Day extends RangeSerie {
   private readonly _dayOfWeek: WeekDays;
@@ -82,40 +85,55 @@ export class Day extends RangeSerie {
     });
   }
 
-  static fromString(value: string, number?: WeekDays | null): Day {
-    if (
-      (!value.includes(SEPARATOR) && value.length === 0) ||
-      (number != null && !WEEK_DAYS.includes(number))
-    ) {
+  static fromString(
+    value: string,
+    options: DayFromStringOptions = { requireDayOfWeekPrefix: true },
+  ): Day {
+    if (!value.includes(SEPARATOR) && value.length === 0) {
       throw new WeekRangerError(value, 'Day');
     }
+    let range;
+    let dayOfWeek = options?.dayOfWeek;
 
     const splitValue = value.split(SEPARATOR);
 
-    const [rawDayNumber, rawRanges] = splitValue;
+    if (splitValue.length === 2) {
+      const [rawDayOfWeek, rawRanges] = splitValue;
 
-    let dayNumber = Number.parseInt(rawDayNumber, 10);
-    if (number != null) dayNumber = number;
+      dayOfWeek = dayOfWeek != null ? dayOfWeek : Number.parseInt(rawDayOfWeek, 10);
 
-    if (!WEEK_DAYS.includes(dayNumber)) throw new WeekRangerError(value, 'Day');
+      if (!WEEK_DAYS.includes(dayOfWeek)) {
+        throw new WeekRangerError(value, 'Day');
+      }
 
-    const rangeSerie = RangeSerie.fromString(rawRanges).toJSON();
+      range = RangeSerie.fromString(rawRanges, options).toJSON();
 
-    return new Day({ ...rangeSerie, dayOfWeek: dayNumber });
+      return new Day({ ...range, dayOfWeek });
+    }
+
+    if (options.requireDayOfWeekPrefix != null && options.requireDayOfWeekPrefix) {
+      throw new WeekRangerError(value, 'Day');
+    }
+
+    range = RangeSerie.fromString(value, options).toJSON();
+
+    return new Day({ ...range, dayOfWeek });
   }
 
   private formatString(day: string | number, ranges: string): string {
     return `${day}${SEPARATOR}${ranges}`;
   }
 
-  toString(includeDay: boolean = true): string {
+  toString(options: DayToStringOptions = {}): string {
+    const { includeDay = true } = options;
     if (!includeDay) return super.toString();
-    return this.formatString(this._dayOfWeek, super.toString());
+    return this.formatString(this._dayOfWeek, super.toString(options));
   }
 
-  toLocaleString(includeDay: boolean = true): string {
+  toLocaleString(options: DayToStringOptions = {}): string {
+    const { includeDay = true } = options;
     if (!includeDay) return super.toString();
-    return this.formatString(this._dayOfWeek, super.toLocaleString());
+    return this.formatString(this._dayOfWeek, super.toLocaleString(options));
   }
 
   toDate(date = new Date()): Array<[Date, Date]> {
@@ -134,9 +152,11 @@ export class Day extends RangeSerie {
   }
 
   compareTo(that: Day): number {
-    if (this._dayOfWeek != null && that._dayOfWeek != null)
+    if (this._dayOfWeek != null && that._dayOfWeek != null) {
       return this._dayOfWeek - that._dayOfWeek;
-    return this.size - this.size;
+    }
+
+    return 0;
   }
 
   isAfter(that: Day): boolean {

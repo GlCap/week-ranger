@@ -1,6 +1,7 @@
 import type { DateTime } from 'luxon';
 
 import type { Day } from './Day';
+import type { WeekDays } from './enums';
 
 export interface TimeSerializable {
   hours: number;
@@ -14,16 +15,6 @@ export interface TimeRangeSerializable {
 
 export interface RangeSerieSerializable {
   ranges: TimeRangeSerializable[];
-}
-
-export enum WeekDays {
-  sunday = 0,
-  monday = 1,
-  tuesday = 2,
-  wednesday = 3,
-  thursday = 4,
-  friday = 5,
-  saturday = 6,
 }
 
 export interface DaySerializable extends RangeSerieSerializable {
@@ -80,3 +71,37 @@ export interface DatedDaySlottableOptions extends RangeSerieSlottableOptions {
 export interface DaySlottableOptions extends RangeSerieSlottableOptions {
   dayOfWeek?: WeekDays;
 }
+
+export interface ToStringOptions {
+  dateOfParsing?: Date;
+}
+
+export interface TimeToStringOptions extends ToStringOptions {}
+
+export interface TimeRangeToStringOptions extends ToStringOptions {}
+
+export interface RangeSerieToStringOptions extends ToStringOptions {}
+
+export interface DayToStringOptions extends ToStringOptions {
+  dayOfWeek?: WeekDays;
+  includeDay?: boolean;
+}
+
+export interface WeekToStringOptions extends ToStringOptions {}
+
+export interface FromStringOptions {
+  dateOfFormatting?: Date;
+}
+
+export interface TimeFromStringOptions extends FromStringOptions {}
+
+export interface TimeRangeFromStringOptions extends FromStringOptions {}
+
+export interface RangeSerieFromStringOptions extends FromStringOptions {}
+
+export interface DayFromStringOptions extends FromStringOptions {
+  dayOfWeek?: WeekDays;
+  requireDayOfWeekPrefix?: boolean;
+}
+
+export interface WeekFromStringOptions extends FromStringOptions {}

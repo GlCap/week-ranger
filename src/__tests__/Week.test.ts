@@ -1,4 +1,3 @@
-import { RangeSerie } from '../RangeSerie';
 import { Day } from '../Day';
 import { Week } from '../Week';
 
@@ -16,6 +15,11 @@ const invalidWeek =
 describe('Week class', () => {
   describe('constructor', () => {
     const week = Week.fromString(stringFullWeek);
+
+    const day = Day.fromString('08:30-10:30,06:30-07:30,07:30-10:30', {
+      requireDayOfWeekPrefix: false,
+    });
+
     it('should instance from an object', () => {
       expect(new Week(week.toJSON())).toBeDefined();
     });
@@ -25,15 +29,19 @@ describe('Week class', () => {
     });
 
     it('should instance from a Day', () => {
-      const serie = RangeSerie.fromString('08:30-10:30,06:30-07:30,07:30-10:30');
-      expect(Week.fromRange(serie)).toBeInstanceOf(Week);
-      expect(Week.fromRange(serie).equals(Week.fromString(stringFullWeek))).toBeTruthy();
+      expect(Week.fromDay(day)).toBeInstanceOf(Week);
+      expect(Week.fromDay(day).equals(Week.fromString(stringFullWeek))).toBeTruthy();
+    });
+
+    it.each([...week.entries()])('Key: %d should equal to dayOfWeek: %d', (key, day) => {
+      expect(key).toBe(day.dayOfWeek);
     });
   });
 
   describe('fromString', () => {
+    const week = Week.fromString(stringFullWeek);
+
     it('should parse a correctly formatted string', () => {
-      const week = Week.fromString(stringFullWeek);
       expect(week).toBeInstanceOf(Week);
       expect(week.monday).toBeInstanceOf(Day);
       expect(week.tuesday).toBeInstanceOf(Day);
@@ -62,6 +70,10 @@ describe('Week class', () => {
       expect(weekMissing.thursday).toBeInstanceOf(Day);
       expect(weekMissing.friday).toBeInstanceOf(Day);
       expect(weekMissing.saturday).toBeInstanceOf(Day);
+    });
+
+    it.each([...week.entries()])('Key: %d should equal to dayOfWeek: %d', (key, day) => {
+      expect(key).toBe(day.dayOfWeek);
     });
 
     it('should throw on invalid string format', () => {
