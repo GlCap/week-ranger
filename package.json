@@ -1,6 +1,6 @@
 {
   "name": "week-ranger",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "A simple library to manage time",
   "keywords": [
     "week",

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.12.0](https://github.com/GlCap/week-ranger/compare/v0.11.0...v0.12.0) (2022-03-25)
+
+### Features
+
+- reworked Time to handle DST during parsing and serializing ([b7075d6](https://github.com/GlCap/week-ranger/commit/b7075d6d81a36e8f22c330c636763f93e255f4ea))
+
 ## [0.11.0](https://github.com/GlCap/week-ranger/compare/v0.10.0...v0.11.0) (2022-03-25)
 
 ### Features
